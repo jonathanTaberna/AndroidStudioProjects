@@ -28,6 +28,14 @@
             android:name=".PreferenciasActivity"
             android:label="Preferencias ...">
         </activity>
+        <activity
+            android:name=".VistaLugarActivity"
+            android:label="Vista de Lugares ...">
+        </activity>
+        <activity
+            android:name=".EdicionLugarActivity"
+            android:label="Edicion de un Lugar">
+        </activity>
     </application>
 
 </manifest>

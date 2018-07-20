@@ -21,6 +21,7 @@
             style="@style/EstiloBoton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="mostrarPreferencias"
             android:text="@string/mostrar_lugares" />
 
         <Button
