@@ -3,6 +3,7 @@ package com.example.mislugares;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.preference.PreferenceManager;
@@ -10,6 +11,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -25,12 +28,18 @@ public class MainActivity extends AppCompatActivity {
     private Button bPreferencias;
     public static Lugares lugares = new LugaresVector();
 
+    private RecyclerView recyclerView;
+    public AdaptadorLugares adaptador;
+    private RecyclerView.LayoutManager layoutManager;
+
+    MediaPlayer mp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //setContentView(R.layout.edicion_lugar);
-
+        /*
         bPreferencias =(Button) findViewById(R.id.button2);
         bPreferencias.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -52,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        */
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -63,6 +74,26 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        adaptador = new AdaptadorLugares(this, lugares);
+        recyclerView.setAdapter(adaptador);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        adaptador.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(MainActivity.this, VistaLugarActivity.class);
+                i.putExtra("id", (long) recyclerView.getChildAdapterPosition(v));
+                startActivity(i);
+            }
+        });
+
+        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
+
+        mp = MediaPlayer.create(this, R.raw.audio);
+        //mp.start();
 
     }
 
@@ -136,6 +167,64 @@ public class MainActivity extends AppCompatActivity {
         String s = "notificaciones: "+ pref.getBoolean("notificaciones",true)
                 +", Máxima Distancia para notificar: " + pref.getString("maximo","?");
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Toast.makeText(this, "onStart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
+        mp.start();
+    }
+
+    @Override
+    protected void onPause() {
+        Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show();
+        super.onPause();
+        mp.pause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Toast.makeText(this, "onStop", Toast.LENGTH_SHORT).show();
+        mp.pause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Toast.makeText(this, "onRestart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
+        mp.pause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle estadoGuardado){
+        super.onSaveInstanceState(estadoGuardado);
+        if (mp != null) {
+            int pos = mp.getCurrentPosition();
+            estadoGuardado.putInt("posicion", pos);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle estadoGuardado){
+        super.onRestoreInstanceState(estadoGuardado);
+        if (estadoGuardado != null && mp != null) {
+            int pos = estadoGuardado.getInt("posicion");
+            mp.seekTo(pos);
+        }
     }
 
 }

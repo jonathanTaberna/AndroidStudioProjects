@@ -1,8 +1,15 @@
 package com.example.mislugares;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -11,13 +18,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.util.Date;
 
 public class VistaLugarActivity extends AppCompatActivity {
     private long id;
     private Lugar lugar;
+    private ImageView imageView;
+    final static int RESULTADO_EDITAR= 1;
+    final static int RESULTADO_GALERIA= 2;
+    final static int RESULTADO_FOTO= 3;
+    private Uri uriFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +72,7 @@ public class VistaLugarActivity extends AppCompatActivity {
                     }
                 });
          */
+        imageView = (ImageView) findViewById(R.id.foto);
          actualizarVistas();
     }
 
@@ -70,8 +86,14 @@ public class VistaLugarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.accion_compartir:
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT,
+                        lugar.getNombre() + " - " + lugar.getUrl());
+                startActivity(intent);
                 return true;
             case R.id.accion_llegar:
+                verMapa(null);
                 return true;
             case R.id.accion_editar:
                 lanzarEdicionLugar(null);
@@ -103,14 +125,22 @@ public class VistaLugarActivity extends AppCompatActivity {
     public void lanzarEdicionLugar (View view) {
         Intent i = new Intent(this, EdicionLugarActivity.class);
         i.putExtra("id", id);
-        startActivityForResult(i, 1234);
+        startActivityForResult(i, RESULTADO_EDITAR);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1234) {
+        if (requestCode == RESULTADO_EDITAR) {
             actualizarVistas();
             findViewById(R.id.scrollView1).invalidate();
+        } else if (requestCode == RESULTADO_GALERIA
+                && resultCode == Activity.RESULT_OK) {
+            lugar.setFoto(data.getDataString());
+            ponerFoto(imageView, lugar.getFoto());
+        } else if(requestCode == RESULTADO_FOTO && resultCode == Activity.RESULT_OK
+                && lugar!=null && uriFoto!=null) {
+            lugar.setFoto(uriFoto.toString());
+            ponerFoto(imageView, lugar.getFoto());
         }
     }
 
@@ -145,5 +175,80 @@ public class VistaLugarActivity extends AppCompatActivity {
                         lugar.setValoracion(valor);
                     }
                 });
+        ponerFoto(imageView, lugar.getFoto());
     }
+
+    public void verMapa(View view) {
+        Uri uri;
+        double lat = lugar.getPosicion().getLatitud();
+        double lon = lugar.getPosicion().getLongitud();
+        if (lat != 0 || lon != 0) {
+            uri = Uri.parse("geo:" + lat + "," + lon);
+        } else {
+            uri = Uri.parse("geo:0,0?q=" + lugar.getDireccion());
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    public void llamadaTelefono(View view) {
+        startActivity(new Intent(Intent.ACTION_DIAL,
+                Uri.parse("tel:" + lugar.getTelefono())));
+    }
+
+    public void pgWeb(View view) {
+        startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse(lugar.getUrl())));
+    }
+
+    public void galeria(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, RESULTADO_GALERIA);
+    }
+
+    protected void ponerFoto(ImageView imageView, String uri) {
+        if (uri != null) {
+            //imageView.setImageURI(Uri.parse(uri));
+            imageView.setImageBitmap(reduceBitmap(this, uri, 1024, 1024));
+        } else{
+            imageView.setImageBitmap(null);
+        }
+    }
+
+    public void tomarFoto(View view) {
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        uriFoto = Uri.fromFile(new File(Environment.
+                getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                + File.separator + "img_" + (System.currentTimeMillis() / 1000) + ".jpg"));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uriFoto);
+        startActivityForResult(intent, RESULTADO_FOTO);
+    }
+
+    public void eliminarFoto(View view) {
+        lugar.setFoto(null);
+        ponerFoto(imageView, null);
+    }
+
+    public static Bitmap reduceBitmap(Context contexto, String uri,
+                                      int maxAncho, int maxAlto) {
+        try {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(contexto.getContentResolver()
+                    .openInputStream(Uri.parse(uri)), null, options);
+            options.inSampleSize = (int) Math.max(
+                    Math.ceil(options.outWidth / maxAncho),
+                    Math.ceil(options.outHeight / maxAlto));
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeStream(contexto.getContentResolver()
+                    .openInputStream(Uri.parse(uri)), null, options);
+        } catch (FileNotFoundException e) {
+            Toast.makeText(contexto, "Fichero/recurso no encontrado",
+                    Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
