@@ -27,6 +27,7 @@ public class AdaptadorLugares extends RecyclerView.Adapter<AdaptadorLugares.View
         public TextView nombre, direccion;
         public ImageView foto;
         public RatingBar valoracion;
+        public TextView distancia;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -34,6 +35,7 @@ public class AdaptadorLugares extends RecyclerView.Adapter<AdaptadorLugares.View
             direccion = (TextView) itemView.findViewById(R.id.direccion);
             foto = (ImageView) itemView.findViewById(R.id.foto);
             valoracion = (RatingBar) itemView.findViewById(R.id.valoracion);
+            distancia = (TextView) itemView.findViewById(R.id.distancia);
         }
     }
 
@@ -73,6 +75,14 @@ public class AdaptadorLugares extends RecyclerView.Adapter<AdaptadorLugares.View
         holder.foto.setImageResource(id);
         holder.foto.setScaleType(ImageView.ScaleType.FIT_END);
         holder.valoracion.setRating(lugar.getValoracion());
+        if (MainActivity.posicionActual != null && lugar.getPosicion() != null) {
+            int d = (int) MainActivity.posicionActual.distancia(lugar.getPosicion());
+            if(d < 2000) {
+                holder.distancia.setText(d + " m");
+            } else {
+                holder.distancia.setText(d / 1000 + "Km");
+            }
+        }
     }
 
     // Indicamos el número de elementos de la lista
