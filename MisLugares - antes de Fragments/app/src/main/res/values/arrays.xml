@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tiposOrden">
+        <item>Creación</item>
+        <item>Valoración</item>
+        <item>Distancia</item>
+    </string-array>
+    <string-array name="tiposOrdenValores">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="tiposCorreos">
+        <item>Nuevos Lugares</item>
+        <item>Cerca de Mi</item>
+        <item>Mejor Valorados</item>
+    </string-array>
+    <string-array name="tiposCorreosValores">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+</resources>

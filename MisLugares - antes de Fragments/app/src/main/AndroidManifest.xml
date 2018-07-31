@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.mislugares">
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!--
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AcercaDe"
+            android:label="AcercaDe ..."
+            android:theme="@style/Theme.AppCompat.CompactMenu">
+        </activity>
+        <activity
+            android:name=".PreferenciasActivity"
+            android:label="Preferencias ...">
+        </activity>
+        <activity
+            android:name=".VistaLugarActivity"
+            android:label="Vista de Lugares ...">
+        </activity>
+        <activity
+            android:name=".EdicionLugarActivity"
+            android:label="Edicion de un Lugar">
+        </activity>
+    </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+</manifest>
