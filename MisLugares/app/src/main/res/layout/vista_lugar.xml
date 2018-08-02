@@ -80,8 +80,7 @@
             android:id="@+id/barra_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:onClick="pgWeb">
+            android:orientation="horizontal">
             <ImageView
                 android:id="@+id/logo_url"
                 android:layout_width="40dp"
@@ -145,7 +144,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:contentDescription="hora de ultima visita"
-                android:src="@android:drawable/ic_menu_my_calendar" />
+                android:src="@android:drawable/ic_menu_zoom" />
             <TextView
                 android:id="@+id/hora"
                 android:layout_width="match_parent"

@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class SelectorFragment extends Fragment {
 
@@ -17,6 +18,7 @@ public class SelectorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflador, ViewGroup contenedor,
                              Bundle savedInstanceState) {
+        Toast.makeText(getActivity(), "selector fragment", Toast.LENGTH_SHORT).show();
         View vista = inflador.inflate(R.layout.fragment_selector,
                 contenedor, false);
         recyclerView =(RecyclerView) vista.findViewById(R.id.recycler_view);
@@ -29,15 +31,18 @@ public class SelectorFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager =
                 new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        layoutManager.setAutoMeasureEnabled(true); //Quitar esta línea si da problemas
+        //layoutManager.setAutoMeasureEnabled(true); //Quitar esta línea si da problemas
         adaptador = new AdaptadorLugaresBD(getContext(),
                 MainActivity.lugares,  MainActivity.lugares.extraeCursor());
         adaptador.setOnItemClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
+                ((MainActivity) getActivity()).muestraLugar(recyclerView.getChildAdapterPosition(v));
+                /*
                 Intent i = new Intent(getContext(), VistaLugarActivity.class);
                 i.putExtra("id", (long)
                         recyclerView.getChildAdapterPosition(v));
                 startActivity(i);
+                */
             }
         });
         recyclerView.setAdapter(adaptador);

@@ -38,10 +38,10 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     //public AdaptadorLugares adaptador;
 
     public static LugaresBD lugares;
-    public static AdaptadorLugaresBD adaptador;
 
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+    //public static AdaptadorLugaresBD adaptador;
+    //private RecyclerView recyclerView;
+    //private RecyclerView.LayoutManager layoutManager;
 
     final static String TAG = "MisLugares";
     private static final int SOLICITUD_PERMISO_LOCALIZACION = 0;
@@ -51,8 +51,9 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     private static final long DOS_MINUTOS = 2 * 60 * 1000;
 
     static final int RESULTADO_PREFERENCIAS = 0;
+    private VistaLugarFragment fragmentVista;
 
-    MediaPlayer mp;
+    //MediaPlayer mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
 
         lugares = new LugaresBD(this);
         //adaptador = new AdaptadorLugares(this, lugares);
+        /*
         adaptador = new AdaptadorLugaresBD(this, lugares, lugares.extraeCursor());
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -92,10 +94,11 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 startActivity(i);
             }
         });
+        */
 
         //Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
-        mp = MediaPlayer.create(this, R.raw.audio);
+        //mp = MediaPlayer.create(this, R.raw.audio);
         //mp.start();
 
         manejador = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -112,6 +115,9 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
                 solicitarPermisoLocalizacion();
             }
         }
+
+        fragmentVista = (VistaLugarFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.vista_lugar_fragment);
     }
 
     @Override
@@ -199,6 +205,9 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
         //Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
         //mp.start();
         activarProveedores();
+        if (fragmentVista!=null && SelectorFragment.adaptador.getItemCount()>0) {
+            fragmentVista.actualizarVistas(0);
+        }
     }
 
     @Override
@@ -246,10 +255,12 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     @Override
     protected void onRestoreInstanceState(Bundle estadoGuardado){
         super.onRestoreInstanceState(estadoGuardado);
+        /*
         if (estadoGuardado != null && mp != null) {
             int pos = estadoGuardado.getInt("posicion");
             //mp.seekTo(pos);
         }
+        */
     }
 
     private void activarProveedores() {
@@ -294,8 +305,8 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         if (requestCode == RESULTADO_PREFERENCIAS) {
-            adaptador.setCursor(MainActivity.lugares.extraeCursor());
-            adaptador.notifyDataSetChanged();
+            SelectorFragment.adaptador.setCursor(MainActivity.lugares.extraeCursor());
+            SelectorFragment.adaptador.notifyDataSetChanged();
         }
     }
 
@@ -329,6 +340,16 @@ public class MainActivity extends AppCompatActivity  implements LocationListener
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     SOLICITUD_PERMISO_LOCALIZACION);
+        }
+    }
+
+    public void muestraLugar(long id) {
+        if (fragmentVista != null) {
+            fragmentVista.actualizarVistas(id);
+        } else {
+            Intent intent = new Intent(this, VistaLugarActivity.class);
+            intent.putExtra("id", id);
+            startActivityForResult(intent, 0);
         }
     }
 
