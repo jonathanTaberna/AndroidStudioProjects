@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">My RestoErrante</string>
+    <string name="tit_main_activity">Realizar Pedido</string>
+    <string name="lblNombreCliente">Nombre</string>
+    <string name="lblPedido">Pedido</string>
+    <string name="lblDelivery">Enviar por Delibery</string>
+    <string name="lblMesa">Pedido en Mesa</string>
+    <string name="lblIncluirPropina">Incluir Propina</string>
+    <string name="lblPermiteCancelar">Permitir Cancelar</string>
+    <string name="lblBebidaXL">Bebidas XL</string>
+    <string name="lblNotificaciones">Recibir Notificaciones</string>
+    <string name="lblBtnConfirmar">Confirmar</string>
+    <string name="lblBtnCancelar">Cancelar</string>
+</resources>
