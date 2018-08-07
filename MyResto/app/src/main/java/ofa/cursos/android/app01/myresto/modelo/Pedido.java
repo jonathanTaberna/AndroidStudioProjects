@@ -1,5 +1,7 @@
 package ofa.cursos.android.app01.myresto.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Pedido {
@@ -14,6 +16,9 @@ public class Pedido {
     private boolean enviarNotificaciones;
     private boolean pagoAuotomatico;
     private static int idGenerator = 0;
+    //private List<ProductoMenu> itemsPedidos;
+    private List<DetallePedido> itemsPedidos;
+    private Estado estado;
 
     public Integer getId() {
         return id;
@@ -87,14 +92,53 @@ public class Pedido {
         this.pagoAuotomatico = pagoAuotomatico;
     }
 
+    public List<DetallePedido> getItemsPedidos() {
+        return itemsPedidos;
+    }
+
+    public void setItemsPedidos(List<DetallePedido> itemsPedidos) {
+        this.itemsPedidos = itemsPedidos;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
     public Pedido(){
         this.id = ++Pedido.idGenerator;
+        this.itemsPedidos = new ArrayList<>();
+    }
+
+    // método que permite agregar detalles de productos
+    public void addItemDetalle(DetallePedido prd){
+        this.itemsPedidos.add(prd);
+    }
+
+    public void preparar(){
+        if(this.estado==Estado.CONFIRMADO){
+            this.estado = Estado.EN_PREPARACION;
+        }
+    }
+    public void enviar(){
+        if(this.estado==Estado.EN_PREPARACION){
+            this.estado = Estado.EN_ENVIO;
+        }
+    }
+    public void entregar(){
+        if(this.estado==Estado.EN_ENVIO){
+            this.estado = Estado.ENTREGADO;
+        }
     }
 
     @Override
     public String toString() {
-        return nombre + " - " + pedido;
+        return nombre; // + " - " + pedido;
     }
+
     /*
     @Override
     public String toString() {

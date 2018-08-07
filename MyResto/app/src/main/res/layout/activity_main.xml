@@ -33,13 +33,26 @@
         android:layout_height="wrap_content"
         android:text="@string/lblPedido" />
 
-    <EditText
-        android:id="@+id/txtDetallePedido"
+    <Button
+        android:id="@+id/btnAddProducto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Buscar Menu" />
+
+    <EditText
+        android:id="@+id/edtDetallePedido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:editable="false"
         android:ems="10"
         android:inputType="textMultiLine"
-        android:lines="3" />
+        android:lines="4" />
+
+    <TextView
+        android:id="@+id/tvTotalPedido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total:" />
 
     <RadioGroup
         android:id="@+id/rgTipoPedido"
@@ -47,18 +60,18 @@
         android:layout_height="74dp">
 
         <RadioButton
-            android:id="@+id/radBtnDelivery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/lblDelivery" />
-
-        <RadioButton
             android:id="@+id/radBtnMesa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/lblMesa" />
+
+        <RadioButton
+            android:id="@+id/radBtnDelivery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/lblDelivery" />
     </RadioGroup>
 
     <LinearLayout

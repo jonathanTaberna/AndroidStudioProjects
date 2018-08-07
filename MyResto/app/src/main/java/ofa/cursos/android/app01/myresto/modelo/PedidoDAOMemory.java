@@ -20,4 +20,12 @@ public class PedidoDAOMemory implements PedidoDao {
         REPOSITORIO_PEDIDOS.remove(pedido);
     }
 
+    @Override
+    public Pedido buscarPorId(Integer id) {
+        for(Pedido unPedido: REPOSITORIO_PEDIDOS){
+            if(unPedido.getId().equals(id)) return unPedido;
+        }
+        return null;
+    }
+
 }
