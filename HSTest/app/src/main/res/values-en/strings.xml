@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Farmacy Grassi</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_dni">Dni</string>
+    <string name="prompt_password">Password (Optional)</string>
+
+    <string name="action_log_in">Log In</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="action_recovery">Recovery Pass</string>
+
+    <string name="error_invalid_dni">This dni is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_no_exist_dni">This dni don´t exist</string>
+
+</resources>

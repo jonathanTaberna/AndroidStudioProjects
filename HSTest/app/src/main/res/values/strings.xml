@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Farmacia Grassi</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_dni">Dni</string>
+    <string name="prompt_password">Contraseña (Optional)</string>
+
+    <string name="action_log_in">Ingresar</string>
+    <string name="action_sign_in">Registrarse</string>
+    <string name="action_recovery">Recuperar Contraseña</string>
+
+    <string name="error_invalid_dni">El dni es invalido</string>
+    <string name="error_invalid_password">La contraseña es muy corta</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta</string>
+    <string name="error_field_required">Este campo es obligatorio</string>
+    <string name="error_no_exist_dni">El dni no existe</string>
+
+    <!-- String related to User -->
+    <string name="user_name">Nombre</string>
+    <string name="user_last_name">Apellido</string>
+    <string name="user_pass">Contraseña</string>
+    <string name="user_pass_repit">Repita la Contraseña</string>
+    <string name="user_email">Email</string>
+    <string name="user_dir">Direccion</string>
+    <string name="user_num_dir">Nro Direccion</string>
+    <string name="user_between1">Entre Calle</string>
+    <string name="user_between2">y Calle</string>
+    <string name="user_codpos">Codigo Postal</string>
+    <string name="user_located">Localidad</string>
+</resources>
