@@ -65,6 +65,13 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <CheckBox
+                android:id="@+id/cbRecordarUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cbRecordarUsuario" />
+
             <Button
                 android:id="@+id/btnIngresar"
                 style="?android:textAppearanceSmall"

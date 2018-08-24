@@ -28,16 +28,21 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,6 +50,8 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
@@ -57,6 +64,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private CheckBox cbRecordarUsuario;
 
     //preferencias
     private String nroTarjeta = "";
@@ -67,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     //constantes
     private String CONFIG_NOT_FOUND = "CONFIG_NOT_FOUND";
     private String CONFIG_FOUND = "CONFIG_FOUND";
+    private int RESULT_NUEVO_USUARIO = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,16 +102,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mIngresarButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
-                imm.hideSoftInputFromWindow(mUusarioView.getWindowToken(), 0);
-                attemptLogin();
+                if (cbRecordarUsuario.isChecked()) {
+                    if (guardarUsuario()) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
+                        imm.hideSoftInputFromWindow(mUusarioView.getWindowToken(), 0);
+                        attemptLogin();
+                    }
+                } else {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
+                    imm.hideSoftInputFromWindow(mUusarioView.getWindowToken(), 0);
+                    attemptLogin();
+                }
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        cbRecordarUsuario = findViewById(R.id.cbRecordarUsuario);
 
+        File archivo = new File(farmaclubConfig);
+        if (archivo.exists()) {
+            estadoArchivo = CONFIG_FOUND;
+            cbRecordarUsuario.setVisibility(View.VISIBLE);
+        } else  {
+            cbRecordarUsuario.setVisibility(View.INVISIBLE);
+            estadoArchivo = CONFIG_NOT_FOUND;
+            mUusarioView.setHint(R.string.edtUsuarioT);
+            mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
+        }
+
+        /*
         leerPreferencias();
         if (estadoArchivo == CONFIG_FOUND){
             mUusarioView.setHint(R.string.edtUsuarioU);
@@ -111,9 +142,52 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mUusarioView.setHint(R.string.edtUsuarioT);
             mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
+        */
     }
 
-    private void leerPreferencias(){
+    private boolean guardarUsuario() {
+        boolean retorno = false;
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+
+            try {
+                File f1 = new File(farmaclubConfig);
+                FileReader fr = new FileReader(f1);
+                BufferedReader br = new BufferedReader(fr);
+                while ((line = br.readLine()) != null) {
+                    if (line.contains("usuario_utilizado")) {
+                        line = "usuario_utilizado: " + mUusarioView.getText().toString();
+                    }
+                    lines.add(line);
+                }
+                fr.close();
+                br.close();
+
+                FileWriter fw = new FileWriter(f1);
+                BufferedWriter out = new BufferedWriter(fw);
+                for(String s : lines)
+                    out.write(s);
+                out.flush();
+                out.close();
+
+                retorno = true;
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                retorno = false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                retorno = false;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                retorno = false;
+            }
+
+        return retorno;
+    }
+
+    /*
+    private void leerPreferencias(String accion){
         try {
             FileInputStream mInput = openFileInput(farmaclubConfig);
             estadoArchivo = CONFIG_FOUND;
@@ -132,6 +206,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     partes = linea.split("usuario_utilizado:");
                     String parte1 = partes[0];
                     String parte2 = partes[1];
+                    mUusarioView.setText(parte2);
                 }
                 linea = buffreader.readLine(); //lee proxima fila
             }
@@ -141,12 +216,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //e.printStackTrace();
             Log.i("CONFIG-NOT-FOUND", "Archivo no encontrado");
             estadoArchivo = CONFIG_NOT_FOUND;
-            //generarArchivo(farmaclubConfig);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
     }
+    */
 
     private boolean generarArchivo(String archivo) {
         try {
@@ -154,7 +229,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mOutput.write(("nro_tarjeta:" + mUusarioView.getText().toString()).getBytes());
             mOutput.flush();
             mOutput.close();
-            mUusarioView.setText("");
+            //mUusarioView.setText("");
             return true;
         }
         catch (FileNotFoundException e) {
@@ -407,19 +482,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 case 1:
                     if (success) {
                         if (estadoArchivo == CONFIG_NOT_FOUND) {
+                            Intent nuevoUsuario = new Intent(getApplicationContext(), UsuarioActivity.class);
+                            nuevoUsuario.putExtra("tarjeta", tarjeta);
+                            nuevoUsuario.putExtra("nombre",nombre);
+                            startActivityForResult(nuevoUsuario, RESULT_NUEVO_USUARIO);
+                            /*
                             if (generarArchivo(farmaclubConfig)) {
                                 Log.i("JONATT", "GENERO BIEN LA CONFIG");
                             } else {
                                 Log.i("JONATT", "NO SE GENERO LA CONFIG");
                                 break;
                             }
+                            */
+                        } else {
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            i.putExtra("tarjeta", tarjeta);
+                            i.putExtra("puntos", puntos);
+                            i.putExtra("nombre", nombre);
+                            startActivity(i);
+                            finish();
                         }
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        i.putExtra("tarjeta",tarjeta);
-                        i.putExtra("puntos",puntos);
-                        i.putExtra("nombre",nombre);
-                        startActivity(i);
-                        finish();
                     } else {
                         mPasswordView.setError(getString(R.string.error_incorrect_password));
                         mPasswordView.requestFocus();
@@ -447,5 +529,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RESULT_NUEVO_USUARIO ) {
+            if (resultCode == Activity.RESULT_OK) {
+                Log.i("RESULT", "RESULT_NUEVO_USUARIO OK");
+                mUusarioView.setText(data.getStringExtra("usuario"));
+                mPasswordView.setText("");
+                if (generarArchivo(farmaclubConfig)) {
+                    Log.i("JONATT", "GENERO BIEN LA CONFIG");
+                    estadoArchivo = CONFIG_FOUND;
+                    cbRecordarUsuario.setVisibility(View.VISIBLE);
+                } else {
+                    Log.i("JONATT", "NO SE GENERO LA CONFIG");
+                }
+            } else {
+                Log.i("RESULT", "RESULT_NUEVO_USUARIO FAIL");
+                mUusarioView.setText("pepito fuma marihuana");
+            }
+        }
+    }
+
 }
 
