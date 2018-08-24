@@ -1,13 +1,11 @@
-package hsfarmacia.farmacia;
+package hsfarmacia.farmaclub;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -20,36 +18,33 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
-import static android.widget.Toast.LENGTH_SHORT;
-import static java.lang.System.out;
 
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
@@ -63,6 +58,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    //preferencias
+    private String nroTarjeta = "";
+    private String usuarioUtilizado = "";
+    private String farmaclubConfig = "farmaclub.config";
+    private String estadoArchivo = "";
+
+    //constantes
+    private String CONFIG_NOT_FOUND = "CONFIG_NOT_FOUND";
+    private String CONFIG_FOUND = "CONFIG_FOUND";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mUusarioView = (AutoCompleteTextView) findViewById(R.id.edtUsuario);
 
         mPasswordView = (EditText) findViewById(R.id.edtPassword);
+        /*
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -81,17 +87,83 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
         });
+        */
 
         Button mIngresarButton = (Button) findViewById(R.id.btnIngresar);
         mIngresarButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(mUusarioView.getWindowToken(), 0);
                 attemptLogin();
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        leerPreferencias();
+        if (estadoArchivo == CONFIG_FOUND){
+            mUusarioView.setHint(R.string.edtUsuarioU);
+            mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
+        } else {
+            mUusarioView.setHint(R.string.edtUsuarioT);
+            mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
+        }
+    }
+
+    private void leerPreferencias(){
+        try {
+            FileInputStream mInput = openFileInput(farmaclubConfig);
+            estadoArchivo = CONFIG_FOUND;
+            String[] partes = null;
+
+            InputStreamReader isr = new InputStreamReader (mInput) ;
+            BufferedReader buffreader = new BufferedReader (isr) ;
+            String linea = buffreader.readLine();
+            while ( linea != null ) {
+                if (linea.contains("nro_tarjeta:")) {
+                    partes = linea.split("nro_tarjeta:");
+                    String parte1 = partes[0];
+                    String parte2 = partes[1];
+                }
+                if (linea.contains("usuario_utilizado:")) {
+                    partes = linea.split("usuario_utilizado:");
+                    String parte1 = partes[0];
+                    String parte2 = partes[1];
+                }
+                linea = buffreader.readLine(); //lee proxima fila
+            }
+            mInput.close();
+        }
+        catch (FileNotFoundException e) {
+            //e.printStackTrace();
+            Log.i("CONFIG-NOT-FOUND", "Archivo no encontrado");
+            estadoArchivo = CONFIG_NOT_FOUND;
+            //generarArchivo(farmaclubConfig);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean generarArchivo(String archivo) {
+        try {
+            FileOutputStream mOutput = openFileOutput(archivo, Activity.MODE_PRIVATE);
+            mOutput.write(("nro_tarjeta:" + mUusarioView.getText().toString()).getBytes());
+            mOutput.flush();
+            mOutput.close();
+            mUusarioView.setText("");
+            return true;
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -242,7 +314,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 //URL url = new URL("http://192.168.2.209:8080/restfull-web-services-app-master/rest/user/u"); //in the real code, there is an ip and a port
                 //conn.setRequestMethod("GET");
                 //conn.setDoOutput(false);
-                URL url = new URL("http://192.168.2.209:8080/restfull-web-services-app-master/rest/user/valida"); //in the real code, there is an ip and a port
+                URL url;
+                if (estadoArchivo == CONFIG_NOT_FOUND){
+                    url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/validaIni"); //in the real code, there is an ip and a port
+                } else {
+                    url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/valida"); //in the real code, there is an ip and a port
+                }
+
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -252,7 +330,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 conn.setConnectTimeout(10000); //10 segundos
                 conn.connect();
 
-                obj.put("usuario", mUsuario);
+                if (estadoArchivo == CONFIG_NOT_FOUND){
+                    obj.put("tarjeta", mUsuario);
+                } else {
+                    obj.put("usuario", mUsuario);
+                }
                 obj.put("pass", mPassword);
 
                 Log.i("JSON", obj.toString());
@@ -324,6 +406,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             switch (salida) {
                 case 1:
                     if (success) {
+                        if (estadoArchivo == CONFIG_NOT_FOUND) {
+                            if (generarArchivo(farmaclubConfig)) {
+                                Log.i("JONATT", "GENERO BIEN LA CONFIG");
+                            } else {
+                                Log.i("JONATT", "NO SE GENERO LA CONFIG");
+                                break;
+                            }
+                        }
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         i.putExtra("tarjeta",tarjeta);
                         i.putExtra("puntos",puntos);

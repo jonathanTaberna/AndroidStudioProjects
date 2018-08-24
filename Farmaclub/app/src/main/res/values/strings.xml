@@ -1,12 +1,13 @@
 <resources>
-    <string name="app_name">Farmacia</string>
+    <string name="app_name">FarmaClub</string>
 
     <!-- Strings definidas para la App de Farmacias-->
 
-    <string name="edtUsuario">Usuario</string>
+    <string name="edtUsuarioT">Numero Tarjeta</string>
+    <string name="edtUsuarioU">Usuario</string>
     <string name="edtContrasenia">Contraseña</string>
     <string name="btnIngresar">Ingresar</string>
-    <string name="error_invalid_password">La contraseña es demasiado corta.</string>
+    <string name="error_invalid_password">El tamaño de la contraseña (entre 4 y 15) es incorrecto.</string>
     <string name="error_incorrect_password">La contraseña es incorrecta.</string>
     <string name="error_field_required">Este campo es Obligatorio.</string>
     <string name="usuario_deconocido">Usuario y/o contraseña invalidos.</string>
