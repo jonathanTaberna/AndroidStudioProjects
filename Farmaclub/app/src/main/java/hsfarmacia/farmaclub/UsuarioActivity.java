@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -23,6 +25,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import hsfarmacia.farmaclub.constantes.constantes;
 
 public class UsuarioActivity extends AppCompatActivity {
 
@@ -40,6 +43,7 @@ public class UsuarioActivity extends AppCompatActivity {
     private EditText edtPasswordRep;
     private Button btnCancelar;
     private Button btnAceptar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +79,26 @@ public class UsuarioActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        edtPasswordRep.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                    if (validarCampos()){
+                        mAuthTask = new UserRegisterTask(usuario, tarjeta);
+                        mAuthTask.execute((Void) null);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
     }
 
     private boolean validarCampos(){
-        String usuario = edtUsuario.getText().toString();
+        usuario = edtUsuario.getText().toString();
         String password = edtPassword.getText().toString();
         String passwordRep = edtPasswordRep.getText().toString();
 
@@ -103,6 +123,12 @@ public class UsuarioActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(passwordRep))  {
             edtPasswordRep.setError(getString(R.string.error_field_required));
             focusView = edtPasswordRep;
+            cancel = true;
+        }
+
+        if (usuario.contains(" ")) {
+            edtUsuario.setError(getString(R.string.usuario_invalido));
+            focusView = edtUsuario;
             cancel = true;
         }
 
@@ -149,7 +175,7 @@ public class UsuarioActivity extends AppCompatActivity {
             String JsonResponse = null;
             try {
 
-                URL url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/existeUsu"); //in the real code, there is an ip and a port
+                URL url = new URL(constantes.pathConnection + "existeusu"); //in the real code, there is an ip and a port
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -211,26 +237,25 @@ public class UsuarioActivity extends AppCompatActivity {
             mAuthTask = null;
 
             int salida = 9;
-            String tarjeta = "";
-            String usuario = "";
 
             try {
                 salida = jsonResp.getInt("salida");
-                tarjeta = jsonResp.getString("tarjeta");
-                usuario = jsonResp.getString("usuario");
             } catch (Exception e){
                 salida = 9;
-                edtUsuario.setError(getString(R.string.usuario_existente));
-                edtUsuario.requestFocus();
             }
 
             switch (salida) {
                 case 1:
                     if (success) {
-                        Intent data = new Intent();
-                        data.putExtra("usuario",usuario);
-                        setResult(RESULT_OK,data);
-                        finish();
+                        if (actualizaUsuario()) {
+                            Intent data = new Intent();
+                            data.putExtra("usuario", usuario);
+                            setResult(RESULT_OK, data);
+                            finish();
+                        } else {
+                            edtUsuario.setError(getString(R.string.error_update));
+                            edtUsuario.requestFocus();
+                        }
                     } else {
                         edtUsuario.setError(getString(R.string.error_json));
                         edtUsuario.requestFocus();
@@ -256,12 +281,74 @@ public class UsuarioActivity extends AppCompatActivity {
         protected void onCancelled() {
             mAuthTask = null;
         }
+
+        // quede aca... sale error por la accion en el MainThread
+        private boolean actualizaUsuario() {
+
+            JSONObject obj = new JSONObject();
+            HttpURLConnection conn = null;
+
+            BufferedReader reader = null;
+            String JsonResponse = null;
+            try {
+                URL url = new URL(constantes.pathConnection + "actualiza"); //in the real code, there is an ip and a port
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept","application/json");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setConnectTimeout(10000); //10 segundos
+                conn.connect();
+                obj.put("tarjeta", mTarjeta);
+                obj.put("usuario", mUsuario);
+                obj.put("pass", edtPassword.getText().toString());
+
+                Log.i("JSON", obj.toString());
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(obj.toString());
+
+                os.flush();
+                os.close();
+
+                status = conn.getResponseCode();
+                Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                Log.i("MSG" , conn.getResponseMessage());
+
+                if (status == 200){ //respuesta OK
+                    InputStream inputStream = conn.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String inputLine;
+                    while ((inputLine = reader.readLine()) != null) {
+                        buffer.append(inputLine + "\n");
+                        jsonResp = new JSONObject(inputLine);
+                    }
+                    JsonResponse = buffer.toString();
+                    Log.i("RESPONSE",JsonResponse);
+
+                }
+
+            } catch (ConnectException ce) {
+                if (ce.getMessage().contains("ETIMEDOUT")) {
+                    status = 99;
+                }
+            }catch (SocketTimeoutException e) {
+                status = 99;
+            } catch (Exception e){
+                e.printStackTrace();
+            }  finally {
+                conn.disconnect();
+            }
+
+            if (status == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
     }
-
-
-
-
-
-
-
 }

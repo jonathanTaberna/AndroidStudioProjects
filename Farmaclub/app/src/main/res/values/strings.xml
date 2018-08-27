@@ -27,6 +27,8 @@
     <string name="servidor_timeout">No es posible conectarse al Servidor.</string>
     <string name="passwords_diferentes">Las contraseñas no coinciden.</string>
     <string name="usuario_existente">El usuario ya existe.</string>
+    <string name="usuario_invalido">Usuario no valido.</string>
+    <string name="error_update">No se pudo generar el usuario.</string>
 
 
     <!-- Strings related to login -->

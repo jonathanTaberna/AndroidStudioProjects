@@ -52,6 +52,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import hsfarmacia.farmaclub.constantes.constantes;
+
 
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
@@ -72,10 +74,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String farmaclubConfig = "farmaclub.config";
     private String estadoArchivo = "";
 
-    //constantes
-    private String CONFIG_NOT_FOUND = "CONFIG_NOT_FOUND";
-    private String CONFIG_FOUND = "CONFIG_FOUND";
-    private int RESULT_NUEVO_USUARIO = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,19 +100,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mIngresarButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (cbRecordarUsuario.isChecked()) {
-                    if (guardarUsuario()) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
-                        imm.hideSoftInputFromWindow(mUusarioView.getWindowToken(), 0);
-                        attemptLogin();
-                    }
-                } else {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
-                    imm.hideSoftInputFromWindow(mUusarioView.getWindowToken(), 0);
-                    attemptLogin();
+                if (estadoArchivo == constantes.CONFIG_FOUND) {
+                    guardarUsuario();
                 }
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(mUusarioView.getWindowToken(), 0);
+                attemptLogin();
+
             }
         });
 
@@ -122,19 +115,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         cbRecordarUsuario = findViewById(R.id.cbRecordarUsuario);
 
-        File archivo = new File(farmaclubConfig);
+        File archivo = new File(getBaseContext().getFilesDir()+ "/" + farmaclubConfig);
         if (archivo.exists()) {
-            estadoArchivo = CONFIG_FOUND;
+            estadoArchivo = constantes.CONFIG_FOUND;
+            mUusarioView.setHint(R.string.edtUsuarioU);
             cbRecordarUsuario.setVisibility(View.VISIBLE);
+            mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
+            mUusarioView.setText(leerUsuarioCargado());
+            cbRecordarUsuario.setChecked(true);
+            mPasswordView.requestFocus();
         } else  {
-            cbRecordarUsuario.setVisibility(View.INVISIBLE);
-            estadoArchivo = CONFIG_NOT_FOUND;
+            estadoArchivo = constantes.CONFIG_NOT_FOUND;
             mUusarioView.setHint(R.string.edtUsuarioT);
+            cbRecordarUsuario.setVisibility(View.INVISIBLE);
             mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
 
         /*
-        leerPreferencias();
         if (estadoArchivo == CONFIG_FOUND){
             mUusarioView.setHint(R.string.edtUsuarioU);
             mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -145,8 +142,45 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         */
     }
 
-    private boolean guardarUsuario() {
-        boolean retorno = false;
+    private void guardarUsuario() {
+
+        try {
+            FileInputStream fis = getBaseContext().openFileInput(farmaclubConfig);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.contains("usuario_utilizado")) {
+                    if (cbRecordarUsuario.isChecked()) {
+                        line = "usuario_utilizado:" + mUusarioView.getText().toString();
+                    } else {
+                        line = "usuario_utilizado:";
+                    }
+                }
+                sb.append(line + "\n");
+            }
+            fis.close();
+            isr.close();
+            bufferedReader.close();
+
+            FileOutputStream mOutput = openFileOutput(farmaclubConfig, Context.MODE_PRIVATE);
+            mOutput.write(sb.toString().getBytes());
+            mOutput.flush();
+            mOutput.close();
+
+
+        } catch (Exception e) {
+            Log.i("FILE-ERROR: ", e.getMessage());
+        }
+
+
+
+
+
+/*
+
+
         List<String> lines = new ArrayList<String>();
         String line = null;
 
@@ -156,7 +190,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 BufferedReader br = new BufferedReader(fr);
                 while ((line = br.readLine()) != null) {
                     if (line.contains("usuario_utilizado")) {
-                        line = "usuario_utilizado: " + mUusarioView.getText().toString();
+                        if (cbRecordarUsuario.isChecked()) {
+                            line = "usuario_utilizado: " + mUusarioView.getText().toString();
+                        } else {
+                            line = "usuario_utilizado: ";
+                        }
                     }
                     lines.add(line);
                 }
@@ -170,75 +208,79 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 out.flush();
                 out.close();
 
-                retorno = true;
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                retorno = false;
+                Log.i("FILE-ERROR: ", e.getMessage());
             } catch (IOException e) {
                 e.printStackTrace();
-                retorno = false;
+                Log.i("FILE-ERROR: ", e.getMessage());
             } catch (Exception ex) {
                 ex.printStackTrace();
-                retorno = false;
+                Log.i("FILE-ERROR: ", ex.getMessage());
             }
-
-        return retorno;
+*/
     }
 
-    /*
-    private void leerPreferencias(String accion){
+
+    private String leerUsuarioCargado(){
+        String usuario = "";
         try {
             FileInputStream mInput = openFileInput(farmaclubConfig);
-            estadoArchivo = CONFIG_FOUND;
             String[] partes = null;
 
             InputStreamReader isr = new InputStreamReader (mInput) ;
             BufferedReader buffreader = new BufferedReader (isr) ;
             String linea = buffreader.readLine();
             while ( linea != null ) {
-                if (linea.contains("nro_tarjeta:")) {
-                    partes = linea.split("nro_tarjeta:");
-                    String parte1 = partes[0];
-                    String parte2 = partes[1];
-                }
                 if (linea.contains("usuario_utilizado:")) {
                     partes = linea.split("usuario_utilizado:");
                     String parte1 = partes[0];
                     String parte2 = partes[1];
-                    mUusarioView.setText(parte2);
+                    usuario = partes[1];
+                    //mUusarioView.setText(parte2);
                 }
                 linea = buffreader.readLine(); //lee proxima fila
             }
             mInput.close();
         }
-        catch (FileNotFoundException e) {
-            //e.printStackTrace();
-            Log.i("CONFIG-NOT-FOUND", "Archivo no encontrado");
-            estadoArchivo = CONFIG_NOT_FOUND;
+        catch (Exception e) {
+            Log.i("CONFIG-NOT-FOUND", e.getMessage());
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        return  usuario;
     }
-    */
 
     private boolean generarArchivo(String archivo) {
+        boolean retorno = false;
         try {
-            FileOutputStream mOutput = openFileOutput(archivo, Activity.MODE_PRIVATE);
-            mOutput.write(("nro_tarjeta:" + mUusarioView.getText().toString()).getBytes());
+            FileOutputStream mOutput = openFileOutput(archivo, Context.MODE_PRIVATE);
+            mOutput.write(("nro_tarjeta:" + mUusarioView.getText().toString() + "\n").getBytes());
+            mOutput.write(("usuario_utilizado:").getBytes());
             mOutput.flush();
             mOutput.close();
             //mUusarioView.setText("");
-            return true;
+
+
+            /*
+            FileWriter fw = new FileWriter( archivo);
+            BufferedWriter out = new BufferedWriter(fw);
+            out.write("nro_tarjeta:" + mUusarioView.getText().toString());
+            out.write("usuario_utilizado:");
+            out.flush();
+            out.close();
+            */
+
+
+            retorno = true;
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
+            retorno = false;
         }
         catch (IOException e) {
             e.printStackTrace();
+            retorno = false;
         }
-        return false;
+        return retorno;
     }
 
     /**
@@ -390,10 +432,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 //conn.setRequestMethod("GET");
                 //conn.setDoOutput(false);
                 URL url;
-                if (estadoArchivo == CONFIG_NOT_FOUND){
-                    url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/validaIni"); //in the real code, there is an ip and a port
+                if (estadoArchivo == constantes.CONFIG_NOT_FOUND){
+                    //url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/validaIni"); //in the real code, there is an ip and a port
+                    url = new URL( constantes.pathConnection + "validaIni"); //in the real code, there is an ip and a port
                 } else {
-                    url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/valida"); //in the real code, there is an ip and a port
+                    //url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/valida"); //in the real code, there is an ip and a port
+                    url = new URL(constantes.pathConnection +"valida"); //in the real code, there is an ip and a port
                 }
 
                 conn = (HttpURLConnection) url.openConnection();
@@ -405,7 +449,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 conn.setConnectTimeout(10000); //10 segundos
                 conn.connect();
 
-                if (estadoArchivo == CONFIG_NOT_FOUND){
+                if (estadoArchivo == constantes.CONFIG_NOT_FOUND){
                     obj.put("tarjeta", mUsuario);
                 } else {
                     obj.put("usuario", mUsuario);
@@ -481,11 +525,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             switch (salida) {
                 case 1:
                     if (success) {
-                        if (estadoArchivo == CONFIG_NOT_FOUND) {
+                        if (estadoArchivo == constantes.CONFIG_NOT_FOUND) {
                             Intent nuevoUsuario = new Intent(getApplicationContext(), UsuarioActivity.class);
                             nuevoUsuario.putExtra("tarjeta", tarjeta);
                             nuevoUsuario.putExtra("nombre",nombre);
-                            startActivityForResult(nuevoUsuario, RESULT_NUEVO_USUARIO);
+                            startActivityForResult(nuevoUsuario, constantes.RESULT_NUEVO_USUARIO);
                             /*
                             if (generarArchivo(farmaclubConfig)) {
                                 Log.i("JONATT", "GENERO BIEN LA CONFIG");
@@ -532,15 +576,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RESULT_NUEVO_USUARIO ) {
+        if (requestCode == constantes.RESULT_NUEVO_USUARIO ) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.i("RESULT", "RESULT_NUEVO_USUARIO OK");
                 mUusarioView.setText(data.getStringExtra("usuario"));
+                mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
                 mPasswordView.setText("");
                 if (generarArchivo(farmaclubConfig)) {
                     Log.i("JONATT", "GENERO BIEN LA CONFIG");
-                    estadoArchivo = CONFIG_FOUND;
+                    estadoArchivo = constantes.CONFIG_FOUND;
                     cbRecordarUsuario.setVisibility(View.VISIBLE);
+                    cbRecordarUsuario.setChecked(true);
+                    mPasswordView.requestFocus();
                 } else {
                     Log.i("JONATT", "NO SE GENERO LA CONFIG");
                 }
