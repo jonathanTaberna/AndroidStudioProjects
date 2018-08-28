@@ -10,6 +10,11 @@
     <string name="edtContrasenia">Contraseña</string>
     <string name="edtRepetirContrasenia">Repetir Contraseña</string>
 
+    <!-- text View-->
+    <string name="tvTerminos">Al ACEPTAR usted confirma las bases de <u>Terminos y Condiciones</u></string>
+    <string name="tvTerminosDownload">Se estan descargando las bases de <u>Terminos y Condiciones</u></string>
+
+
     <!-- botones-->
     <string name="btnIngresar">Ingresar</string>
     <string name="btnAceptar">Aceptar</string>

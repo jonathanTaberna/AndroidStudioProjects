@@ -68,10 +68,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private CheckBox cbRecordarUsuario;
 
-    //preferencias
-    private String nroTarjeta = "";
-    private String usuarioUtilizado = "";
-    private String farmaclubConfig = "farmaclub.config";
     private String estadoArchivo = "";
 
 
@@ -115,21 +111,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         cbRecordarUsuario = findViewById(R.id.cbRecordarUsuario);
 
-        File archivo = new File(getBaseContext().getFilesDir()+ "/" + farmaclubConfig);
+        File archivo = new File(getBaseContext().getFilesDir()+ "/" + constantes.farmaclubConfig);
         if (archivo.exists()) {
             estadoArchivo = constantes.CONFIG_FOUND;
             mUusarioView.setHint(R.string.edtUsuarioU);
             cbRecordarUsuario.setVisibility(View.VISIBLE);
             mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
-            mUusarioView.setText(leerUsuarioCargado());
             cbRecordarUsuario.setChecked(true);
-            mPasswordView.requestFocus();
+            String usuarioCargado = leerUsuarioCargado();
+            if (!usuarioCargado.isEmpty()) {
+                mUusarioView.setText(usuarioCargado);
+                mPasswordView.requestFocus();
+            }
         } else  {
             estadoArchivo = constantes.CONFIG_NOT_FOUND;
             mUusarioView.setHint(R.string.edtUsuarioT);
             cbRecordarUsuario.setVisibility(View.INVISIBLE);
             mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
-        }
+    }
 
         /*
         if (estadoArchivo == CONFIG_FOUND){
@@ -145,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void guardarUsuario() {
 
         try {
-            FileInputStream fis = getBaseContext().openFileInput(farmaclubConfig);
+            FileInputStream fis = getBaseContext().openFileInput(constantes.farmaclubConfig);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader bufferedReader = new BufferedReader(isr);
             StringBuilder sb = new StringBuilder();
@@ -164,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             isr.close();
             bufferedReader.close();
 
-            FileOutputStream mOutput = openFileOutput(farmaclubConfig, Context.MODE_PRIVATE);
+            FileOutputStream mOutput = openFileOutput(constantes.farmaclubConfig, Context.MODE_PRIVATE);
             mOutput.write(sb.toString().getBytes());
             mOutput.flush();
             mOutput.close();
@@ -225,7 +224,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String leerUsuarioCargado(){
         String usuario = "";
         try {
-            FileInputStream mInput = openFileInput(farmaclubConfig);
+            FileInputStream mInput = openFileInput(constantes.farmaclubConfig);
             String[] partes = null;
 
             InputStreamReader isr = new InputStreamReader (mInput) ;
@@ -234,9 +233,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             while ( linea != null ) {
                 if (linea.contains("usuario_utilizado:")) {
                     partes = linea.split("usuario_utilizado:");
-                    String parte1 = partes[0];
-                    String parte2 = partes[1];
-                    usuario = partes[1];
+                    if (partes.length >= 2) {
+                        String parte1 = partes[0];
+                        String parte2 = partes[1];
+                        usuario = partes[1];
+                    }
                     //mUusarioView.setText(parte2);
                 }
                 linea = buffreader.readLine(); //lee proxima fila
@@ -582,7 +583,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mUusarioView.setText(data.getStringExtra("usuario"));
                 mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
                 mPasswordView.setText("");
-                if (generarArchivo(farmaclubConfig)) {
+                if (generarArchivo(constantes.farmaclubConfig)) {
                     Log.i("JONATT", "GENERO BIEN LA CONFIG");
                     estadoArchivo = constantes.CONFIG_FOUND;
                     cbRecordarUsuario.setVisibility(View.VISIBLE);
@@ -591,10 +592,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 } else {
                     Log.i("JONATT", "NO SE GENERO LA CONFIG");
                 }
-            } else {
-                Log.i("RESULT", "RESULT_NUEVO_USUARIO FAIL");
-                mUusarioView.setText("pepito fuma marihuana");
             }
+            //else {
+            //    Log.i("RESULT", "RESULT_NUEVO_USUARIO FAIL");
+            //    mUusarioView.setText("pepito fuma marihuana");
+            //}
         }
     }
 
