@@ -161,6 +161,18 @@ public class UsuarioActivity extends AppCompatActivity {
             cancel = true;
         }
 
+        if (password.length() < 4 || password.length() > 15) {
+            edtPassword.setError(getString(R.string.error_invalid_password));
+            focusView = edtPassword;
+            cancel = true;
+        }
+
+        if (passwordRep.length() < 4 || passwordRep.length() > 15) {
+            edtPasswordRep.setError(getString(R.string.error_invalid_password));
+            focusView = edtPasswordRep;
+            cancel = true;
+        }
+
         if (userRegisterTask != null) {
             cancel = true;
         }
@@ -267,17 +279,6 @@ public class UsuarioActivity extends AppCompatActivity {
             switch (salida) {
                 case 1:
                     if (success) {
-                        /*
-                        if (actualizaUsuario()) {
-                            Intent data = new Intent();
-                            data.putExtra("usuario", usuario);
-                            setResult(RESULT_OK, data);
-                            finish();
-                        } else {
-                            edtUsuario.setError(getString(R.string.error_update));
-                            edtUsuario.requestFocus();
-                        }
-                        */
                         updateUserTask = new UpdateUserTask(usuario,edtPassword.getText().toString(),tarjeta);
                         updateUserTask.execute((Void) null);
                     } else {
@@ -436,18 +437,6 @@ public class UsuarioActivity extends AppCompatActivity {
             updateUserTask = null;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**

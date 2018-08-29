@@ -13,6 +13,8 @@
     <!-- text View-->
     <string name="tvTerminos">Al ACEPTAR usted confirma las bases de <u>Terminos y Condiciones</u></string>
     <string name="tvTerminosDownload">Se estan descargando las bases de <u>Terminos y Condiciones</u></string>
+    <string name="tvTengoUsuario">Ya tengo <u>Usuario y Contraseña</u></string>
+    <string name="tvOlvideUsuario"><u>Olvide mi Usuario y/o Contraseña</u></string>
 
 
     <!-- botones-->
@@ -24,7 +26,7 @@
     <string name="cbRecordarUsuario">Recordar Usuario.</string>
 
     <!-- mensajes de errores -->
-    <string name="error_invalid_password">El tamaño de la contraseña (entre 4 y 15) es incorrecto.</string>
+    <string name="error_invalid_password">El tamaño de la contraseña es incorrecto (entre 4 y 15).</string>
     <string name="error_incorrect_password">La contraseña es incorrecta.</string>
     <string name="error_field_required">Este campo es Obligatorio.</string>
     <string name="usuario_deconocido">Usuario y/o contraseña invalidos.</string>

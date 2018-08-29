@@ -3,9 +3,11 @@ package hsfarmacia.farmaclub;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -18,10 +20,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -30,6 +34,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -67,17 +72,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private CheckBox cbRecordarUsuario;
+    private TextView tvTengoUsuario;
 
     private String estadoArchivo = "";
+    private String tarjeta = "";
+    private int flagVoyConUsuario;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        flagVoyConUsuario = 0;
         // Set up the login form.
         mUusarioView = (AutoCompleteTextView) findViewById(R.id.edtUsuario);
-
         mPasswordView = (EditText) findViewById(R.id.edtPassword);
         /*
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -91,6 +99,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
         */
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(""); // hide title
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+
 
         Button mIngresarButton = (Button) findViewById(R.id.btnIngresar);
         mIngresarButton.setOnClickListener(new OnClickListener() {
@@ -110,6 +127,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         cbRecordarUsuario = findViewById(R.id.cbRecordarUsuario);
+        tvTengoUsuario = findViewById(R.id.tvTengoUsuario);
+        tvTengoUsuario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUusarioView.setHint(R.string.edtUsuarioU);
+                cbRecordarUsuario.setVisibility(View.VISIBLE);
+                mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
+                cbRecordarUsuario.setChecked(true);
+                tvTengoUsuario.setVisibility(View.INVISIBLE);
+                flagVoyConUsuario = 1;
+            }
+        });
 
         File archivo = new File(getBaseContext().getFilesDir()+ "/" + constantes.farmaclubConfig);
         if (archivo.exists()) {
@@ -123,11 +152,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mUusarioView.setText(usuarioCargado);
                 mPasswordView.requestFocus();
             }
+            tvTengoUsuario.setVisibility(View.INVISIBLE);
         } else  {
             estadoArchivo = constantes.CONFIG_NOT_FOUND;
             mUusarioView.setHint(R.string.edtUsuarioT);
             cbRecordarUsuario.setVisibility(View.INVISIBLE);
             mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
+            tvTengoUsuario.setVisibility(View.VISIBLE);
     }
 
         /*
@@ -250,11 +281,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return  usuario;
     }
 
-    private boolean generarArchivo(String archivo) {
+    private boolean generarArchivo(String archivo, String tarjeta) {
         boolean retorno = false;
         try {
             FileOutputStream mOutput = openFileOutput(archivo, Context.MODE_PRIVATE);
-            mOutput.write(("nro_tarjeta:" + mUusarioView.getText().toString() + "\n").getBytes());
+            mOutput.write(("nro_tarjeta:" + tarjeta + "\n").getBytes());
             mOutput.write(("usuario_utilizado:").getBytes());
             mOutput.flush();
             mOutput.close();
@@ -333,7 +364,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 4 && password.length() < 15;
+        return password.length() >= 4 && password.length() < 15;
     }
 
     /**
@@ -433,7 +464,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 //conn.setRequestMethod("GET");
                 //conn.setDoOutput(false);
                 URL url;
-                if (estadoArchivo == constantes.CONFIG_NOT_FOUND){
+                if (estadoArchivo == constantes.CONFIG_NOT_FOUND && flagVoyConUsuario == 0){
                     //url = new URL("http://192.168.2.50:8080/farmaclubserver/rest/user/validaIni"); //in the real code, there is an ip and a port
                     url = new URL( constantes.pathConnection + "validaIni"); //in the real code, there is an ip and a port
                 } else {
@@ -450,7 +481,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 conn.setConnectTimeout(10000); //10 segundos
                 conn.connect();
 
-                if (estadoArchivo == constantes.CONFIG_NOT_FOUND){
+                if (estadoArchivo == constantes.CONFIG_NOT_FOUND && flagVoyConUsuario == 0){
                     obj.put("tarjeta", mUsuario);
                 } else {
                     obj.put("usuario", mUsuario);
@@ -508,7 +539,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             int salida = 9;
-            String tarjeta = "";
             int puntos = 0;
             String nombre = "";
 
@@ -526,20 +556,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             switch (salida) {
                 case 1:
                     if (success) {
-                        if (estadoArchivo == constantes.CONFIG_NOT_FOUND) {
+                        if (estadoArchivo == constantes.CONFIG_NOT_FOUND && flagVoyConUsuario == 0) {
                             Intent nuevoUsuario = new Intent(getApplicationContext(), UsuarioActivity.class);
                             nuevoUsuario.putExtra("tarjeta", tarjeta);
                             nuevoUsuario.putExtra("nombre",nombre);
                             startActivityForResult(nuevoUsuario, constantes.RESULT_NUEVO_USUARIO);
-                            /*
-                            if (generarArchivo(farmaclubConfig)) {
-                                Log.i("JONATT", "GENERO BIEN LA CONFIG");
-                            } else {
-                                Log.i("JONATT", "NO SE GENERO LA CONFIG");
-                                break;
-                            }
-                            */
                         } else {
+                            if (flagVoyConUsuario == 1) {
+                                if (generarArchivo(constantes.farmaclubConfig, tarjeta)) {
+                                    Log.i("JONATT", "GENERO BIEN LA CONFIG");
+                                    estadoArchivo = constantes.CONFIG_FOUND;
+                                } else {
+                                    Log.i("JONATT", "NO SE GENERO LA CONFIG");
+                                }
+                            }
+
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             i.putExtra("tarjeta", tarjeta);
                             i.putExtra("puntos", puntos);
@@ -583,7 +614,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mUusarioView.setText(data.getStringExtra("usuario"));
                 mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
                 mPasswordView.setText("");
-                if (generarArchivo(constantes.farmaclubConfig)) {
+                if (generarArchivo(constantes.farmaclubConfig, tarjeta)){
                     Log.i("JONATT", "GENERO BIEN LA CONFIG");
                     estadoArchivo = constantes.CONFIG_FOUND;
                     cbRecordarUsuario.setVisibility(View.VISIBLE);
