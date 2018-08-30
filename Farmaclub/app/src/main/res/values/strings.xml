@@ -25,6 +25,10 @@
     <!-- check box-->
     <string name="cbRecordarUsuario">Recordar Usuario.</string>
 
+    <!-- toast -->
+    <string name="toastOlvideUsuario">Se enviara un mail a su casilla de correo con los pasos para reestablecer su Usuario y Contraseña.</string>
+    <string name="toastErrorReestablecerUsuario">Se produjo un error reestableciendo su Usuario y Contraseña. Intente nuevamente.</string>
+
     <!-- mensajes de errores -->
     <string name="error_invalid_password">El tamaño de la contraseña es incorrecto (entre 4 y 15).</string>
     <string name="error_incorrect_password">La contraseña es incorrecta.</string>

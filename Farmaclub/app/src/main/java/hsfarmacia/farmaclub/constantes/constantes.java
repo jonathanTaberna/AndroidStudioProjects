@@ -14,7 +14,7 @@ public class constantes {
     public static String flavio  = "http://192.168.2.50:8080/farmaclubserver/rest/user/"; //existeusu
     public static String hsServer = "http://192.168.2.121:8080/farmaclubserver/rest/user/";
 
-    public static String pathConnection = hsServer;
+    public static String pathConnection = flavio;
 
     public static String pdfName = "FarmaClub Terminos y Condiciones.pdf";
 

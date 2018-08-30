@@ -6,8 +6,11 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Image;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -36,6 +39,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -63,8 +67,8 @@ import hsfarmacia.farmaclub.constantes.constantes;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     private int status = 0;
-    private JSONObject jsonResp = null;
     private UserLoginTask mAuthTask = null;
+    private ResetPassTask resetPassTask = null;
 
     // UI references.
     private AutoCompleteTextView mUusarioView;
@@ -72,7 +76,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private CheckBox cbRecordarUsuario;
+    private Button mIngresarButton;
     private TextView tvTengoUsuario;
+    private TextView tvOlvideUsuario;
+    private TextInputLayout tilPassword;
+
 
     private String estadoArchivo = "";
     private String tarjeta = "";
@@ -100,16 +108,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
         */
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(""); // hide title
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
-
-        Button mIngresarButton = (Button) findViewById(R.id.btnIngresar);
+        mIngresarButton = (Button) findViewById(R.id.btnIngresar);
         mIngresarButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,6 +125,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        tilPassword = findViewById(R.id.tilPassword);
         cbRecordarUsuario = findViewById(R.id.cbRecordarUsuario);
         tvTengoUsuario = findViewById(R.id.tvTengoUsuario);
         tvTengoUsuario.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +140,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+        tvOlvideUsuario = findViewById(R.id.tvOlvideUsuario);
+        tvOlvideUsuario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                estadoArchivo = constantes.CONFIG_NOT_FOUND;
+                mUusarioView.setText("");
+                mUusarioView.setHint(R.string.edtUsuarioT);
+                mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                mIngresarButton.setText("Reestablecer");
+                mPasswordView.setVisibility(View.INVISIBLE);
+                cbRecordarUsuario.setVisibility(View.INVISIBLE);
+                tvTengoUsuario.setVisibility(View.INVISIBLE);
+                tvOlvideUsuario.setVisibility(View.INVISIBLE);
+                tilPassword.setVisibility(View.INVISIBLE);
+                flagVoyConUsuario = 2;
+
+            }
+        });
+
+
+
         File archivo = new File(getBaseContext().getFilesDir()+ "/" + constantes.farmaclubConfig);
         if (archivo.exists()) {
             estadoArchivo = constantes.CONFIG_FOUND;
@@ -153,12 +175,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mPasswordView.requestFocus();
             }
             tvTengoUsuario.setVisibility(View.INVISIBLE);
+            tvOlvideUsuario.setVisibility(View.VISIBLE);
         } else  {
             estadoArchivo = constantes.CONFIG_NOT_FOUND;
             mUusarioView.setHint(R.string.edtUsuarioT);
             cbRecordarUsuario.setVisibility(View.INVISIBLE);
             mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
             tvTengoUsuario.setVisibility(View.VISIBLE);
+            tvOlvideUsuario.setVisibility(View.INVISIBLE);
     }
 
         /*
@@ -336,7 +360,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password) && flagVoyConUsuario != 2) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -348,6 +372,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView = mUusarioView;
             cancel = true;
         }
+
+        if (usuario.contains(" ")) {
+            mUusarioView.setError(getString(R.string.usuario_invalido));
+            focusView = mUusarioView;
+            cancel = true;
+        }
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -355,10 +385,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+
             showProgress(true);
 
-            mAuthTask = new UserLoginTask(usuario, password);
-            mAuthTask.execute((Void) null);
+            if (flagVoyConUsuario == 2) {
+                //Toast.makeText(getBaseContext(), R.string.toastOlvideUsuario, Toast.LENGTH_LONG).show();
+                tarjeta = usuario;
+
+                resetPassTask = new ResetPassTask();
+                resetPassTask.execute((Void) null);
+
+            } else {
+
+                mAuthTask = new UserLoginTask(usuario, password);
+                mAuthTask.execute((Void) null);
+            }
         }
     }
 
@@ -437,6 +478,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == constantes.RESULT_NUEVO_USUARIO ) {
+            if (resultCode == Activity.RESULT_OK) {
+                Log.i("RESULT", "RESULT_NUEVO_USUARIO OK");
+                mUusarioView.setText(data.getStringExtra("usuario"));
+                mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
+                mPasswordView.setText("");
+                if (generarArchivo(constantes.farmaclubConfig, tarjeta)){
+                    Log.i("JONATT", "GENERO BIEN LA CONFIG");
+                    estadoArchivo = constantes.CONFIG_FOUND;
+                    cbRecordarUsuario.setVisibility(View.VISIBLE);
+                    cbRecordarUsuario.setChecked(true);
+                    mPasswordView.requestFocus();
+                } else {
+                    Log.i("JONATT", "NO SE GENERO LA CONFIG");
+                }
+            }
+            //else {
+            //    Log.i("RESULT", "RESULT_NUEVO_USUARIO FAIL");
+            //    mUusarioView.setText("pepito fuma marihuana");
+            //}
+        }
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -445,6 +511,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mUsuario;
         private final String mPassword;
+        private JSONObject jsonResp = null;
 
         UserLoginTask(String usuario, String password) {
             mUsuario = usuario;
@@ -459,7 +526,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             BufferedReader reader = null;
             String JsonResponse = null;
             try {
-
                 //URL url = new URL("http://192.168.2.209:8080/restfull-web-services-app-master/rest/user/u"); //in the real code, there is an ip and a port
                 //conn.setRequestMethod("GET");
                 //conn.setDoOutput(false);
@@ -566,6 +632,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 if (generarArchivo(constantes.farmaclubConfig, tarjeta)) {
                                     Log.i("JONATT", "GENERO BIEN LA CONFIG");
                                     estadoArchivo = constantes.CONFIG_FOUND;
+                                    guardarUsuario();
                                 } else {
                                     Log.i("JONATT", "NO SE GENERO LA CONFIG");
                                 }
@@ -606,28 +673,132 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == constantes.RESULT_NUEVO_USUARIO ) {
-            if (resultCode == Activity.RESULT_OK) {
-                Log.i("RESULT", "RESULT_NUEVO_USUARIO OK");
-                mUusarioView.setText(data.getStringExtra("usuario"));
-                mUusarioView.setInputType(InputType.TYPE_CLASS_TEXT);
-                mPasswordView.setText("");
-                if (generarArchivo(constantes.farmaclubConfig, tarjeta)){
-                    Log.i("JONATT", "GENERO BIEN LA CONFIG");
-                    estadoArchivo = constantes.CONFIG_FOUND;
-                    cbRecordarUsuario.setVisibility(View.VISIBLE);
-                    cbRecordarUsuario.setChecked(true);
-                    mPasswordView.requestFocus();
-                } else {
-                    Log.i("JONATT", "NO SE GENERO LA CONFIG");
+
+    public class ResetPassTask extends AsyncTask<Void, Void, Boolean> {
+
+        private JSONObject respuestaResetPass = new JSONObject();
+        private int respuestaStatus = 0;
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            JSONObject obj = new JSONObject();
+            HttpURLConnection conn = null;
+            BufferedReader reader = null;
+            String JsonResponse = null;
+            try {
+                URL url = new URL( constantes.pathConnection + "reset_pass");
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept","application/json");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setConnectTimeout(10000); //10 segundos
+                conn.connect();
+
+                obj.put("tarjeta", tarjeta);
+
+                Log.i("JSON", obj.toString());
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(obj.toString());
+
+                os.flush();
+                os.close();
+
+                respuestaStatus = conn.getResponseCode();
+                Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                Log.i("MSG" , conn.getResponseMessage());
+
+                if (respuestaStatus == 200){ //respuesta OK
+                    InputStream inputStream = conn.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String inputLine;
+                    while ((inputLine = reader.readLine()) != null) {
+                        buffer.append(inputLine + "\n");
+                        respuestaResetPass = new JSONObject(inputLine);
+                    }
+                    JsonResponse = buffer.toString();
+                    Log.i("RESPONSE",JsonResponse);
+
                 }
+
+            } catch (ConnectException ce) {
+                if (ce.getMessage().contains("ETIMEDOUT")) {
+                    respuestaStatus = 99;
+                }
+            }catch (SocketTimeoutException e) {
+                respuestaStatus = 99;
+            } catch (Exception e){
+                e.printStackTrace();
+            }  finally {
+                conn.disconnect();
             }
-            //else {
-            //    Log.i("RESULT", "RESULT_NUEVO_USUARIO FAIL");
-            //    mUusarioView.setText("pepito fuma marihuana");
-            //}
+
+            if (respuestaStatus == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            resetPassTask = null;
+            showProgress(false);
+
+            //variables de respuesta
+            int salida = 9;
+            String msj = "";
+
+            try {
+                salida = respuestaResetPass.getInt("salida");
+                msj = respuestaResetPass.getString("msj");
+            } catch (Exception e){
+                salida = 9;
+                mUusarioView.setError(getString(R.string.error_json));
+                mUusarioView.requestFocus();
+                return;
+            }
+
+            switch (salida) {
+                case 1:
+                    if (success) {
+                        //Toast.makeText(getBaseContext(), R.string.toastErrorReestablecerUsuario, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), R.string.toastOlvideUsuario, Toast.LENGTH_LONG).show();
+                        finish();
+
+                    } else {
+                        mUusarioView.setError(getString(R.string.toastErrorReestablecerUsuario));
+                        mUusarioView.requestFocus();
+                    }
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                    mUusarioView.setError(msj);
+                    mUusarioView.requestFocus();
+                    break;
+                case 9:
+                    if (respuestaStatus == 99) {
+                        mUusarioView.setError(getString(R.string.servidor_timeout));
+                        mUusarioView.requestFocus();
+                    } else {
+                        mUusarioView.setError(getString(R.string.toastErrorReestablecerUsuario));
+                        mUusarioView.requestFocus();
+                    }
+                    break;
+                default:
+                    mUusarioView.setError(getString(R.string.toastErrorReestablecerUsuario));
+                    mUusarioView.requestFocus();
+                    break;
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            resetPassTask = null;
+            showProgress(false);
         }
     }
 
