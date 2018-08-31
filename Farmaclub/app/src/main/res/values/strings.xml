@@ -19,6 +19,7 @@
 
     <!-- botones-->
     <string name="btnIngresar">Ingresar</string>
+    <string name="btnReestablecer">Reestablecer</string>
     <string name="btnAceptar">Aceptar</string>
     <string name="btnCancelar">Cancelar</string>
 

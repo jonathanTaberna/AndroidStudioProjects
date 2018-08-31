@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -453,6 +454,7 @@ public class UsuarioActivity extends AppCompatActivity {
         private int statusPDF = 0;
         private static final int  MEGABYTE = 1024 * 1024;
         private String extStorageDirectory = null;
+        private int flagLeePDF = 0;
 
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -484,6 +486,7 @@ public class UsuarioActivity extends AppCompatActivity {
                     int bufferLength = 0;
                     while((bufferLength = inputStream.read(buffer))>0 ){
                         fileOutputStream.write(buffer, 0, bufferLength);
+                        flagLeePDF = 1;
                     }
                     fileOutputStream.close();
                 }
@@ -509,10 +512,11 @@ public class UsuarioActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            if (success) {
-                tvTerminos.setTextColor(Color.BLACK);
-                tvTerminos.setEnabled(true);
-                tvTerminos.setText(getString(R.string.tvTerminos));
+            tvTerminos.setTextColor(Color.BLACK);
+            tvTerminos.setEnabled(true);
+            tvTerminos.setText(getString(R.string.tvTerminos));
+
+            if (success && flagLeePDF == 1) {
                 File pdfFile = new File(extStorageDirectory + "/" + constantes.pdfName);
                 Uri path = Uri.fromFile(pdfFile);
                 Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
@@ -524,6 +528,8 @@ public class UsuarioActivity extends AppCompatActivity {
                 } catch (ActivityNotFoundException e) {
                     Log.i("PDF", "No Application available to view PDF");
                 }
+            } else {
+                Toast.makeText(getBaseContext(),"Problemas en la descarga de la Licencia.", Toast.LENGTH_SHORT).show();
             }
         }
 

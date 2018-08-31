@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:theme="@style/AppTheme"
+    >
+    <ImageView
+    android:id="@+id/elemento_lista_foto"
+    android:layout_width="?android:attr/listPreferredItemHeight"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_alignParentLeft="true"
+    android:contentDescription="fotografía"/>
+
+    <TextView
+        android:id="@+id/elemento_lista_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/elemento_lista_foto"
+        android:singleLine="true"
+        android:text="Nombres del producto"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/elemento_lista_descripcion"
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/elemento_lista_foto"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
+        android:text="descripcion del producto" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="?android:attr/listDivider" />
+</RelativeLayout>

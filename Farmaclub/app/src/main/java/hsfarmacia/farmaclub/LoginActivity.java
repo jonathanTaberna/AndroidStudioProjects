@@ -149,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mUusarioView.setHint(R.string.edtUsuarioT);
                 mUusarioView.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-                mIngresarButton.setText("Reestablecer");
+                mIngresarButton.setText(R.string.btnReestablecer);
                 mPasswordView.setVisibility(View.INVISIBLE);
                 cbRecordarUsuario.setVisibility(View.INVISIBLE);
                 tvTengoUsuario.setVisibility(View.INVISIBLE);
@@ -623,7 +623,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 case 1:
                     if (success) {
                         if (estadoArchivo == constantes.CONFIG_NOT_FOUND && flagVoyConUsuario == 0) {
-                            Intent nuevoUsuario = new Intent(getApplicationContext(), UsuarioActivity.class);
+                            //Intent nuevoUsuario = new Intent(getApplicationContext(), UsuarioActivity.class);
+                            Intent nuevoUsuario = new Intent(getBaseContext(), UsuarioActivity.class);
                             nuevoUsuario.putExtra("tarjeta", tarjeta);
                             nuevoUsuario.putExtra("nombre",nombre);
                             startActivityForResult(nuevoUsuario, constantes.RESULT_NUEVO_USUARIO);
@@ -766,7 +767,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (success) {
                         //Toast.makeText(getBaseContext(), R.string.toastErrorReestablecerUsuario, Toast.LENGTH_LONG).show();
                         Toast.makeText(getBaseContext(), R.string.toastOlvideUsuario, Toast.LENGTH_LONG).show();
-                        finish();
+
+                        mIngresarButton.setText(R.string.btnIngresar);
+                        tilPassword.setVisibility(View.VISIBLE);
+                        mPasswordView.setVisibility(View.VISIBLE);
+                        tvTengoUsuario.setVisibility(View.INVISIBLE);
+                        tvOlvideUsuario.setVisibility(View.INVISIBLE);
+                        flagVoyConUsuario = 0;
 
                     } else {
                         mUusarioView.setError(getString(R.string.toastErrorReestablecerUsuario));
