@@ -1,5 +1,6 @@
 package hsfarmacia.farmaclub;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -57,7 +58,11 @@ public class UsuarioActivity extends AppCompatActivity {
     private Button btnCancelar;
     private Button btnAceptar;
 
-
+    private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 2;
+    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 3;
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4;
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +124,39 @@ public class UsuarioActivity extends AppCompatActivity {
             }
         });
 
+        verificarPermisos();
+
+
+
+    }
+
+    private void verificarPermisos(){
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M){
+            return;
+        }
+
+
+
+        int permsRequestCode = 100;
+        String[] perms = {android.Manifest.permission.INTERNET,
+                          android.Manifest.permission.ACCESS_NETWORK_STATE,
+                          android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                          android.Manifest.permission.READ_PHONE_STATE,
+                          android.Manifest.permission.READ_EXTERNAL_STORAGE};
+        int internetPermission = checkSelfPermission(android.Manifest.permission.INTERNET);
+        int accessNetworkStatePermission = checkSelfPermission(android.Manifest.permission.ACCESS_NETWORK_STATE);
+        int writeExternalStoragePermission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int readPhoneStatePermission = checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE);
+        int readExternalStoragePermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (internetPermission != android.content.pm.PackageManager.PERMISSION_GRANTED ||
+            accessNetworkStatePermission != android.content.pm.PackageManager.PERMISSION_GRANTED ||
+            writeExternalStoragePermission != android.content.pm.PackageManager.PERMISSION_GRANTED ||
+            readPhoneStatePermission != android.content.pm.PackageManager.PERMISSION_GRANTED ||
+            readExternalStoragePermission != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+             requestPermissions(perms, permsRequestCode);
+        }
     }
 
     private boolean validarCampos(){
@@ -184,6 +222,7 @@ public class UsuarioActivity extends AppCompatActivity {
             return true;
         }
     }
+
 
     /**
      * Represents an asynchronous registration task used to authenticate
@@ -489,6 +528,7 @@ public class UsuarioActivity extends AppCompatActivity {
                         flagLeePDF = 1;
                     }
                     fileOutputStream.close();
+                    inputStream.close();
                 }
 
             } catch (ConnectException ce) {
@@ -518,15 +558,27 @@ public class UsuarioActivity extends AppCompatActivity {
 
             if (success && flagLeePDF == 1) {
                 File pdfFile = new File(extStorageDirectory + "/" + constantes.pdfName);
-                Uri path = Uri.fromFile(pdfFile);
+                Uri path = null;
+
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M){
+                    path = Uri.fromFile(pdfFile);
+                } else {
+                    path = Uri.parse(pdfFile.getPath());
+                }
+
                 Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
                 pdfIntent.setDataAndType(path, "application/pdf");
-                pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                pdfIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
 
                 try {
                     startActivity(pdfIntent);
                 } catch (ActivityNotFoundException e) {
                     Log.i("PDF", "No Application available to view PDF");
+                    Log.i("PDF", e.getMessage());
+                    Toast.makeText(getBaseContext(),"No existe aplicacion para visualizar PDF.", Toast.LENGTH_SHORT).show();
+
                 }
             } else {
                 Toast.makeText(getBaseContext(),"Problemas en la descarga de la Licencia.", Toast.LENGTH_SHORT).show();
