@@ -2,14 +2,17 @@ package hsfarmacia.farmaclub;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,8 +20,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +51,7 @@ public class UsuarioActivity extends AppCompatActivity {
     private UserRegisterTask userRegisterTask = null;
     private UpdateUserTask updateUserTask = null;
     private ConditionsTask conditionsTask = null;
+    private String extStorageDirectory = null;
 
     private TextView tvUsuario;
     private TextView tvTarjeta;
@@ -63,6 +67,13 @@ public class UsuarioActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 3;
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 5;
+
+
+    private static final int REQUEST_RESULT = 333;
+    private static final int MY_NOTIFICATION = 444;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,17 +136,12 @@ public class UsuarioActivity extends AppCompatActivity {
         });
 
         verificarPermisos();
-
-
-
     }
 
     private void verificarPermisos(){
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M){
             return;
         }
-
-
 
         int permsRequestCode = 100;
         String[] perms = {android.Manifest.permission.INTERNET,
@@ -222,6 +228,146 @@ public class UsuarioActivity extends AppCompatActivity {
             return true;
         }
     }
+
+    //eliminar metodo
+    private void notificar(){
+        NotificationManager mNotifyManager;
+        Notification.Builder mBuilder;
+        String filePath = extStorageDirectory + "/" + constantes.pdfName;
+        File file = new File(filePath);
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String ext = file.getName().substring(file.getName().indexOf(".")+1);
+        ext= "pdf";// file.getName().substring(file.getName().indexOf(".")+1);
+        String type = mime.getMimeTypeFromExtension(ext);
+
+        Intent openFile;
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
+            openFile = new Intent(Intent.ACTION_VIEW, Uri.fromFile(file));
+            openFile.setDataAndType(Uri.fromFile(file), type);
+        } else {
+            openFile = new Intent(Intent.ACTION_VIEW, Uri.parse(filePath));
+            openFile.setDataAndType(Uri.parse(filePath), type);
+        }
+
+
+        openFile.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent p = PendingIntent.getActivity(this, 0, openFile, 0);
+        mNotifyManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new Notification.Builder(this);
+        mBuilder.setContentTitle("Download")
+                .setContentText("Download in progress")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentIntent(p);
+        //mBuilder.setProgress(100, 0, false);
+        mNotifyManager.notify(MY_NOTIFICATION, mBuilder.build());
+
+
+
+
+
+/*
+        Intent intent= new Intent(getBaseContext(), PdfActivity.class);
+        intent.putExtra("idNotification", MY_NOTIFICATION);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), REQUEST_RESULT, intent, PendingIntent.FLAG_ONE_SHOT);
+
+
+        Notification.Builder builder = new Notification.Builder(getBaseContext())
+                .setContentTitle("un titulo peola")
+                .setContentText("descripcion peola")
+                .setSmallIcon(android.R.drawable.ic_menu_info_details);
+
+        builder.addAction(android.R.drawable.ic_menu_share, "tutto ok",pendingIntent);
+
+
+        issueNotification(builder);
+
+*/
+
+
+
+
+/* ANDA
+        //What happen when you will click on button
+        Intent intent = new Intent(this, PdfActivity.class);
+        intent.putExtra("idNotification", MY_NOTIFICATION);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        //Button
+        NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "Go", pendingIntent).build();
+
+        //Notification
+        Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentText("Back to Application ?")
+                .setContentTitle("Amazing news")
+                .addAction(action) //add buton
+                .build();
+
+        //Send notification
+        NotificationManager notificationManager = (NotificationManager)
+                this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+ANDA
+*/
+
+
+
+
+
+
+
+
+
+        /*
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                Random r = new Random();
+                int segundos = 5+r.nextInt(11);
+                try {
+                    Thread.currentThread().sleep(1000*segundos);
+                    //__INVOCAR METODO NOTIFICAR que realizará en el PASO 3
+                    notificarEnvio("lopez puto");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        Thread t =new Thread(r);
+        t.start();
+        */
+    }
+
+    //eliminar metodo
+    private void issueNotification(Notification.Builder builder) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(MY_NOTIFICATION, builder.build());
+    }
+
+    //eliminar metodo
+    private void notificarEnvio(String destinatario){
+// Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(getBaseContext(), PdfActivity.class);
+        intent.putExtra("pdfPath", extStorageDirectory + "/" + constantes.pdfName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, intent,
+                0);
+        Log.d("APP_MY_RESTO","Creando notificacion");
+        NotificationCompat.Builder mBuilder = new
+                NotificationCompat.Builder(getBaseContext(), "1")
+                .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                .setContentTitle("Pedido entregado")
+                .setContentText("El pedido para "+destinatario+" ha sido entregado")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+// Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(getBaseContext());
+        notificationManager.notify(100, mBuilder.build());
+    }
+
+
 
 
     /**
@@ -492,7 +638,6 @@ public class UsuarioActivity extends AppCompatActivity {
 */
         private int statusPDF = 0;
         private static final int  MEGABYTE = 1024 * 1024;
-        private String extStorageDirectory = null;
         private int flagLeePDF = 0;
 
         @Override
@@ -557,6 +702,16 @@ public class UsuarioActivity extends AppCompatActivity {
             tvTerminos.setText(getString(R.string.tvTerminos));
 
             if (success && flagLeePDF == 1) {
+                Intent intent = new Intent(getBaseContext(), PdfActivity.class);
+                intent.putExtra("pdfPath", extStorageDirectory + "/" + constantes.pdfName);
+                startActivity(intent);
+
+                //notificar();
+
+
+
+
+                /*
                 File pdfFile = new File(extStorageDirectory + "/" + constantes.pdfName);
                 Uri path = null;
 
@@ -580,18 +735,12 @@ public class UsuarioActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(),"No existe aplicacion para visualizar PDF.", Toast.LENGTH_SHORT).show();
 
                 }
+                */
             } else {
                 Toast.makeText(getBaseContext(),"Problemas en la descarga de la Licencia.", Toast.LENGTH_SHORT).show();
             }
         }
 
     }
-
-
-
-
-
-
-
 
 }
