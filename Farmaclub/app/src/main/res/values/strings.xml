@@ -15,13 +15,15 @@
     <string name="tvTerminosDownload">Se estan descargando las bases de <u>Terminos y Condiciones</u></string>
     <string name="tvTengoUsuario">Ya tengo <u>Usuario y Contraseña</u></string>
     <string name="tvOlvideUsuario"><u>Olvide mi Usuario y/o Contraseña</u></string>
-
+    <string name="tvPuntosDisponibles">Puntos Acumulados:</string>
 
     <!-- botones-->
     <string name="btnIngresar">Ingresar</string>
     <string name="btnReestablecer">Reestablecer</string>
     <string name="btnAceptar">Aceptar</string>
     <string name="btnCancelar">Cancelar</string>
+    <string name="btnPrev">&lt;</string>
+    <string name="btnNext">&gt;</string>
 
     <!-- check box-->
     <string name="cbRecordarUsuario">Recordar Usuario.</string>
@@ -42,6 +44,12 @@
     <string name="usuario_invalido">Usuario no valido.</string>
     <string name="error_update">No se pudo generar el usuario.</string>
 
+    <!-- menu -->
+    <string name="action_settings">Configurar</string>
+
+
+
+
 
     <!-- Strings related to login -->
 
@@ -52,7 +60,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-
     <!-- strings comentadas
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>

@@ -1,50 +1,42 @@
 package hsfarmacia.farmaclub.provisorios;
 
+import android.graphics.Bitmap;
+
 public class Producto {
 
-    private String titulo;
-    private String descripcion;
+    private String codigo;
+    private String nombre;
     private int puntos;
-    private String foto;
+    private Bitmap foto1;
 
-    public Producto(String titulo, String descripcion, int puntos, String foto) {
-        this.titulo = titulo;
-        this.descripcion = descripcion;
+    public Producto(String codigo, String nombre, int puntos, Bitmap foto1) {
+        this.codigo = codigo;
+        this.nombre = nombre;
         this.puntos = puntos;
-        this.foto = foto;
+        this.foto1 = foto1;
     }
 
     public  Producto () {
-        this.titulo = "";
-        this.descripcion = "";
+        this.codigo = "";
+        this.nombre = "";
         this.puntos = 0;
-        this.foto = "";
+        this.foto1 = null;
     }
 
-    @Override
-    public String toString() {
-        return "Producto{" +
-                "titulo='" + titulo + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", puntos=" + puntos +
-                ", foto='" + foto + '\'' +
-                '}';
+    public String getCodigo() {
+        return codigo;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public String getNombre() {
+        return nombre;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public int getPuntos() {
@@ -55,11 +47,12 @@ public class Producto {
         this.puntos = puntos;
     }
 
-    public String getFoto() {
-        return foto;
+    public Bitmap getFoto1() {
+        return foto1;
     }
 
-    public void setFoto(String foto) {
-        this.foto = foto;
+    public void setFoto1(Bitmap foto1) {
+        this.foto1 = foto1;
     }
+
 }

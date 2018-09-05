@@ -55,8 +55,9 @@ public class AdaptadorProductos  extends RecyclerView.Adapter<AdaptadorProductos
 
     // Personalizamos un ViewHolder a partir de un lugar
     public void personalizaVista(ViewHolder holder, Producto producto) {
-        holder.nombre.setText(producto.getTitulo());
-        holder.descripcion.setText(producto.getDescripcion());
+        holder.nombre.setText(producto.getCodigo());
+        holder.descripcion.setText(producto.getNombre());
+        holder.foto.setImageBitmap(producto.getFoto1());
         /*
         int id = R.drawable.otros;
         switch(lugar.getTipo()) {
