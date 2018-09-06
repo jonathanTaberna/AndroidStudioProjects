@@ -1,5 +1,6 @@
 package hsfarmacia.farmaclub;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -39,7 +40,7 @@ import hsfarmacia.farmaclub.provisorios.ProductosVector;
 
 import static android.widget.LinearLayout.VERTICAL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ConfiguracionesDialogo.FinalizoConfiguracionesDialogo{
 
     private String tarjeta;
     private int puntos;
@@ -47,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
     private int cantidadProductos;
     private int cantidadPaginas;
     private int paginaActual = 1;
+    private int flagPaso = 0;
+    private Context contexto;
+    private Productos productos;
+    private String filtrarPuntos;
+    private int filtrarPor;
+    private int ordenarPor;
+    private int ordenar;
+
 
     private RecyclerView recyclerView;
     public AdaptadorProductos adaptador;
@@ -55,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private GetCanjesTask getCanjesTask;
     private int fromCantidadProducto = 1;
     private int toCantidadProducto = 20;
-    private String orderByProducto = "codigo,asc";
+    private String orderByProducto = "nombre,asc";
 
     //pantalla
     //private TextView tvTarjeta;
@@ -80,6 +89,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        flagPaso = 0;
+        contexto = this;
+        filtrarPuntos = "todos";
+        filtrarPor = 1;
+        ordenarPor = 1;
+        ordenar = 1;
+
+
+
         tarjeta = extras.getString("tarjeta");
         puntos = extras.getInt("puntos");
         nombre = extras.getString("nombre");
@@ -94,9 +112,9 @@ public class MainActivity extends AppCompatActivity {
 
         //tvTarjeta.setText("El codigo de tarjeta es: " + tarjeta);
         tvNombre.setText("Bienvenido " + nombre);
-        tvCantidadPuntos.setText(""+puntos);
+        tvCantidadPuntos.setText("" + puntos);
 
-        getCanjesTask = new GetCanjesTask(fromCantidadProducto,toCantidadProducto,orderByProducto);
+        getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
         getCanjesTask.execute((Void) null);
 
         btnPrev.setEnabled(false); //estado inicial
@@ -105,11 +123,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 fromCantidadProducto -= 20;
                 toCantidadProducto -= 20;
-                getCanjesTask = new GetCanjesTask(fromCantidadProducto,toCantidadProducto,orderByProducto);
+                getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
                 getCanjesTask.execute((Void) null);
                 paginaActual --;
-                if (fromCantidadProducto == 1) {
+                if (paginaActual == 1) {
                     btnPrev.setEnabled(false); //estado inicial
+                }
+                if (cantidadPaginas > 1) {
+                    btnNext.setEnabled(true);
                 }
             }
         });
@@ -118,12 +139,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 fromCantidadProducto += 20;
                 toCantidadProducto += 20;
-                getCanjesTask = new GetCanjesTask(fromCantidadProducto,toCantidadProducto,orderByProducto);
+                getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
                 getCanjesTask.execute((Void) null);
                 btnPrev.setEnabled(true);
                 paginaActual ++;
+                if (paginaActual == cantidadPaginas) {
+                    btnNext.setEnabled(false);
+                }
             }
         });
+
 
         /*
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -171,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Bitmap foto1 = null;
 
-                String foto_1 = jsonObject.getString("foto_2");
+                String foto_1 = jsonObject.getString("foto");
                 if (foto_1.length() > 0) {
                     byte[] decodedString = Base64.decode(foto_1, Base64.DEFAULT);
                     foto1 = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -184,14 +209,64 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        Productos productos = productosVector;
+        productos = productosVector;
         adaptador = new AdaptadorProductos(this, productos);
         recyclerView.setAdapter(adaptador);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        adaptador.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int id = (int) recyclerView.getChildAdapterPosition(v);
+                Producto prod = productos.elemento(id);
+                new PopUpProductoDialogo(contexto, prod.getFoto1(),prod.getNombre(),prod.getPuntos());
 
-        cantidadPaginas = cantidadProductos / 20;
+            }
+        });
+        if (flagPaso == 0) {
+            flagPaso = 1;
+            cantidadPaginas = cantidadProductos / 20;
+            if (cantidadProductos%20 > 0) {
+                cantidadPaginas ++;
+            }
+            if (cantidadPaginas > 1) {
+                btnNext.setEnabled(true);
+            } else {
+                btnNext.setEnabled(false);
+            }
+        }
         tvPagina.setText("Pagina " + paginaActual + "/" + cantidadPaginas);
+    }
+
+    @Override
+    public void ResultadoConfiguracionesDialogo(String filtrarPuntos, String orden, String orderBy) {
+        fromCantidadProducto = 1;
+        toCantidadProducto = 20;
+        orderByProducto = orden + "," + orderBy;
+        if (this.filtrarPuntos != filtrarPuntos) {
+            this.flagPaso = 0;
+        }
+        this.filtrarPuntos = filtrarPuntos;
+
+        if (filtrarPuntos == "todos") {
+            this.filtrarPor = 1;
+        } else {
+            this.filtrarPor = 2;
+        }
+        if (orden == "nombre") {
+            this.ordenarPor = 1;
+        } else {
+            this.ordenarPor = 2;
+        }
+        if (orderBy == "asc") {
+            this.ordenar = 1;
+        } else {
+            this.ordenar = 2;
+        }
+
+        getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto);
+        getCanjesTask.execute((Void) null);
+        btnPrev.setEnabled(false); //estado inicial
     }
 
     public class GetCanjesTask extends AsyncTask<Void, Void, Boolean> {
@@ -200,8 +275,10 @@ public class MainActivity extends AppCompatActivity {
         private int fromCantidad;
         private int toCantidad;
         private String orderBy;
+        private String filtrarPuntos;
 
-        public GetCanjesTask(int fromCantidad, int toCantidad, String orderBy) {
+        public GetCanjesTask(String filtrarPuntos, int fromCantidad, int toCantidad, String orderBy) {
+            this.filtrarPuntos = filtrarPuntos;
             this.fromCantidad = fromCantidad;
             this.toCantidad = toCantidad;
             this.orderBy = orderBy;
@@ -217,7 +294,12 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 //URL url = new URL(constantes.lanzoniProductos + "getCanjes");
-                URL url = new URL(constantes.flavioProductos + "getCanjes");
+                URL url;
+                if (filtrarPuntos == "todos") {
+                    url = new URL(constantes.hsServerNombreProductos + "getCanjes");
+                } else {
+                    url = new URL(constantes.hsServerNombreProductos + "getCanjesXPuntos");
+                }
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -226,6 +308,9 @@ public class MainActivity extends AppCompatActivity {
                 conn.setDoInput(true);
                 conn.setConnectTimeout(10000); //10 segundos
                 conn.connect();
+                if (filtrarPuntos == "disponibles"){
+                    obj.put("tarjeta", tarjeta);
+                }
                 obj.put("from", fromCantidad);
                 obj.put("to", toCantidad);
                 //obj.put("orderBy", "nombre,asc");
@@ -362,7 +447,8 @@ public class MainActivity extends AppCompatActivity {
 
                 //quede aca, falta crear dialogggggggggg
 
-                Toast.makeText(this, "menusssss", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "menusssss", Toast.LENGTH_SHORT).show();
+                new ConfiguracionesDialogo(contexto, MainActivity.this,filtrarPor, ordenarPor,ordenar);
                 return true;
             default:
                 // If we got here, the user's action was not recognized.

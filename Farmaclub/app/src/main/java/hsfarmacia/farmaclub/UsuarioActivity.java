@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +63,7 @@ public class UsuarioActivity extends AppCompatActivity {
     private TextView tvTerminos;
     private Button btnCancelar;
     private Button btnAceptar;
+    private CheckBox cbTerminos;
 
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 2;
@@ -91,8 +94,11 @@ public class UsuarioActivity extends AppCompatActivity {
         edtPassword = (EditText) findViewById(R.id.edtPassword);
         edtPasswordRep = (EditText) findViewById(R.id.edtPasswordRep);
         tvTerminos = (TextView) findViewById(R.id.tvTerminos);
-        //tvTerminos.setPaintFlags(tvTerminos.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         btnCancelar = (Button) findViewById(R.id.btnCancelar);
+        btnAceptar = (Button) findViewById(R.id.btnAceptar);
+        cbTerminos = (CheckBox) findViewById(R.id.cbTerminos);
+
+        btnAceptar.setEnabled(false);
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,7 +106,6 @@ public class UsuarioActivity extends AppCompatActivity {
                 finish();
             }
         });
-        btnAceptar = (Button) findViewById(R.id.btnAceptar);
         btnAceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,7 +118,7 @@ public class UsuarioActivity extends AppCompatActivity {
         edtPasswordRep.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                if ((id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) && cbTerminos.isChecked()) {
                     if (validarCampos()){
                         userRegisterTask = new UserRegisterTask(usuario, tarjeta);
                         userRegisterTask.execute((Void) null);
@@ -132,6 +137,20 @@ public class UsuarioActivity extends AppCompatActivity {
                 tvTerminos.setText(getString(R.string.tvTerminosDownload));
                 conditionsTask = new ConditionsTask();
                 conditionsTask.execute((Void) null);
+            }
+        });
+
+        cbTerminos.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (cbTerminos.isChecked()) {
+                    // your code to checked checkbox
+                    btnAceptar.setEnabled(true);
+                } else {
+                // your code to  no checked checkbox
+                    btnAceptar.setEnabled(false);
+                }
             }
         });
 

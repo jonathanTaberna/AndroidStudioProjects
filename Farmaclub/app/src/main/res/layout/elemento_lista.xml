@@ -16,24 +16,24 @@
         android:contentDescription="fotografía" />
 
     <TextView
-        android:id="@+id/elemento_lista_nombre"
+        android:id="@+id/elemento_lista_descripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@id/elemento_lista_foto"
         android:singleLine="true"
-        android:text="Nombres del producto"
+        android:text="descripcion del producto"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/elemento_lista_descripcion"
+        android:id="@+id/elemento_lista_puntos"
         android:layout_width="315dp"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/elemento_lista_foto"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:singleLine="true"
-        android:text="descripcion del producto" />
+        android:text="Nombres del producto"/>
 
     <View
         android:id="@+id/divider"

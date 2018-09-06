@@ -11,7 +11,8 @@
     <string name="edtRepetirContrasenia">Repetir Contraseña</string>
 
     <!-- text View-->
-    <string name="tvTerminos">Al ACEPTAR usted confirma las bases de <u>Terminos y Condiciones</u></string>
+    <string name="tvTerminos"><u>VER Terminos y Condiciones</u></string>
+    <string name="cbTerminos">ACEPTAR Terminos y Condiciones</string>
     <string name="tvTerminosDownload">Se estan descargando las bases de <u>Terminos y Condiciones</u></string>
     <string name="tvTengoUsuario">Ya tengo <u>Usuario y Contraseña</u></string>
     <string name="tvOlvideUsuario"><u>Olvide mi Usuario y/o Contraseña</u></string>
@@ -24,6 +25,13 @@
     <string name="btnCancelar">Cancelar</string>
     <string name="btnPrev">&lt;</string>
     <string name="btnNext">&gt;</string>
+    <string name="rbNombre">Nombre</string>
+    <string name="rbPuntos">Puntos</string>
+    <string name="rbAsc">Ascendende</string>
+    <string name="rbDesc">Descendente</string>
+    <string name="rbTodosPuntos">Todos los puntos</string>
+    <string name="rbPuntosDisponibles">Puntos Disponibles</string>
+
 
     <!-- check box-->
     <string name="cbRecordarUsuario">Recordar Usuario.</string>

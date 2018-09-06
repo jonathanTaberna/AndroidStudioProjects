@@ -26,12 +26,14 @@ public class AdaptadorProductos  extends RecyclerView.Adapter<AdaptadorProductos
 
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nombre, descripcion;
+        //public TextView nombre, descripcion;
+        public TextView puntos, descripcion;
         public ImageView foto;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre);
+            //nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre);
+            puntos = (TextView) itemView.findViewById(R.id.elemento_lista_puntos);
             descripcion = (TextView) itemView.findViewById(R.id.elemento_lista_descripcion);
             foto = (ImageView) itemView.findViewById(R.id.elemento_lista_foto);
         }
@@ -55,7 +57,8 @@ public class AdaptadorProductos  extends RecyclerView.Adapter<AdaptadorProductos
 
     // Personalizamos un ViewHolder a partir de un lugar
     public void personalizaVista(ViewHolder holder, Producto producto) {
-        holder.nombre.setText(producto.getCodigo());
+        //holder.nombre.setText(producto.getCodigo());
+        holder.puntos.setText("Puntos: " + producto.getPuntos());
         holder.descripcion.setText(producto.getNombre());
         holder.foto.setImageBitmap(producto.getFoto1());
         /*
