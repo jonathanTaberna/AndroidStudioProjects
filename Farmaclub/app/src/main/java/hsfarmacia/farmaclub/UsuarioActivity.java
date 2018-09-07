@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -132,7 +134,7 @@ public class UsuarioActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.i("tvTerminos","hizo click");
-                tvTerminos.setTextColor(Color.RED);
+                //tvTerminos.setTextColor(Color.RED);
                 tvTerminos.setEnabled(false);
                 tvTerminos.setText(getString(R.string.tvTerminosDownload));
                 conditionsTask = new ConditionsTask();
@@ -482,6 +484,10 @@ ANDA
             }
 
             switch (salida) {
+                case 0:
+                    edtUsuario.setError(getString(R.string.usuario_existente));
+                    edtUsuario.requestFocus();
+                    break;
                 case 1:
                     if (success) {
                         updateUserTask = new UpdateUserTask(usuario,edtPassword.getText().toString(),tarjeta);
@@ -716,9 +722,10 @@ ANDA
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            tvTerminos.setTextColor(Color.BLACK);
+            //tvTerminos.setTextColor(Color.RED);
             tvTerminos.setEnabled(true);
             tvTerminos.setText(getString(R.string.tvTerminos));
+            tvTerminos.setPaintFlags(tvTerminos.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
             if (success && flagLeePDF == 1) {
                 Intent intent = new Intent(getBaseContext(), PdfActivity.class);

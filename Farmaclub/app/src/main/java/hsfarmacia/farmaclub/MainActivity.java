@@ -1,10 +1,14 @@
 package hsfarmacia.farmaclub;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,9 +62,6 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
     private int ordenar;
 
 
-    private RecyclerView recyclerView;
-    public AdaptadorProductos adaptador;
-    private RecyclerView.LayoutManager layoutManager;
 
     private GetCanjesTask getCanjesTask;
     private int fromCantidadProducto = 1;
@@ -67,12 +69,16 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
     private String orderByProducto = "nombre,asc";
 
     //pantalla
+    private RecyclerView recyclerView;
+    public AdaptadorProductos adaptador;
+    private RecyclerView.LayoutManager layoutManager;
     //private TextView tvTarjeta;
     private TextView tvCantidadPuntos;
     private TextView tvNombre;
     private Button btnPrev;
     private Button btnNext;
     private TextView tvPagina;
+    private View pbLoading;
 
 
     //provisorios
@@ -109,11 +115,13 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         btnPrev = (Button) findViewById(R.id.btnPrev);
         btnNext = (Button) findViewById(R.id.btnNext);
         tvPagina = (TextView) findViewById(R.id.tvPagina);
+        pbLoading = (ProgressBar) findViewById(R.id.pbLoading);
 
         //tvTarjeta.setText("El codigo de tarjeta es: " + tarjeta);
         tvNombre.setText("Bienvenido " + nombre);
         tvCantidadPuntos.setText("" + puntos);
 
+        showProgress(true);
         getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
         getCanjesTask.execute((Void) null);
 
@@ -174,6 +182,39 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         //});
 
 
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            pbLoading.setVisibility(show ? View.GONE : View.VISIBLE);
+            pbLoading.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    pbLoading.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            pbLoading.setVisibility(show ? View.VISIBLE : View.GONE);
+            pbLoading.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    pbLoading.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            pbLoading.setVisibility(show ? View.VISIBLE : View.GONE);
+            pbLoading.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 
     private void inflarVista(JSONArray jsonArray) {
@@ -245,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         orderByProducto = orden + "," + orderBy;
         if (this.filtrarPuntos != filtrarPuntos) {
             this.flagPaso = 0;
+            paginaActual = 1;
         }
         this.filtrarPuntos = filtrarPuntos;
 
@@ -368,6 +410,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         @Override
         protected void onPostExecute(final Boolean success) {
             getCanjesTask = null;
+            showProgress(false);
 
             int salida = 9;
             String msj = "";
@@ -426,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
 
         @Override
         protected void onCancelled() {
+            showProgress(false);
             getCanjesTask = null;
         }
     }

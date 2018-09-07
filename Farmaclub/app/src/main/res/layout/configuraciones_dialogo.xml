@@ -6,10 +6,10 @@
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="368dp"
+        android:layout_width="272dp"
         android:layout_height="479dp"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteX="56dp"
         tools:layout_editor_absoluteY="16dp">
 
         <LinearLayout

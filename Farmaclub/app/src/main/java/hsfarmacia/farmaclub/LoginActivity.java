@@ -160,7 +160,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-
+        showProgress(false);
 
         File archivo = new File(getBaseContext().getFilesDir()+ "/" + constantes.farmaclubConfig);
         if (archivo.exists()) {
@@ -652,7 +652,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }
                     break;
                 case 9:
-                    if (status == 99) {
+                    if (status == 99 || status == 404  || status == 405) {
                         mPasswordView.setError(getString(R.string.servidor_timeout));
                         mPasswordView.requestFocus();
                     } else {

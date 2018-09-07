@@ -8,6 +8,12 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="147dp"
+        android:layout_height="76dp" />
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/bar_layout"
         android:layout_width="match_parent"
@@ -36,7 +42,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/farmaclub_logo" />
+                android:src="@drawable/farmaclub_logo_grande" />
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>
@@ -45,15 +51,6 @@
 
 
     <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/bar_layout"
-        android:layout_gravity="top|bottom"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/login_form"
