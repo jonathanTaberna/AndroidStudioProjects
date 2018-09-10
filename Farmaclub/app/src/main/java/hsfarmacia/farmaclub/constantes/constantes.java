@@ -9,6 +9,7 @@ public class constantes {
     public static String CONFIG_NOT_FOUND = "CONFIG_NOT_FOUND";
     public static String CONFIG_FOUND = "CONFIG_FOUND";
     public static int RESULT_NUEVO_USUARIO = 111;
+    public static int CANTIDAD_PRODUCTOS_LISTA = 10;
 
     public static String lanzoni = "http://192.168.2.209:8080/restfull-web-services-app-master/rest/user/";
     public static String lanzoniProductos = "http://192.168.2.209:8080/restfull-web-services-app-master/rest/product/";
@@ -19,6 +20,7 @@ public class constantes {
     public static String hsServerNombreProductos = "http://highsoft.no-ip.org:8080/farmaclubserver/rest/product/";
 
     public static String pathConnection = hsServerNombre;
+    public static String pathConnectionProductos = hsServerNombreProductos;
 
     public static String pdfName = "FarmaClub Terminos y Condiciones.pdf";
 

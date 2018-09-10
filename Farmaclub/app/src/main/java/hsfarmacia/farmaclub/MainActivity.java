@@ -6,12 +6,10 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -25,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -43,7 +40,7 @@ import hsfarmacia.farmaclub.provisorios.Producto;
 import hsfarmacia.farmaclub.provisorios.Productos;
 import hsfarmacia.farmaclub.provisorios.ProductosVector;
 
-import static android.widget.LinearLayout.VERTICAL;
+import static hsfarmacia.farmaclub.constantes.constantes.CANTIDAD_PRODUCTOS_LISTA;
 
 public class MainActivity extends AppCompatActivity implements ConfiguracionesDialogo.FinalizoConfiguracionesDialogo{
 
@@ -60,12 +57,13 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
     private int filtrarPor;
     private int ordenarPor;
     private int ordenar;
+    private int ultimaPaginaCargada = 0;
 
 
 
     private GetCanjesTask getCanjesTask;
     private int fromCantidadProducto = 1;
-    private int toCantidadProducto = 20;
+    private int toCantidadProducto = CANTIDAD_PRODUCTOS_LISTA;
     private String orderByProducto = "nombre,asc";
 
     //pantalla
@@ -79,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
     private Button btnNext;
     private TextView tvPagina;
     private View pbLoading;
+
+
+    ProductosVector productosVector = new ProductosVector();
 
 
     //provisorios
@@ -129,11 +130,17 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fromCantidadProducto -= 20;
-                toCantidadProducto -= 20;
-                getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
-                getCanjesTask.execute((Void) null);
+                fromCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
+                toCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
                 paginaActual --;
+                showProgress(true);
+
+                //getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
+                //getCanjesTask.execute((Void) null);
+
+                ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
+                actualizarVista(productosVectorAux);
+
                 if (paginaActual == 1) {
                     btnPrev.setEnabled(false); //estado inicial
                 }
@@ -145,12 +152,20 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fromCantidadProducto += 20;
-                toCantidadProducto += 20;
-                getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
-                getCanjesTask.execute((Void) null);
-                btnPrev.setEnabled(true);
+                fromCantidadProducto += CANTIDAD_PRODUCTOS_LISTA;
+                toCantidadProducto += CANTIDAD_PRODUCTOS_LISTA;
                 paginaActual ++;
+                showProgress(true);
+
+                if (paginaActual > ultimaPaginaCargada) {
+                    getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto);
+                    getCanjesTask.execute((Void) null);
+                } else {
+                     ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
+                     actualizarVista(productosVectorAux);
+                }
+
+                btnPrev.setEnabled(true);
                 if (paginaActual == cantidadPaginas) {
                     btnNext.setEnabled(false);
                 }
@@ -219,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
 
     private void inflarVista(JSONArray jsonArray) {
         Producto producto = null;
-        ProductosVector productosVector = new ProductosVector();
+        // hasta aca el ctrl   z
 
         if (jsonArray == null) {
             return;
@@ -243,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
                     foto1 = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 }
 
+
                 producto = new Producto(codigo, nombre, puntos, foto1);
                 productosVector.anyade(producto);
             } catch (Exception e) {
@@ -250,8 +266,17 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
             }
         }
 
+        ultimaPaginaCargada ++;
+
+        ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
+        //productos = productosVector;
+        actualizarVista(productosVectorAux);
+    }
+
+
+    public void actualizarVista(ProductosVector productosVector){
         productos = productosVector;
-        adaptador = new AdaptadorProductos(this, productos);
+        adaptador = new AdaptadorProductos(MainActivity.this, productos);
         recyclerView.setAdapter(adaptador);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -260,14 +285,16 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
             public void onClick(View v) {
                 int id = (int) recyclerView.getChildAdapterPosition(v);
                 Producto prod = productos.elemento(id);
+                //cambiar esta llamada, por:
+                //  new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos());
                 new PopUpProductoDialogo(contexto, prod.getFoto1(),prod.getNombre(),prod.getPuntos());
 
             }
         });
         if (flagPaso == 0) {
             flagPaso = 1;
-            cantidadPaginas = cantidadProductos / 20;
-            if (cantidadProductos%20 > 0) {
+            cantidadPaginas = cantidadProductos / CANTIDAD_PRODUCTOS_LISTA;
+            if (cantidadProductos%CANTIDAD_PRODUCTOS_LISTA > 0) {
                 cantidadPaginas ++;
             }
             if (cantidadPaginas > 1) {
@@ -277,13 +304,18 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
             }
         }
         tvPagina.setText("Pagina " + paginaActual + "/" + cantidadPaginas);
+        showProgress(false);
     }
+
 
     @Override
     public void ResultadoConfiguracionesDialogo(String filtrarPuntos, String orden, String orderBy) {
         fromCantidadProducto = 1;
-        toCantidadProducto = 20;
+        toCantidadProducto = CANTIDAD_PRODUCTOS_LISTA;
         orderByProducto = orden + "," + orderBy;
+        ultimaPaginaCargada = 0;
+        productosVector.ResetList();
+
         if (this.filtrarPuntos != filtrarPuntos) {
             this.flagPaso = 0;
             paginaActual = 1;
@@ -306,6 +338,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
             this.ordenar = 2;
         }
 
+        showProgress(true);
         getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto);
         getCanjesTask.execute((Void) null);
         btnPrev.setEnabled(false); //estado inicial
@@ -338,9 +371,9 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
                 //URL url = new URL(constantes.lanzoniProductos + "getCanjes");
                 URL url;
                 if (filtrarPuntos == "todos") {
-                    url = new URL(constantes.hsServerNombreProductos + "getCanjes");
+                    url = new URL(constantes.pathConnectionProductos + "getCanjes");
                 } else {
-                    url = new URL(constantes.hsServerNombreProductos + "getCanjesXPuntos");
+                    url = new URL(constantes.pathConnectionProductos + "getCanjesXPuntos");
                 }
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
@@ -482,14 +515,11 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
-
-                //quede aca, falta crear dialogggggggggg
 
                 //Toast.makeText(this, "menusssss", Toast.LENGTH_SHORT).show();
                 new ConfiguracionesDialogo(contexto, MainActivity.this,filtrarPor, ordenarPor,ordenar);
@@ -501,6 +531,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
 
         }
     }
+
 
 
 
