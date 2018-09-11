@@ -501,6 +501,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //    mUusarioView.setText("pepito fuma marihuana");
             //}
         }
+
+        if (requestCode == constantes.RESULT_MAIN_ACTIVITY ) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                finish();
+            }
+            if (resultCode == Activity.RESULT_FIRST_USER) {
+                mPasswordView.setText("");
+                mPasswordView.requestFocus();
+            }
+            //else {
+            //    Log.i("RESULT", "RESULT_NUEVO_USUARIO FAIL");
+            //    mUusarioView.setText("pepito fuma marihuana");
+            //}
+        }
+
     }
 
     /**
@@ -639,12 +654,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 }
                             }
 
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            //Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            Intent i = new Intent(getApplicationContext(), MainActivity2.class);
                             i.putExtra("tarjeta", tarjeta);
                             i.putExtra("puntos", puntos);
                             i.putExtra("nombre", nombre);
-                            startActivity(i);
-                            finish();
+                            //startActivity(i);
+                            //finish();
+                            startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
                         }
                     } else {
                         mPasswordView.setError(getString(R.string.error_incorrect_password));

@@ -273,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         actualizarVista(productosVectorAux);
     }
 
-
     public void actualizarVista(ProductosVector productosVector){
         productos = productosVector;
         adaptador = new AdaptadorProductos(MainActivity.this, productos);
@@ -306,7 +305,6 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         tvPagina.setText("Pagina " + paginaActual + "/" + cantidadPaginas);
         showProgress(false);
     }
-
 
     @Override
     public void ResultadoConfiguracionesDialogo(String filtrarPuntos, String orden, String orderBy) {
@@ -506,7 +504,6 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
             getCanjesTask = null;
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

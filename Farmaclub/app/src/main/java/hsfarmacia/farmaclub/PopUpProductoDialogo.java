@@ -68,6 +68,9 @@ public class PopUpProductoDialogo {
         getImageTask = new GetImageTask(codigoProd);
         getImageTask.execute((Void) null);
 
+        //para descargar imagen desde un servidor de imagenes
+        //new GetImageFromURL(ivPopUpProductoDialogoImagen,"https://i.imgur.com/WS58anC.jpg").execute();
+
         dialogo.show();
     }
 
@@ -208,4 +211,32 @@ public class PopUpProductoDialogo {
         }
     }
 
+    //para descargar imagen desde un servidor de imagenes
+    public class GetImageFromURL extends AsyncTask<Void, Void, Bitmap>{
+        ImageView imgV;
+        String url;
+
+        public GetImageFromURL(ImageView imgV, String url){
+            this.imgV = imgV;
+            this.url = url;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            Bitmap bitmap = null;
+            try {
+                InputStream srt = new java.net.URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(srt);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            imgV.setImageBitmap(bitmap);
+        }
+    }
 }

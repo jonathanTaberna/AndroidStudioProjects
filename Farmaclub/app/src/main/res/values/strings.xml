@@ -53,11 +53,19 @@
     <string name="error_update">No se pudo generar el usuario.</string>
 
     <!-- menu -->
+    <!--
     <string name="action_settings">Configurar</string>
+    -->
+    <string name="action_settings">Ordenar</string>
 
 
-
-
+    <!-- menu desplegable -->
+    <string name="title_activity_main2">FarmaClub</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">FarmaClub</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">FarmaClub App</string>
 
     <!-- Strings related to login -->
 
@@ -68,6 +76,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <!-- strings comentadas
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
