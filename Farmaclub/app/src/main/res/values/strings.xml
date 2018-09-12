@@ -9,6 +9,9 @@
     <string name="edtNuevoUsuario">Nuevo Usuario</string>
     <string name="edtContrasenia">Contraseña</string>
     <string name="edtRepetirContrasenia">Repetir Contraseña</string>
+    <string name="edtMisDatosNombre">Nombre y Apellido</string>
+    <string name="edtMisDatosCorreo">Direccion de correo electronico</string>
+    <string name="edtMisDatosTelefono">Numero de Telefono</string>
 
     <!-- text View-->
     <string name="tvTerminos"><u>VER Terminos y Condiciones</u></string>

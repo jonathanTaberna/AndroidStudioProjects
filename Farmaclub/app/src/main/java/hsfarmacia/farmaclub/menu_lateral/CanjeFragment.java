@@ -283,7 +283,7 @@ public class CanjeFragment extends Fragment {
         if (flagPaso == 0) {
             flagPaso = 1;
             cantidadPaginas = cantidadProductos / CANTIDAD_PRODUCTOS_LISTA;
-            if (cantidadProductos%CANTIDAD_PRODUCTOS_LISTA > 0) {
+            if (cantidadProductos%CANTIDAD_PRODUCTOS_LISTA > 0) { //resto de la division
                 cantidadPaginas ++;
             }
             if (cantidadPaginas > 1) {

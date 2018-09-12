@@ -207,14 +207,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/btnCancelar" />
+                    android:text="@string/btnCancelar"
+                    android:background="@drawable/layout_botones"/>
 
                 <Button
                     android:id="@+id/btnDialogAceptar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/btnAceptar" />
+                    android:text="@string/btnAceptar"
+                    android:background="@drawable/layout_botones"/>
             </LinearLayout>
 
 
