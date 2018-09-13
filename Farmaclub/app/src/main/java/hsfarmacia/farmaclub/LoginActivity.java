@@ -353,8 +353,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mUusarioView.setError(null);
         mPasswordView.setError(null);
 
-        String usuario = mUusarioView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String usuario = mUusarioView.getText().toString().trim();
+        String password = mPasswordView.getText().toString().trim();
 
         boolean cancel = false;
         View focusView = null;
@@ -622,12 +622,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             int salida = 9;
             int puntos = 0;
             String nombre = "";
+            String correo = "";
+            String telefono = "";
 
             try {
                 salida = jsonResp.getInt("salida");
-                tarjeta = jsonResp.getString("tarjeta");
+                tarjeta = jsonResp.getString("tarjeta").trim();
                 puntos = jsonResp.getInt("puntos");
-                nombre = jsonResp.getString("nombre");
+                nombre = jsonResp.getString("nombre").trim();
+                correo = jsonResp.getString("correo").trim();
+                telefono = jsonResp.getString("telefono").trim();
+
+
             } catch (Exception e){
                 salida = 9;
                 mPasswordView.setError(getString(R.string.error_json));
@@ -659,6 +665,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             i.putExtra("tarjeta", tarjeta);
                             i.putExtra("puntos", puntos);
                             i.putExtra("nombre", nombre);
+                            i.putExtra("correo", correo);
+                            i.putExtra("telefono", telefono);
                             //startActivity(i);
                             //finish();
                             startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);

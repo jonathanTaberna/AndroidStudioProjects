@@ -95,20 +95,14 @@ public class CanjeFragment extends Fragment {
 
 
     //fin variables main activity
-
+    /*
     @SuppressLint("ValidFragment")
     public CanjeFragment(String tarjeta, int puntos, String nombre){
         this.tarjeta = tarjeta;
         this.puntos = puntos;
         this.nombre = nombre;
     }
-
-    public void setOrden(String filtrarPuntos, int filtrarPor, int ordenarPor, int ordenar) {
-        this.filtrarPuntos = filtrarPuntos;
-        this.filtrarPor = filtrarPor;
-        this.ordenarPor = ordenarPor;
-        this.ordenar = ordenar;
-    }
+    */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,6 +115,12 @@ public class CanjeFragment extends Fragment {
         ordenarPor = 1;
         ordenar = 1;
 
+
+        Bundle bundle = getArguments();
+
+        this.tarjeta = bundle.getString("tarjeta");
+        this.puntos = bundle.getInt("puntos");
+        this.nombre = bundle.getString("nombre");
 
         //tarjeta = getActivity().getIntent().getStringExtra("tarjeta");
         //puntos = getActivity().getIntent().getIntExtra("puntos", 0);

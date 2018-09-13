@@ -6,4 +6,10 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/main2_action_edit_data"
+        android:orderInCategory="100"
+        android:title="@string/action_edit_data"
+        android:visible="false"
+        app:showAsAction="never" />
 </menu>

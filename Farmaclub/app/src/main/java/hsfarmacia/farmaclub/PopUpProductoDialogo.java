@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -56,6 +58,8 @@ public class PopUpProductoDialogo {
         final Dialog dialogo = new Dialog(contexto);
         dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogo.setCancelable(true);
+        //dialogo.getWindow().setBackgroundDrawableResource(R.drawable.layout_bg);
+        dialogo.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogo.setContentView(R.layout.popup_producto_dialogo);
 
          ivPopUpProductoDialogoImagen= (ImageView) dialogo.findViewById(R.id.ivPopUpProductoDialogoImagen);

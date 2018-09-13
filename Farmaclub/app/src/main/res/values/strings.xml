@@ -60,6 +60,7 @@
     <string name="action_settings">Configurar</string>
     -->
     <string name="action_settings">Ordenar</string>
+    <string name="action_edit_data">Editar Datos</string>
 
 
     <!-- menu desplegable -->

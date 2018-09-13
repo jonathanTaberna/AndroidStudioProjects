@@ -16,7 +16,7 @@ public class Producto {
         this.foto1 = foto1;
     }
 
-    public  Producto () {
+    public Producto () {
         this.codigo = "";
         this.nombre = "";
         this.puntos = 0;
