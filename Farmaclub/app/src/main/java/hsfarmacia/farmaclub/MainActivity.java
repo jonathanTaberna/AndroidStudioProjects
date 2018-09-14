@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
                 }
 
 
-                producto = new Producto(codigo, nombre, puntos, foto1);
+                producto = new Producto(codigo, nombre, puntos,"", foto1);
                 productosVector.anyade(producto);
             } catch (Exception e) {
                 Log.e("inflarVista", e.getMessage());
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
 
     public void actualizarVista(ProductosVector productosVector){
         productos = productosVector;
-        adaptador = new AdaptadorProductos(MainActivity.this, productos);
+        adaptador = new AdaptadorProductos(MainActivity.this, productos, 60);
         recyclerView.setAdapter(adaptador);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);

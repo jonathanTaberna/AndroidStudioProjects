@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Image;
+import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -91,6 +92,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //createShortCut();
+
         flagVoyConUsuario = 0;
         // Set up the login form.
         mUusarioView = (AutoCompleteTextView) findViewById(R.id.edtUsuario);
@@ -518,6 +522,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    //crea acceso directo
+    /*
+    public void createShortCut(){
+        // a Intent to create a shortCut
+        Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        //repeat to create is forbidden
+        shortcutintent.putExtra("duplicate", false);
+        //set the name of shortCut
+        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+        //set icon
+        Parcelable icon = Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.mipmap.ic_launcher);
+        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
+        //set the application to lunch when you click the icon
+        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext() , LoginActivity.class));
+        //sendBroadcast,done
+        sendBroadcast(shortcutintent);
+    }
+    */
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -624,6 +647,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             String nombre = "";
             String correo = "";
             String telefono = "";
+            String direccion = "";
+            String localidad = "";
+            int codpos = 0;
+            String fecnac = "";
+
 
             try {
                 salida = jsonResp.getInt("salida");
@@ -632,16 +660,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 nombre = jsonResp.getString("nombre").trim();
                 correo = jsonResp.getString("correo").trim();
                 telefono = jsonResp.getString("telefono").trim();
+                direccion = jsonResp.getString("direccion").trim();
+                localidad = jsonResp.getString("localidad").trim();
+                codpos = jsonResp.getInt("codpos");
+                fecnac = jsonResp.getString("fecnac");
 
 
             } catch (Exception e){
-                salida = 9;
-                mPasswordView.setError(getString(R.string.error_json));
-                mPasswordView.requestFocus();
+                salida = 8;
             }
 
             switch (salida) {
                 case 1:
+                case 8:
+                    if (salida == 8) {
+                        Log.i("Login", "error en casteo JSON");
+                    }
                     if (success) {
                         if (estadoArchivo == constantes.CONFIG_NOT_FOUND && flagVoyConUsuario == 0) {
                             //Intent nuevoUsuario = new Intent(getApplicationContext(), UsuarioActivity.class);
@@ -667,6 +701,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             i.putExtra("nombre", nombre);
                             i.putExtra("correo", correo);
                             i.putExtra("telefono", telefono);
+                            i.putExtra("direccion", direccion);
+                            i.putExtra("localidad", localidad);
+                            i.putExtra("codpos", codpos);
+                            i.putExtra("fecnac", fecnac);
                             //startActivity(i);
                             //finish();
                             startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
@@ -698,7 +736,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
-
 
     public class ResetPassTask extends AsyncTask<Void, Void, Boolean> {
 

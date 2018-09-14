@@ -41,13 +41,17 @@ public class MainActivity2 extends AppCompatActivity
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private String fragmentActual = "";
     private Toolbar toolbar;
-
+    private Boolean enableView = false;
 
     private String tarjeta;
     private int puntos;
     private String nombre;
     private String correo;
     private String telefono;
+    private String direccion;
+    private String localidad;
+    private int codpos;
+    private String fecnac;
 
     private String filtrarPuntos;
     private int filtrarPor;
@@ -89,23 +93,32 @@ public class MainActivity2 extends AppCompatActivity
         nombre = extras.getString("nombre");
         correo = extras.getString("correo");
         telefono = extras.getString("telefono");
+        direccion = extras.getString("direccion");
+        localidad = extras.getString("localidad");
+        codpos = extras.getInt("codpos");
+        fecnac = extras.getString("fecnac");
 
         filtrarPuntos = "todos";
         filtrarPor = 1;
         ordenarPor = 1;
         ordenar = 1;
 
+
+        fragmentActual = "canje";
+        llamarNewInstanceCanje(fragmentActual);
+        /*
+        argumentosCanje.putString("fragmentVisible", fragmentActual);
         argumentosCanje.putString("tarjeta", tarjeta);
         argumentosCanje.putInt("puntos", puntos);
         argumentosCanje.putString("nombre", nombre);
 
-        fragmentActual = "canje";
         canjeFragment = new CanjeFragment();
         canjeFragment.setArguments(argumentosCanje);
         //fragmentManager.beginTransaction().replace(R.id.contenedor, new CanjeFragment(tarjeta,puntos,nombre)).commit();
         fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
         //toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
 
+        */
     }
 
     @Override
@@ -114,7 +127,17 @@ public class MainActivity2 extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (fragmentActual == "mis_datos" && enableView) {
+                toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
+                llamarNewInstance(false);
+                //enableView = false;
+                //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+                //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+
+            } else {
+                drawer.openDrawer(GravityCompat.START);
+            }
+            //super.onBackPressed(); //close the app
         }
     }
 
@@ -147,9 +170,10 @@ public class MainActivity2 extends AppCompatActivity
             //misDatosFragment = new MisDatosFragment();
             //misDatosFragment.setArguments(argumentosMisDatos);
             //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
-
-            misDatosFragment = MisDatosFragment.newInstance(true, nombre, correo, telefono);
-            fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+            llamarNewInstance(true);
+            //enableView = true;
+            //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
 
             return true;
         }
@@ -167,7 +191,8 @@ public class MainActivity2 extends AppCompatActivity
         if (id == R.id.nav_canje) {
             if (fragmentActual != "canje") {
                 fragmentActual = "canje";
-                fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
+                llamarNewInstanceCanje(fragmentActual);
+                //fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
                 toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(true);
                 toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
 
@@ -179,7 +204,16 @@ public class MainActivity2 extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_promociones) {
             fragmentActual = "promociones";
-            fragmentManager.beginTransaction().replace(R.id.contenedor, new PromocionesFragment()).commit();
+            llamarNewInstanceCanje(fragmentActual);
+
+            /*
+            argumentosCanje.putString("fragmentVisible", fragmentActual);
+            canjeFragment = new CanjeFragment();
+            canjeFragment.setArguments(argumentosCanje);
+
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, new PromocionesFragment()).commit();
+            fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
+            */
             toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
             toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
 
@@ -189,9 +223,11 @@ public class MainActivity2 extends AppCompatActivity
             //argumentosMisDatos.putBoolean("vistaActiva", false);
             //misDatosFragment = new MisDatosFragment();
             //misDatosFragment.setArguments(argumentosMisDatos);
-            misDatosFragment = MisDatosFragment.newInstance(false, nombre, correo, telefono);
+            llamarNewInstance(false);
+            //enableView = false;
+            //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
 
-            fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
             toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
             toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
 
@@ -240,23 +276,45 @@ public class MainActivity2 extends AppCompatActivity
         canjeFragment.actualizarVistaOrdenada(filtrarPuntos, orden, orderBy);
     }
 
-    public void ResultadoMisDatos(String accion, String nombre, String correo, String telefono) {
+    public void ResultadoMisDatos(String accion, String nombre, String correo, String telefono, String direccion, String localidad, int codpos, String fecnac) {
         toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
 
         if (accion == "ACEPTAR") {
             Toast.makeText(MainActivity2.this,"APRETO ACEPTAR", Toast.LENGTH_SHORT).show();
 
-            updateDataPersonTask = new UpdateDataPersonTask(nombre,correo,telefono);
+            updateDataPersonTask = new UpdateDataPersonTask(nombre,correo,telefono, direccion, localidad, codpos, fecnac);
             updateDataPersonTask.execute((Void) null);
 
         }
         if (accion == "CANCELAR"){
             Toast.makeText(MainActivity2.this,"APRETO CANCELAR", Toast.LENGTH_SHORT).show();
-            misDatosFragment = MisDatosFragment.newInstance(false, nombre, correo, telefono);
-            fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+            llamarNewInstance(false);
+            //enableView = false;
+            //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
         }
     }
 
+    private void llamarNewInstance(Boolean enable){
+
+        enableView = enable;
+        misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos, fecnac);
+        fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+
+    }
+
+    private void llamarNewInstanceCanje(String fragmentActual){
+
+        argumentosCanje.putString("fragmentVisible", fragmentActual);
+        argumentosCanje.putString("tarjeta", tarjeta);
+        argumentosCanje.putInt("puntos", puntos);
+        argumentosCanje.putString("nombre", nombre);
+
+        canjeFragment = new CanjeFragment();
+        canjeFragment.setArguments(argumentosCanje);
+        fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
+
+    }
 
     public class UpdateDataPersonTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -265,11 +323,19 @@ public class MainActivity2 extends AppCompatActivity
         private String nombreUpdate;
         private String correoUpdate;
         private String telefonoUpdate;
+        private String direccionUpdate;
+        private String localidadUpdate;
+        private int codposUpdate;
+        private String fecnacUpdate;
 
-        public UpdateDataPersonTask (String nombreUpdate, String correoUpdate, String telefonoUpdate) {
+        public UpdateDataPersonTask (String nombreUpdate, String correoUpdate, String telefonoUpdate, String direccionUpdate, String localidadUpdate, int codposUpdate, String fecnacUpdate) {
             this.nombreUpdate = nombreUpdate;
             this.correoUpdate = correoUpdate;
             this.telefonoUpdate = telefonoUpdate;
+            this.direccionUpdate = direccionUpdate;
+            this.localidadUpdate = localidadUpdate;
+            this.codposUpdate = codposUpdate;
+            this.fecnacUpdate = fecnacUpdate;
         }
 
         @Override
@@ -293,6 +359,10 @@ public class MainActivity2 extends AppCompatActivity
                 obj.put("nombre", nombreUpdate);
                 obj.put("correo", correoUpdate);
                 obj.put("telefono", telefonoUpdate);
+                obj.put("direccion", direccionUpdate);
+                obj.put("localidad", localidadUpdate);
+                obj.put("codpos", codposUpdate);
+                obj.put("fecnac", fecnacUpdate);
 
 
                 Log.i("JSON", obj.toString());
@@ -362,8 +432,15 @@ public class MainActivity2 extends AppCompatActivity
                         nombre = nombreUpdate;
                         correo = correoUpdate;
                         telefono = telefonoUpdate;
-                        misDatosFragment = MisDatosFragment.newInstance(false, nombre, correo, telefono);
-                        fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+                        direccion = direccionUpdate;
+                        localidad = localidadUpdate;
+                        codpos = codposUpdate;
+                        fecnac = fecnacUpdate;
+
+                        llamarNewInstance(false);
+                        //enableView = false;
+                        //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+                        //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
                     }
                     break;
                 case 2:

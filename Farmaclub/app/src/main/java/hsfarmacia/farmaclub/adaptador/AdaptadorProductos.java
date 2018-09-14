@@ -6,22 +6,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import hsfarmacia.farmaclub.R;
 import hsfarmacia.farmaclub.provisorios.Producto;
 import hsfarmacia.farmaclub.provisorios.Productos;
 
+import static hsfarmacia.farmaclub.constantes.constantes.TAMANYO_ELEMENTO_CANJE;
+import static hsfarmacia.farmaclub.constantes.constantes.TAMANYO_ELEMENTO_PROMOCIONES;
+
 public class AdaptadorProductos  extends RecyclerView.Adapter<AdaptadorProductos.ViewHolder> {
     protected Productos productos;       //Productos a mostrar
     protected LayoutInflater inflador;   //Crea Layouts a partir del XML
     protected Context contexto;          //Lo necesitamos para el inflador
     protected View.OnClickListener onClickListener; //Listener para cada elemento
+    protected int height; //tamaño de cada vista
 
-    public AdaptadorProductos(Context contexto, Productos productos) {
+    public AdaptadorProductos(Context contexto, Productos productos, int height) {
         this.contexto = contexto;
         this.productos = productos;
         inflador = (LayoutInflater) contexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.height = height;
     }
 
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
@@ -30,12 +36,15 @@ public class AdaptadorProductos  extends RecyclerView.Adapter<AdaptadorProductos
         public TextView puntos, descripcion;
         public ImageView foto;
 
+        public RelativeLayout rlElemento;
+
         public ViewHolder(View itemView) {
             super(itemView);
             //nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre);
             puntos = (TextView) itemView.findViewById(R.id.elemento_lista_puntos);
             descripcion = (TextView) itemView.findViewById(R.id.elemento_lista_descripcion);
             foto = (ImageView) itemView.findViewById(R.id.elemento_lista_foto);
+            rlElemento = (RelativeLayout) itemView.findViewById(R.id.rlElemento);
         }
     }
 
@@ -58,9 +67,22 @@ public class AdaptadorProductos  extends RecyclerView.Adapter<AdaptadorProductos
     // Personalizamos un ViewHolder a partir de un lugar
     public void personalizaVista(ViewHolder holder, Producto producto) {
         //holder.nombre.setText(producto.getCodigo());
-        holder.puntos.setText("Puntos: " + producto.getPuntos());
+        if (height == TAMANYO_ELEMENTO_CANJE) {
+            holder.puntos.setText("Puntos: " + producto.getPuntos());
+        }
+        if (height == TAMANYO_ELEMENTO_PROMOCIONES) {
+            holder.puntos.setText(producto.getComentario());
+        }
         holder.descripcion.setText(producto.getNombre());
         holder.foto.setImageBitmap(producto.getFoto1());
+
+        ViewGroup.LayoutParams layoutParams;
+        layoutParams = holder.rlElemento.getLayoutParams();
+        layoutParams.height = height;
+        holder.rlElemento.setLayoutParams(layoutParams);
+        layoutParams = holder.foto.getLayoutParams();
+        layoutParams.height = height;
+        holder.foto.setLayoutParams(layoutParams);
         /*
         int id = R.drawable.otros;
         switch(lugar.getTipo()) {

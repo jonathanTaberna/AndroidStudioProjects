@@ -11,6 +11,8 @@ public class constantes {
     public static int RESULT_NUEVO_USUARIO = 111;
     public static int RESULT_MAIN_ACTIVITY = 222;
     public static int CANTIDAD_PRODUCTOS_LISTA = 10;
+    public static int TAMANYO_ELEMENTO_CANJE = 120;
+    public static int TAMANYO_ELEMENTO_PROMOCIONES = 170;
 
     public static String lanzoni = "http://192.168.2.28:8080/restfull-web-services-app-master/rest/user/";
     public static String lanzoniProductos = "http://192.168.2.28:8080/restfull-web-services-app-master/rest/product/";

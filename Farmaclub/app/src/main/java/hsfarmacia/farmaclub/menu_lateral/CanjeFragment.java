@@ -49,6 +49,8 @@ import hsfarmacia.farmaclub.provisorios.Productos;
 import hsfarmacia.farmaclub.provisorios.ProductosVector;
 
 import static hsfarmacia.farmaclub.constantes.constantes.CANTIDAD_PRODUCTOS_LISTA;
+import static hsfarmacia.farmaclub.constantes.constantes.TAMANYO_ELEMENTO_CANJE;
+import static hsfarmacia.farmaclub.constantes.constantes.TAMANYO_ELEMENTO_PROMOCIONES;
 
 @SuppressLint("ValidFragment")
 public class CanjeFragment extends Fragment {
@@ -90,9 +92,9 @@ public class CanjeFragment extends Fragment {
     private TextView tvPagina;
     private View pbLoading;
 
-
     ProductosVector productosVector = new ProductosVector();
 
+    private String fragmentVisible = "";
 
     //fin variables main activity
     /*
@@ -118,6 +120,7 @@ public class CanjeFragment extends Fragment {
 
         Bundle bundle = getArguments();
 
+        this.fragmentVisible = bundle.getString("fragmentVisible");
         this.tarjeta = bundle.getString("tarjeta");
         this.puntos = bundle.getInt("puntos");
         this.nombre = bundle.getString("nombre");
@@ -236,6 +239,7 @@ public class CanjeFragment extends Fragment {
                 String codigo = jsonObject.getString("codigo");
                 String nombre = jsonObject.getString("nombre");
                 int puntos = jsonObject.getInt("puntos");
+                String comentario = jsonObject.getString("comentario");
 
                 //byte[] decodedString = Base64.decode(jsonObject.getString("foto_2").getBytes(), Base64.DEFAULT);
                 //Bitmap foto1 = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -249,7 +253,7 @@ public class CanjeFragment extends Fragment {
                 }
 
 
-                producto = new Producto(codigo, nombre, puntos, foto1);
+                producto = new Producto(codigo, nombre, puntos, comentario, foto1);
                 productosVector.anyade(producto);
             } catch (Exception e) {
                 Log.e("inflarVista", e.getMessage());
@@ -265,7 +269,12 @@ public class CanjeFragment extends Fragment {
 
     public void actualizarVista(ProductosVector productosVector){
         productos = productosVector;
-        adaptador = new AdaptadorProductos(contexto, productos);
+        if (fragmentVisible == "canje"){
+            adaptador = new AdaptadorProductos(contexto, productos, TAMANYO_ELEMENTO_CANJE);
+        }
+        if (fragmentVisible == "promociones"){
+            adaptador = new AdaptadorProductos(contexto, productos, TAMANYO_ELEMENTO_PROMOCIONES);
+        }
         recyclerView.setAdapter(adaptador);
         layoutManager = new LinearLayoutManager(contexto);
         recyclerView.setLayoutManager(layoutManager);

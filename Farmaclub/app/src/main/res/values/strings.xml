@@ -12,6 +12,10 @@
     <string name="edtMisDatosNombre">Nombre y Apellido</string>
     <string name="edtMisDatosCorreo">Direccion de correo electronico</string>
     <string name="edtMisDatosTelefono">Numero de Telefono</string>
+    <string name="edtMisDatosDireccion">Direccion</string>
+    <string name="edtMisDatosLocalidad">Localidad</string>
+    <string name="edtMisDatosCodpos">Cod. Postal</string>
+    <string name="edtMisDatosFechaNacimiento">Fecha de Nacimiento</string>
 
     <!-- text View-->
     <string name="tvTerminos"><u>VER Terminos y Condiciones</u></string>

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlElemento"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:theme="@style/AppTheme"
-    >
-
+    android:layout_height="80dp"
+    android:theme="@style/AppTheme">
+    <!--
+    "?android:attr/listPreferredItemHeight"
+    -->
     <ImageView
         android:id="@+id/elemento_lista_foto"
-        android:layout_width="?android:attr/listPreferredItemHeight"
-        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentLeft="true"
         android:background="@android:color/white"
         android:contentDescription="fotografía" />
@@ -29,11 +30,12 @@
         android:id="@+id/elemento_lista_puntos"
         android:layout_width="315dp"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/elemento_lista_foto"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:singleLine="true"
-        android:text="Nombres del producto"/>
+        android:layout_toRightOf="@id/elemento_lista_foto"
+        android:maxLines="2"
+        android:singleLine="false"
+        android:text="Nombres del producto" />
 
     <View
         android:id="@+id/divider"

@@ -7,12 +7,14 @@ public class Producto {
     private String codigo;
     private String nombre;
     private int puntos;
+    private String comentario;
     private Bitmap foto1;
 
-    public Producto(String codigo, String nombre, int puntos, Bitmap foto1) {
+    public Producto(String codigo, String nombre, int puntos, String comentario, Bitmap foto1) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.puntos = puntos;
+        this.comentario = comentario;
         this.foto1 = foto1;
     }
 
@@ -20,6 +22,7 @@ public class Producto {
         this.codigo = "";
         this.nombre = "";
         this.puntos = 0;
+        this.comentario = "";
         this.foto1 = null;
     }
 
@@ -45,6 +48,14 @@ public class Producto {
 
     public void setPuntos(int puntos) {
         this.puntos = puntos;
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 
     public Bitmap getFoto1() {
