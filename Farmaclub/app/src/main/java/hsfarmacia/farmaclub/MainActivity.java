@@ -1,28 +1,20 @@
 package hsfarmacia.farmaclub;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -34,290 +26,224 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-import hsfarmacia.farmaclub.adaptador.AdaptadorProductos;
 import hsfarmacia.farmaclub.constantes.constantes;
-import hsfarmacia.farmaclub.provisorios.Producto;
-import hsfarmacia.farmaclub.provisorios.Productos;
-import hsfarmacia.farmaclub.provisorios.ProductosVector;
+import hsfarmacia.farmaclub.menu_lateral.CanjeFragment;
+import hsfarmacia.farmaclub.menu_lateral.MisDatosFragment;
+import hsfarmacia.farmaclub.menu_lateral.NovedadesFragment;
 
-import static hsfarmacia.farmaclub.constantes.constantes.CANTIDAD_PRODUCTOS_LISTA;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, ConfiguracionesDialogo.FinalizoConfiguracionesDialogo{
 
-public class MainActivity extends AppCompatActivity implements ConfiguracionesDialogo.FinalizoConfiguracionesDialogo{
+    private FragmentManager fragmentManager = getSupportFragmentManager();
+    private String fragmentActual = "";
+    private Toolbar toolbar;
+    private Boolean enableView = false;
+    private TextView tvCantidadNotificaciones;
 
     private String tarjeta;
     private int puntos;
     private String nombre;
-    private int cantidadProductos;
-    private int cantidadPaginas;
-    private int paginaActual = 1;
-    private int flagPaso = 0;
-    private Context contexto;
-    private Productos productos;
+    private String correo;
+    private String telefono;
+    private String direccion;
+    private String localidad;
+    private int codpos;
+    private String fecnac;
+
     private String filtrarPuntos;
     private int filtrarPor;
     private int ordenarPor;
     private int ordenar;
-    private int ultimaPaginaCargada = 0;
 
+    private CanjeFragment canjeFragment;
+    private Bundle argumentosCanje = new Bundle();
 
+    private MisDatosFragment misDatosFragment;
+    private UpdateDataPersonTask updateDataPersonTask = null;
 
-    private GetCanjesTask getCanjesTask;
-    private int fromCantidadProducto = 1;
-    private int toCantidadProducto = CANTIDAD_PRODUCTOS_LISTA;
-    private String orderByProducto = "nombre,asc";
+    private NovedadesFragment novedadesFragment;
 
-    //pantalla
-    private RecyclerView recyclerView;
-    public AdaptadorProductos adaptador;
-    private RecyclerView.LayoutManager layoutManager;
-    //private TextView tvTarjeta;
-    private TextView tvCantidadPuntos;
-    private TextView tvNombre;
-    private Button btnPrev;
-    private Button btnNext;
-    private TextView tvPagina;
-    private View pbLoading;
-
-
-    ProductosVector productosVector = new ProductosVector();
-
-
-    //provisorios
-    //public static Productos productos = new ProductosVector();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        tvCantidadNotificaciones = (TextView) navigationView.getMenu().findItem(R.id.nav_novedades).getActionView().findViewById(R.id.tvCantidadNotificaciones);
+        tvCantidadNotificaciones.setText("99+");
 
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
         }
+        tarjeta = extras.getString("tarjeta");
+        puntos = extras.getInt("puntos");
+        nombre = extras.getString("nombre");
+        correo = extras.getString("correo");
+        telefono = extras.getString("telefono");
+        direccion = extras.getString("direccion");
+        localidad = extras.getString("localidad");
+        codpos = extras.getInt("codpos");
+        fecnac = extras.getString("fecnac");
 
-        flagPaso = 0;
-        contexto = this;
         filtrarPuntos = "todos";
         filtrarPor = 1;
         ordenarPor = 1;
         ordenar = 1;
 
 
-
-        tarjeta = extras.getString("tarjeta");
-        puntos = extras.getInt("puntos");
-        nombre = extras.getString("nombre");
-
-        //tvTarjeta = (TextView) findViewById(R.id.tvTarjeta);
-        tvCantidadPuntos = (TextView) findViewById(R.id.tvCantidadPuntos);
-        tvNombre = (TextView) findViewById(R.id.tvNombre);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        btnPrev = (Button) findViewById(R.id.btnPrev);
-        btnNext = (Button) findViewById(R.id.btnNext);
-        tvPagina = (TextView) findViewById(R.id.tvPagina);
-        pbLoading = (ProgressBar) findViewById(R.id.pbLoading);
-
-        //tvTarjeta.setText("El codigo de tarjeta es: " + tarjeta);
-        tvNombre.setText("Bienvenido " + nombre);
-        tvCantidadPuntos.setText("" + puntos);
-
-        showProgress(true);
-        getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
-        getCanjesTask.execute((Void) null);
-
-        btnPrev.setEnabled(false); //estado inicial
-        btnPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fromCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
-                toCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
-                paginaActual --;
-                showProgress(true);
-
-                //getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
-                //getCanjesTask.execute((Void) null);
-
-                ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
-                actualizarVista(productosVectorAux);
-
-                if (paginaActual == 1) {
-                    btnPrev.setEnabled(false); //estado inicial
-                }
-                if (cantidadPaginas > 1) {
-                    btnNext.setEnabled(true);
-                }
-            }
-        });
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fromCantidadProducto += CANTIDAD_PRODUCTOS_LISTA;
-                toCantidadProducto += CANTIDAD_PRODUCTOS_LISTA;
-                paginaActual ++;
-                showProgress(true);
-
-                if (paginaActual > ultimaPaginaCargada) {
-                    getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto);
-                    getCanjesTask.execute((Void) null);
-                } else {
-                     ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
-                     actualizarVista(productosVectorAux);
-                }
-
-                btnPrev.setEnabled(true);
-                if (paginaActual == cantidadPaginas) {
-                    btnNext.setEnabled(false);
-                }
-            }
-        });
-
-
-        /*
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        adaptador = new AdaptadorProductos(this, productos);
-        recyclerView.setAdapter(adaptador);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        */
-
-
-
-
-        //DividerItemDecoration decoration = new DividerItemDecoration(getApplicationContext(), VERTICAL);
-        //recyclerView.addItemDecoration(decoration);
-        // iniciar Actividad para detalle del producto
-        //adaptador.setOnItemClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-        //        Intent i = new Intent(MainActivity.this, VistaLugarActivity.class);
-        //        i.putExtra("id", (long) recyclerView.getChildAdapterPosition(v));
-        //        startActivity(i);
-        //    }
-        //});
-
+        fragmentActual = "canje";
+        llamarNewInstanceCanje(fragmentActual);
+        navigationView.getMenu().getItem(0).setChecked(true); //marca el primer item de la lista del menu lateral
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            pbLoading.setVisibility(show ? View.GONE : View.VISIBLE);
-            pbLoading.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    pbLoading.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            pbLoading.setVisibility(show ? View.VISIBLE : View.GONE);
-            pbLoading.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    pbLoading.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            pbLoading.setVisibility(show ? View.VISIBLE : View.GONE);
-            pbLoading.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
-    }
+            if (fragmentActual == "mis_datos" && enableView) {
+                toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
+                llamarNewInstanceMisDatos(false);
+                //enableView = false;
+                //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+                //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
 
-    private void inflarVista(JSONArray jsonArray) {
-        Producto producto = null;
-        // hasta aca el ctrl   z
-
-        if (jsonArray == null) {
-            return;
-        }
-
-        for (int i=0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String codigo = jsonObject.getString("codigo");
-                String nombre = jsonObject.getString("nombre");
-                int puntos = jsonObject.getInt("puntos");
-
-                //byte[] decodedString = Base64.decode(jsonObject.getString("foto_2").getBytes(), Base64.DEFAULT);
-                //Bitmap foto1 = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-                Bitmap foto1 = null;
-
-                String foto_1 = jsonObject.getString("foto");
-                if (foto_1.length() > 0) {
-                    byte[] decodedString = Base64.decode(foto_1, Base64.DEFAULT);
-                    foto1 = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                }
-
-
-                producto = new Producto(codigo, nombre, puntos,"", foto1);
-                productosVector.anyade(producto);
-            } catch (Exception e) {
-                Log.e("inflarVista", e.getMessage());
-            }
-        }
-
-        ultimaPaginaCargada ++;
-
-        ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
-        //productos = productosVector;
-        actualizarVista(productosVectorAux);
-    }
-
-    public void actualizarVista(ProductosVector productosVector){
-        productos = productosVector;
-        adaptador = new AdaptadorProductos(MainActivity.this, productos, 60);
-        recyclerView.setAdapter(adaptador);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        adaptador.setOnItemClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int id = (int) recyclerView.getChildAdapterPosition(v);
-                Producto prod = productos.elemento(id);
-                //cambiar esta llamada, por:
-                //  new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos());
-                new PopUpProductoDialogo(contexto, prod.getFoto1(),prod.getNombre(),prod.getPuntos());
-
-            }
-        });
-        if (flagPaso == 0) {
-            flagPaso = 1;
-            cantidadPaginas = cantidadProductos / CANTIDAD_PRODUCTOS_LISTA;
-            if (cantidadProductos%CANTIDAD_PRODUCTOS_LISTA > 0) {
-                cantidadPaginas ++;
-            }
-            if (cantidadPaginas > 1) {
-                btnNext.setEnabled(true);
             } else {
-                btnNext.setEnabled(false);
+                drawer.openDrawer(GravityCompat.START);
             }
+            //super.onBackPressed(); //close the app
         }
-        tvPagina.setText("Pagina " + paginaActual + "/" + cantidadPaginas);
-        showProgress(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_activity2, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.main2_action_settings) {
+            new ConfiguracionesDialogo(MainActivity.this, MainActivity.this, filtrarPor, ordenarPor,ordenar);
+            return true;
+        }
+        if (id == R.id.main2_action_edit_data) {
+
+            toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
+
+
+            //argumentosMisDatos.putBoolean("vistaActiva", true);
+            //misDatosFragment.getArguments().clear();
+            //misDatosFragment = new MisDatosFragment();
+            //misDatosFragment.setArguments(argumentosMisDatos);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+            llamarNewInstanceMisDatos(true);
+            //enableView = true;
+            //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_canje) {
+            if (fragmentActual != "canje") {
+                fragmentActual = "canje";
+                llamarNewInstanceCanje(fragmentActual);
+                //fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
+                toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(true);
+                toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
+
+                this.filtrarPuntos = "todos";
+                this.filtrarPor = 1;
+                this.ordenarPor = 1;
+                this.ordenar = 1;
+            }
+            // Handle the camera action
+        } else if (id == R.id.nav_promociones) {
+            fragmentActual = "promociones";
+            llamarNewInstanceCanje(fragmentActual);
+
+            /*
+            argumentosCanje.putString("fragmentVisible", fragmentActual);
+            canjeFragment = new CanjeFragment();
+            canjeFragment.setArguments(argumentosCanje);
+
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, new PromocionesFragment()).commit();
+            fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
+            */
+            toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
+            toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
+
+        } else if (id == R.id.nav_mis_datos) {
+            fragmentActual = "mis_datos";
+
+            //argumentosMisDatos.putBoolean("vistaActiva", false);
+            //misDatosFragment = new MisDatosFragment();
+            //misDatosFragment.setArguments(argumentosMisDatos);
+            llamarNewInstanceMisDatos(false);
+            //enableView = false;
+            //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+
+            toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
+            toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
+
+        } else if (id == R.id.nav_novedades) {
+            fragmentActual = "novedades";
+            llamarNewInstanceNovedades(tarjeta);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, new NovedadesFragment()).commit();
+            toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
+            toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
+
+        } else if (id == R.id.nav_cerrar_sesion) {
+            setResult(RESULT_FIRST_USER);
+            finish();
+
+        } else if (id == R.id.nav_salir) {
+            setResult(RESULT_CANCELED);
+            finish();
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
     public void ResultadoConfiguracionesDialogo(String filtrarPuntos, String orden, String orderBy) {
-        fromCantidadProducto = 1;
-        toCantidadProducto = CANTIDAD_PRODUCTOS_LISTA;
-        orderByProducto = orden + "," + orderBy;
-        ultimaPaginaCargada = 0;
-        productosVector.ResetList();
-
-        if (this.filtrarPuntos != filtrarPuntos) {
-            this.flagPaso = 0;
-            paginaActual = 1;
-        }
         this.filtrarPuntos = filtrarPuntos;
 
         if (filtrarPuntos == "todos") {
@@ -335,59 +261,102 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
         } else {
             this.ordenar = 2;
         }
-
-        showProgress(true);
-        getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto);
-        getCanjesTask.execute((Void) null);
-        btnPrev.setEnabled(false); //estado inicial
+        canjeFragment.actualizarVistaOrdenada(filtrarPuntos, orden, orderBy);
     }
 
-    public class GetCanjesTask extends AsyncTask<Void, Void, Boolean> {
-        private int status = 0;
-        JSONObject jsonResp = null;
-        private int fromCantidad;
-        private int toCantidad;
-        private String orderBy;
-        private String filtrarPuntos;
+    public void ResultadoMisDatos(String accion, String nombre, String correo, String telefono, String direccion, String localidad, int codpos, String fecnac) {
+        toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
 
-        public GetCanjesTask(String filtrarPuntos, int fromCantidad, int toCantidad, String orderBy) {
-            this.filtrarPuntos = filtrarPuntos;
-            this.fromCantidad = fromCantidad;
-            this.toCantidad = toCantidad;
-            this.orderBy = orderBy;
+        if (accion == "ACEPTAR") {
+            Toast.makeText(MainActivity.this,"APRETO ACEPTAR", Toast.LENGTH_SHORT).show();
+
+            updateDataPersonTask = new UpdateDataPersonTask(nombre,correo,telefono, direccion, localidad, codpos, fecnac);
+            updateDataPersonTask.execute((Void) null);
+
+        }
+        if (accion == "CANCELAR"){
+            Toast.makeText(MainActivity.this,"APRETO CANCELAR", Toast.LENGTH_SHORT).show();
+            llamarNewInstanceMisDatos(false);
+            //enableView = false;
+            //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+            //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+        }
+    }
+
+    private void llamarNewInstanceNovedades(String tarjeta){
+        novedadesFragment = NovedadesFragment.newInstance(tarjeta);
+        fragmentManager.beginTransaction().replace(R.id.contenedor, novedadesFragment).commit();
+    }
+
+    private void llamarNewInstanceMisDatos(Boolean enable){
+
+        enableView = enable;
+        misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos, fecnac);
+        fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
+
+    }
+
+    private void llamarNewInstanceCanje(String fragmentActual){
+
+        argumentosCanje.putString("fragmentVisible", fragmentActual);
+        argumentosCanje.putString("tarjeta", tarjeta);
+        argumentosCanje.putInt("puntos", puntos);
+        argumentosCanje.putString("nombre", nombre);
+
+        canjeFragment = new CanjeFragment();
+        canjeFragment.setArguments(argumentosCanje);
+        fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
+
+    }
+
+    public class UpdateDataPersonTask extends AsyncTask<Void, Void, Boolean> {
+
+        private JSONObject respuestaResetPass = new JSONObject();
+        private int respuestaStatus = 0;
+        private String nombreUpdate;
+        private String correoUpdate;
+        private String telefonoUpdate;
+        private String direccionUpdate;
+        private String localidadUpdate;
+        private int codposUpdate;
+        private String fecnacUpdate;
+
+        public UpdateDataPersonTask (String nombreUpdate, String correoUpdate, String telefonoUpdate, String direccionUpdate, String localidadUpdate, int codposUpdate, String fecnacUpdate) {
+            this.nombreUpdate = nombreUpdate;
+            this.correoUpdate = correoUpdate;
+            this.telefonoUpdate = telefonoUpdate;
+            this.direccionUpdate = direccionUpdate;
+            this.localidadUpdate = localidadUpdate;
+            this.codposUpdate = codposUpdate;
+            this.fecnacUpdate = fecnacUpdate;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             JSONObject obj = new JSONObject();
             HttpURLConnection conn = null;
-
             BufferedReader reader = null;
             String JsonResponse = null;
             try {
-
-                //URL url = new URL(constantes.lanzoniProductos + "getCanjes");
-                URL url;
-                if (filtrarPuntos == "todos") {
-                    url = new URL(constantes.pathConnectionProductos + "getCanjes");
-                } else {
-                    url = new URL(constantes.pathConnectionProductos + "getCanjesXPuntos");
-                }
+                URL url = new URL( constantes.pathConnection + "actualizaDatos");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Accept","application/json");
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
                 conn.setConnectTimeout(10000); //10 segundos
                 conn.connect();
-                if (filtrarPuntos == "disponibles"){
-                    obj.put("tarjeta", tarjeta);
-                }
-                obj.put("from", fromCantidad);
-                obj.put("to", toCantidad);
-                //obj.put("orderBy", "nombre,asc");
-                obj.put("orderBy", orderBy);
+
+                obj.put("tarjeta", tarjeta);
+                obj.put("nombre", nombreUpdate);
+                obj.put("correo", correoUpdate);
+                obj.put("telefono", telefonoUpdate);
+                obj.put("direccion", direccionUpdate);
+                obj.put("localidad", localidadUpdate);
+                obj.put("codpos", codposUpdate);
+                obj.put("fecnac", fecnacUpdate);
+
 
                 Log.i("JSON", obj.toString());
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
@@ -396,11 +365,11 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
                 os.flush();
                 os.close();
 
-                status = conn.getResponseCode();
+                respuestaStatus = conn.getResponseCode();
                 Log.i("STATUS", String.valueOf(conn.getResponseCode()));
-                Log.i("MSG", conn.getResponseMessage());
+                Log.i("MSG" , conn.getResponseMessage());
 
-                if (status == 200) { //respuesta OK
+                if (respuestaStatus == 200){ //respuesta OK
                     InputStream inputStream = conn.getInputStream();
                     StringBuffer buffer = new StringBuffer();
                     reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -408,30 +377,26 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
                     String inputLine;
                     while ((inputLine = reader.readLine()) != null) {
                         buffer.append(inputLine + "\n");
-
+                        respuestaResetPass = new JSONObject(inputLine);
                     }
                     JsonResponse = buffer.toString();
-                    //Log.i("RESPONSE", JsonResponse);
-                    //Log.i("RESPONSE", jsonResp.toString());
-
-                    //jsonResp = new Gson().fromJson(JsonResponse);
-                    jsonResp = new JSONObject(JsonResponse);
+                    Log.i("RESPONSE",JsonResponse);
 
                 }
 
             } catch (ConnectException ce) {
                 if (ce.getMessage().contains("ETIMEDOUT")) {
-                    status = 99;
+                    respuestaStatus = 99;
                 }
-            } catch (SocketTimeoutException e) {
-                status = 99;
-            } catch (Exception e) {
+            }catch (SocketTimeoutException e) {
+                respuestaStatus = 99;
+            } catch (Exception e){
                 e.printStackTrace();
-            } finally {
+            }  finally {
                 conn.disconnect();
             }
 
-            if (status == 200) {
+            if (respuestaStatus == 200) {
                 return true;
             } else {
                 return false;
@@ -440,96 +405,59 @@ public class MainActivity extends AppCompatActivity implements ConfiguracionesDi
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            getCanjesTask = null;
-            showProgress(false);
+            updateDataPersonTask = null;
 
+            //variables de respuesta
             int salida = 9;
             String msj = "";
-            JSONArray jsonArray = null;
 
             try {
-                salida = jsonResp.getInt("salida");
-                msj = jsonResp.getString("msj");
-                cantidadProductos = jsonResp.getInt("cantidad");
-                jsonArray = jsonResp.getJSONArray("productos");
-                System.out.println(jsonArray.toString());
-            } catch (Exception e) {
-                Log.i("catch onPost",e.getMessage());
+                salida = respuestaResetPass.getInt("salida");
+                msj = respuestaResetPass.getString("msj");
+            } catch (Exception e){
                 salida = 9;
+                return;
             }
 
             switch (salida) {
                 case 1:
                     if (success) {
+                        nombre = nombreUpdate;
+                        correo = correoUpdate;
+                        telefono = telefonoUpdate;
+                        direccion = direccionUpdate;
+                        localidad = localidadUpdate;
+                        codpos = codposUpdate;
+                        fecnac = fecnacUpdate;
 
-                        Toast.makeText(MainActivity.this, "success",Toast.LENGTH_SHORT);
-                        Log.i("onPost","success");
-
-                        inflarVista(jsonArray);
-
-                        //updateUserTask = new UsuarioActivity.UpdateUserTask(usuario,edtPassword.getText().toString(),tarjeta);
-                        //updateUserTask.execute((Void) null);
-                    } else {
-                        Toast.makeText(MainActivity.this, "no success",Toast.LENGTH_SHORT);
-                        Log.i("onPost","no success");
-                        //edtUsuario.setError(getString(R.string.error_json));
-                        //edtUsuario.requestFocus();
+                        llamarNewInstanceMisDatos(false);
+                        //enableView = false;
+                        //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
+                        //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
                     }
                     break;
+                case 2:
+                case 3:
+                case 4:
+                    Toast.makeText(MainActivity.this, msj, Toast.LENGTH_LONG).show();
+                    break;
                 case 9:
-                    if (status == 99) {
-                        Toast.makeText(MainActivity.this, "status 99",Toast.LENGTH_SHORT);
-                        Log.i("onPost","status 99");
-                        //edtUsuario.setError(getString(R.string.servidor_timeout));
-                        //edtUsuario.requestFocus();
+                    if (respuestaStatus == 99) {
+                        Toast.makeText(MainActivity.this, getString(R.string.servidor_timeout), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(MainActivity.this, "status 9",Toast.LENGTH_SHORT);
-                        Log.i("onPost","status 9");
-                        //edtUsuario.setError(getString(R.string.usuario_existente));
-                        //edtUsuario.requestFocus();
+                        Toast.makeText(MainActivity.this, getString(R.string.toastErrorReestablecerUsuario), Toast.LENGTH_LONG).show();
                     }
                     break;
                 default:
-                    Toast.makeText(MainActivity.this, "default",Toast.LENGTH_SHORT);
-                    Log.i("onPost","default");
-                    //edtPassword.setError(getString(R.string.error_incorrect_password));
-                    //edtPassword.requestFocus();
+                    Toast.makeText(MainActivity.this, getString(R.string.toastErrorReestablecerUsuario), Toast.LENGTH_LONG).show();
                     break;
             }
         }
 
         @Override
         protected void onCancelled() {
-            showProgress(false);
-            getCanjesTask = null;
+            updateDataPersonTask = null;
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-
-                //Toast.makeText(this, "menusssss", Toast.LENGTH_SHORT).show();
-                new ConfiguracionesDialogo(contexto, MainActivity.this,filtrarPor, ordenarPor,ordenar);
-                return true;
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-
-
-
 
 }

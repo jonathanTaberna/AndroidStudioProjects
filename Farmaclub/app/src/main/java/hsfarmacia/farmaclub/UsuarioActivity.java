@@ -455,6 +455,8 @@ ANDA
             } catch (ConnectException ce) {
                 if (ce.getMessage().contains("ETIMEDOUT")) {
                     status = 99;
+                } else {
+                    status = 98;
                 }
             } catch (SocketTimeoutException e) {
                 status = 99;
@@ -480,7 +482,7 @@ ANDA
             try {
                 salida = jsonResp.getInt("salida");
             } catch (Exception e) {
-                salida = 9;
+                salida = 8;
             }
 
             switch (salida) {
@@ -489,12 +491,17 @@ ANDA
                     edtUsuario.requestFocus();
                     break;
                 case 1:
+                case 8:
+                    if (salida == 8) {
+                        if (status == 98) {
+                            edtUsuario.setError(getString(R.string.servidor_timeout));
+                            edtUsuario.requestFocus();
+                            break;
+                        }
+                    }
                     if (success) {
                         updateUserTask = new UpdateUserTask(usuario,edtPassword.getText().toString(),tarjeta);
                         updateUserTask.execute((Void) null);
-                    } else {
-                        edtUsuario.setError(getString(R.string.error_json));
-                        edtUsuario.requestFocus();
                     }
                     break;
                 case 9:

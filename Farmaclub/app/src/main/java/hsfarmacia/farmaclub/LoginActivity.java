@@ -3,15 +3,10 @@ package hsfarmacia.farmaclub;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
-import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -24,35 +19,27 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,8 +47,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+
 import hsfarmacia.farmaclub.constantes.constantes;
 
 
@@ -621,6 +607,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (ConnectException ce) {
                 if (ce.getMessage().contains("ETIMEDOUT")) {
                     status = 99;
+                } else {
+                    status = 98;
                 }
             }catch (SocketTimeoutException e) {
                 status = 99;
@@ -660,7 +648,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 nombre = jsonResp.getString("nombre").trim();
                 correo = jsonResp.getString("correo").trim();
                 telefono = jsonResp.getString("telefono").trim();
-                direccion = jsonResp.getString("direccion").trim();
+                direccion = jsonResp.getString("domicilio").trim();
                 localidad = jsonResp.getString("localidad").trim();
                 codpos = jsonResp.getInt("codpos");
                 fecnac = jsonResp.getString("fecnac");
@@ -675,6 +663,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 case 8:
                     if (salida == 8) {
                         Log.i("Login", "error en casteo JSON");
+                        if (status == 98) {
+                            mPasswordView.setError(getString(R.string.servidor_timeout));
+                            mPasswordView.requestFocus();
+                            break;
+                        }
                     }
                     if (success) {
                         if (estadoArchivo == constantes.CONFIG_NOT_FOUND && flagVoyConUsuario == 0) {
@@ -694,8 +687,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 }
                             }
 
-                            //Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                            Intent i = new Intent(getApplicationContext(), MainActivity2.class);
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             i.putExtra("tarjeta", tarjeta);
                             i.putExtra("puntos", puntos);
                             i.putExtra("nombre", nombre);
@@ -705,13 +697,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             i.putExtra("localidad", localidad);
                             i.putExtra("codpos", codpos);
                             i.putExtra("fecnac", fecnac);
-                            //startActivity(i);
-                            //finish();
                             startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
                         }
                     } else {
-                        mPasswordView.setError(getString(R.string.error_incorrect_password));
-                        mPasswordView.requestFocus();
+                        if (status == 99) {
+                            mPasswordView.setError(getString(R.string.servidor_timeout));
+                            mPasswordView.requestFocus();
+                            break;
+                        } else {
+                            mPasswordView.setError(getString(R.string.error_incorrect_password));
+                            mPasswordView.requestFocus();
+                        }
                     }
                     break;
                 case 9:
@@ -789,6 +785,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (ConnectException ce) {
                 if (ce.getMessage().contains("ETIMEDOUT")) {
                     respuestaStatus = 99;
+                } else {
+                    respuestaStatus = 98;
                 }
             }catch (SocketTimeoutException e) {
                 respuestaStatus = 99;
@@ -818,14 +816,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 salida = respuestaResetPass.getInt("salida");
                 msj = respuestaResetPass.getString("msj");
             } catch (Exception e){
-                salida = 9;
-                mUusarioView.setError(getString(R.string.error_json));
-                mUusarioView.requestFocus();
+                salida = 8;
                 return;
             }
 
             switch (salida) {
                 case 1:
+                case 8:
+                    if (salida == 8) {
+                        if (respuestaStatus == 98) {
+                            Toast.makeText(LoginActivity.this, getString(R.string.servidor_timeout), Toast.LENGTH_SHORT);
+                            break;
+                        }
+                    }
                     if (success) {
                         //Toast.makeText(getBaseContext(), R.string.toastErrorReestablecerUsuario, Toast.LENGTH_LONG).show();
                         Toast.makeText(getBaseContext(), R.string.toastOlvideUsuario, Toast.LENGTH_LONG).show();

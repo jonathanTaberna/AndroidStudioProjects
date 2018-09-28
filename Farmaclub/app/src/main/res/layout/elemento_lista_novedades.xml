@@ -1,44 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rlElemento"
+    android:id="@+id/rlElementoNovedades"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
+    android:layout_height="80dp"
     android:theme="@style/AppTheme">
     <!--
     "?android:attr/listPreferredItemHeight"
     -->
-    <ImageView
-        android:id="@+id/elemento_lista_foto"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentLeft="true"
-        android:background="@android:color/white"
-        android:contentDescription="fotografía" />
 
     <TextView
-        android:id="@+id/elemento_lista_descripcion"
+        android:id="@+id/tvENDescripcion"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="54dp"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/elemento_lista_foto"
-        android:singleLine="true"
-        android:text="descripcion del producto"
+        android:layout_toLeftOf="@+id/tvENIconoVer"
+        android:maxLines="3"
+        android:singleLine="false"
+        android:text="descripcion de la novedad"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/elemento_lista_puntos"
+        android:id="@+id/tvENFecha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/elemento_lista_foto"
-        android:maxLines="2"
+        android:layout_marginBottom="5dp"
+        android:layout_toLeftOf="@+id/tvENIconoVer"
+        android:maxLines="1"
         android:singleLine="false"
-        android:text="Nombres del producto" />
+        android:text="fecha de la novedad" />
+
+    <TextView
+        android:id="@+id/tvENIconoVer"
+        android:layout_width="17dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="30dp"
+        android:text="@string/btnNext"
+        android:textColor="@color/colorAccent" />
 
     <View
-        android:id="@+id/divider"
+        android:id="@+id/vENDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"

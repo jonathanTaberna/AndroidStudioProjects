@@ -4,18 +4,14 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import hsfarmacia.farmaclub.MainActivity2;
+import hsfarmacia.farmaclub.MainActivity;
 import hsfarmacia.farmaclub.R;
 
 public class MisDatosFragment extends Fragment {
@@ -130,7 +126,7 @@ public class MisDatosFragment extends Fragment {
                     localidad = localidadEdt;
                     codpos = codposEdt;
                     fecnac = fecnacEdt;
-                    ((MainActivity2) getActivity()).ResultadoMisDatos("ACEPTAR", nombre, correo, telefono, direccion, localidad, codpos, fecnac);
+                    ((MainActivity) getActivity()).ResultadoMisDatos("ACEPTAR", nombre, correo, telefono, direccion, localidad, codpos, fecnac);
                 }
             }
         });
@@ -138,7 +134,7 @@ public class MisDatosFragment extends Fragment {
         btnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity2)getActivity()).ResultadoMisDatos("CANCELAR", nombre, correo, telefono, direccion, localidad, codpos, fecnac);
+                ((MainActivity)getActivity()).ResultadoMisDatos("CANCELAR", nombre, correo, telefono, direccion, localidad, codpos, fecnac);
             }
         });
 
@@ -176,6 +172,13 @@ public class MisDatosFragment extends Fragment {
     }
 
     private void showDatePickerDialog() {
+
+        String [] dma = fecnac.split("/");
+
+        int anio = Integer.parseInt(dma[2]);
+        int mes = Integer.parseInt(dma[1]) - 1; //los meses comienzan desde 0
+        int dia = Integer.parseInt(dma[0]);
+
         DatePickerFragment newFragment = DatePickerFragment.newInstance(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -183,7 +186,7 @@ public class MisDatosFragment extends Fragment {
                 final String selectedDate = String.valueOf(day) + "/" + String.valueOf((month+1)) + "/" + String.valueOf(year);
                 edtMisDatosFechaNacimiento.setText(selectedDate);
             }
-        });
+        }, anio, mes, dia);
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 

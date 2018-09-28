@@ -54,7 +54,7 @@ public class PopUpProductoDialogo {
         dialogo.show();
     }
 
-    public PopUpProductoDialogo(Context contexto, String codigoProd, String descripcion, int puntos) {
+    public PopUpProductoDialogo(Context contexto, String codigoProd, String descripcion, int puntos, String comentario) {
         final Dialog dialogo = new Dialog(contexto);
         dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogo.setCancelable(true);
@@ -67,7 +67,11 @@ public class PopUpProductoDialogo {
         tvPopUpProductoDialogoPuntos = (TextView) dialogo.findViewById(R.id.tvPopUpProductoDialogoPuntos);
 
         tvPopUpProductoDialogoDescripcion.setText(descripcion);
-        tvPopUpProductoDialogoPuntos.setText("Puntos: "+puntos);
+        if (!comentario.isEmpty()) {
+            tvPopUpProductoDialogoPuntos.setText(comentario);
+        } else {
+            tvPopUpProductoDialogoPuntos.setText("Puntos: " + puntos);
+        }
 
         getImageTask = new GetImageTask(codigoProd);
         getImageTask.execute((Void) null);

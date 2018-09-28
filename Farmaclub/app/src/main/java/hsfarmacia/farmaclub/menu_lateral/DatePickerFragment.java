@@ -11,10 +11,18 @@ import java.util.Calendar;
 public class DatePickerFragment extends DialogFragment {
 
     private DatePickerDialog.OnDateSetListener listener;
+    private static int anio;
+    private static int mes;
+    private static int dia;
 
-    public static DatePickerFragment newInstance(DatePickerDialog.OnDateSetListener listener) {
+    public static DatePickerFragment newInstance(DatePickerDialog.OnDateSetListener listener, int anioP, int mesP, int diaP) {
         DatePickerFragment fragment = new DatePickerFragment();
         fragment.setListener(listener);
+
+        anio = anioP;
+        mes = mesP;
+        dia = diaP;
+
         return fragment;
     }
 
@@ -26,6 +34,8 @@ public class DatePickerFragment extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
+
+        /*
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -33,6 +43,8 @@ public class DatePickerFragment extends DialogFragment {
 
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), listener, year, month, day);
+        */
+        return new DatePickerDialog(getActivity(), listener, anio, mes, dia);
     }
 
 }

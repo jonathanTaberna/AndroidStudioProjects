@@ -20,7 +20,7 @@ public class ProductosVector implements Productos {
     }
 
     public List<Producto> getArray(int from, int to){
-        return vectorLugares.subList(from - 1,to);
+        return vectorLugares.subList(from - 1,to - 1);
     }
 
     public void ResetList() {

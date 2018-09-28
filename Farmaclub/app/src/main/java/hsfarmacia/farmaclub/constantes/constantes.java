@@ -22,8 +22,8 @@ public class constantes {
     public static String hsServerNombre = "http://highsoft.no-ip.org:8080/farmaclubserver/rest/user/";
     public static String hsServerNombreProductos = "http://highsoft.no-ip.org:8080/farmaclubserver/rest/product/";
 
-    public static String pathConnection = hsServerNombre;
-    public static String pathConnectionProductos = hsServerNombreProductos;
+    public static String pathConnection = flavio;
+    public static String pathConnectionProductos = flavioProductos;
 
     public static String pdfName = "FarmaClub Terminos y Condiciones.pdf";
 

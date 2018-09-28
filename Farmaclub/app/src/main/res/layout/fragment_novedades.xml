@@ -1,15 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".menu_lateral.CanjeFragment">
+    android:orientation="vertical"
+    tools:context="hsfarmacia.farmaclub.MainActivity">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="318dp"
-        android:layout_height="143dp"
-        android:text="NOVEDADES"
-        android:textSize="50sp" />
+        android:id="@+id/tvBuzonNovedades"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/tvBuzonNovedades"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
 
-</FrameLayout>
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/button_background" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvNovedades"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>
+
+
+
+
+    <!--
+    <?xml version="1.0" encoding="utf-8"?>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".menu_lateral.CanjeFragment">
+
+        <TextView
+            android:layout_width="318dp"
+            android:layout_height="143dp"
+            android:text="NOVEDADES"
+            android:textSize="50sp" />
+
+    </FrameLayout>
+    -->

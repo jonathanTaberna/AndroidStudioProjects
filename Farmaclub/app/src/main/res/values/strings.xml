@@ -24,6 +24,7 @@
     <string name="tvTengoUsuario">Ya tengo <u>Usuario y Contraseña</u></string>
     <string name="tvOlvideUsuario"><u>Olvide mi Usuario y/o Contraseña</u></string>
     <string name="tvPuntosDisponibles">Puntos Acumulados:</string>
+    <string name="tvBuzonNovedades">Buzon de Novedades</string>
 
     <!-- botones-->
     <string name="btnIngresar">Ingresar</string>
@@ -52,7 +53,6 @@
     <string name="error_incorrect_password">La contraseña es incorrecta.</string>
     <string name="error_field_required">Este campo es Obligatorio.</string>
     <string name="usuario_deconocido">Usuario y/o contraseña invalidos.</string>
-    <string name="error_json">Error en Cast JSON.</string>
     <string name="servidor_timeout">No es posible conectarse al Servidor.</string>
     <string name="passwords_diferentes">Las contraseñas no coinciden.</string>
     <string name="usuario_existente">El usuario ya existe.</string>

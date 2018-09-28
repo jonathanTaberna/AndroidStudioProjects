@@ -145,6 +145,7 @@ public class CanjeFragment extends Fragment {
         getCanjesTask.execute((Void) null);
 
         btnPrev.setEnabled(false); //estado inicial
+        btnNext.setEnabled(false); //estado inicial
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,13 +228,14 @@ public class CanjeFragment extends Fragment {
 
     private void inflarVista(JSONArray jsonArray) {
         Producto producto = null;
+        int tamanyoArray = jsonArray.length();
         // hasta aca el ctrl   z
 
         if (jsonArray == null) {
             return;
         }
 
-        for (int i=0; i < jsonArray.length(); i++) {
+        for (int i=0; i < tamanyoArray; i++) {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String codigo = jsonObject.getString("codigo");
@@ -262,9 +264,21 @@ public class CanjeFragment extends Fragment {
 
         ultimaPaginaCargada ++;
 
-        ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
-        //productos = productosVector;
-        actualizarVista(productosVectorAux);
+
+        if (tamanyoArray == 0) { //no hay productos para mostrar
+            producto = new Producto();
+            productosVector.anyade(producto);
+            Toast.makeText(contexto, "No hay productos a Mostrar", Toast.LENGTH_SHORT).show();
+            ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(1, 1));
+            actualizarVista(productosVectorAux);
+        } else {
+            //if (tamanyoArray + fromCantidadProducto < toCantidadProducto) {
+            //    toCantidadProducto = tamanyoArray;
+            //}
+            ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
+            //productos = productosVector;
+            actualizarVista(productosVectorAux);
+        }
     }
 
     public void actualizarVista(ProductosVector productosVector){
@@ -284,7 +298,13 @@ public class CanjeFragment extends Fragment {
                 int id = (int) recyclerView.getChildAdapterPosition(v);
                 Producto prod = productos.elemento(id);
                 //cambiar esta llamada, por:
-                  new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos());
+
+                if (fragmentVisible == "canje"){
+                    new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos(), "");
+                }
+                if (fragmentVisible == "promociones"){
+                    new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos(), prod.getComentario());
+                }
                 //new PopUpProductoDialogo(contexto, prod.getFoto1(),prod.getNombre(),prod.getPuntos());
 
             }
@@ -385,6 +405,8 @@ public class CanjeFragment extends Fragment {
             } catch (ConnectException ce) {
                 if (ce.getMessage().contains("ETIMEDOUT")) {
                     status = 99;
+                } else {
+                    status = 98;
                 }
             } catch (SocketTimeoutException e) {
                 status = 99;
@@ -418,11 +440,19 @@ public class CanjeFragment extends Fragment {
                 System.out.println(jsonArray.toString());
             } catch (Exception e) {
                 Log.i("catch onPost",e.getMessage());
-                salida = 9;
+                salida = 8;
             }
 
             switch (salida) {
+                case 2: //la tarjeta no tiene puntos
                 case 1:
+                case 8:
+                    if (salida == 8) {
+                        if (status == 98) {
+                            Toast.makeText(contexto, getString(R.string.servidor_timeout), Toast.LENGTH_SHORT);
+                            break;
+                        }
+                    }
                     if (success) {
 
                         Toast.makeText(contexto, "success",Toast.LENGTH_SHORT);
