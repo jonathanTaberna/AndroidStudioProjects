@@ -16,8 +16,8 @@ public class constantes {
 
     public static String lanzoni = "http://192.168.2.28:8080/restfull-web-services-app-master/rest/user/";
     public static String lanzoniProductos = "http://192.168.2.28:8080/restfull-web-services-app-master/rest/product/";
-    public static String flavio  = "http://192.168.2.50:8080/farmaclubserver/rest/user/"; //existeusu
-    public static String flavioProductos  = "http://192.168.2.50:8080/farmaclubserver/rest/product/"; //existeusu
+    public static String flavio  = "http://192.168.2.50:81/farmaclubserver/rest/user/"; //existeusu
+    public static String flavioProductos  = "http://192.168.2.50:81/farmaclubserver/rest/product/"; //existeusu
     //public static String hsServer = "http://192.168.2.121:8080/farmaclubserver/rest/user/";
     public static String hsServerNombre = "http://highsoft.no-ip.org:8080/farmaclubserver/rest/user/";
     public static String hsServerNombreProductos = "http://highsoft.no-ip.org:8080/farmaclubserver/rest/product/";

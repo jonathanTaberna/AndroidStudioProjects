@@ -54,6 +54,7 @@
     <string name="error_field_required">Este campo es Obligatorio.</string>
     <string name="usuario_deconocido">Usuario y/o contraseña invalidos.</string>
     <string name="servidor_timeout">No es posible conectarse al Servidor.</string>
+    <string name="servidor_error">Se ha producido un error en el Servidor.</string>
     <string name="passwords_diferentes">Las contraseñas no coinciden.</string>
     <string name="usuario_existente">El usuario ya existe.</string>
     <string name="usuario_invalido">Usuario no valido.</string>

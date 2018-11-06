@@ -300,10 +300,10 @@ public class CanjeFragment extends Fragment {
                 //cambiar esta llamada, por:
 
                 if (fragmentVisible == "canje"){
-                    new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos(), "");
+                    new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos(), "","C");
                 }
                 if (fragmentVisible == "promociones"){
-                    new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos(), prod.getComentario());
+                    new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos(), prod.getComentario(),"P");
                 }
                 //new PopUpProductoDialogo(contexto, prod.getFoto1(),prod.getNombre(),prod.getPuntos());
 
@@ -352,7 +352,7 @@ public class CanjeFragment extends Fragment {
                 //URL url = new URL(constantes.lanzoniProductos + "getCanjes");
                 URL url;
                 if (filtrarPuntos == "todos") {
-                    url = new URL(constantes.pathConnectionProductos + "getCanjes");
+                    url = new URL(constantes.pathConnectionProductos + "getProducts");
                 } else {
                     url = new URL(constantes.pathConnectionProductos + "getCanjesXPuntos");
                 }
@@ -371,6 +371,13 @@ public class CanjeFragment extends Fragment {
                 obj.put("to", toCantidad);
                 //obj.put("orderBy", "nombre,asc");
                 obj.put("orderBy", orderBy);
+
+                if (fragmentVisible == "canje"){
+                    obj.put("para", "c");
+                }
+                if (fragmentVisible == "promociones"){
+                    obj.put("para", "p");
+                }
 
                 Log.i("JSON", obj.toString());
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
@@ -448,9 +455,17 @@ public class CanjeFragment extends Fragment {
                 case 1:
                 case 8:
                     if (salida == 8) {
-                        if (status == 98) {
-                            Toast.makeText(contexto, getString(R.string.servidor_timeout), Toast.LENGTH_SHORT);
-                            break;
+                        if (status == 98|| status == 404  || status == 405) {
+                            Toast.makeText(contexto,  getString(R.string.servidor_timeout),Toast.LENGTH_SHORT).show();
+                            jsonArray = new JSONArray();
+                            inflarVista(jsonArray);
+                            //break;
+                        }
+                        if (status == 200) {
+                            Toast.makeText(contexto,  getString(R.string.servidor_error),Toast.LENGTH_SHORT).show();
+                            jsonArray = new JSONArray();
+                            inflarVista(jsonArray);
+                            //break;
                         }
                     }
                     if (success) {
@@ -470,8 +485,10 @@ public class CanjeFragment extends Fragment {
                     }
                     break;
                 case 9:
-                    if (status == 99) {
-                        Toast.makeText(contexto, "status 99",Toast.LENGTH_SHORT);
+                    if (status == 99 || status == 404  || status == 405) {
+                        Toast.makeText(contexto,  getString(R.string.servidor_timeout),Toast.LENGTH_SHORT).show();
+                        jsonArray = new JSONArray();
+                        inflarVista(jsonArray);
                         Log.i("onPost","status 99");
                         //edtUsuario.setError(getString(R.string.servidor_timeout));
                         //edtUsuario.requestFocus();

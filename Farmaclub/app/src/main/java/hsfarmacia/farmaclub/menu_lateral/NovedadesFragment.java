@@ -340,6 +340,7 @@ public class NovedadesFragment extends Fragment {
                         //edtUsuario.requestFocus();
                     }
                     break;
+
                 case 9:
                     if (status == 99) {
                         Toast.makeText(contexto, "status 99",Toast.LENGTH_SHORT);

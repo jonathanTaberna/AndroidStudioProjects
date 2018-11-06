@@ -1,5 +1,6 @@
 package hsfarmacia.farmaclub.provisorios;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,40 +61,16 @@ public class NovedadesVector implements Novedades {
 
 
     public static LinkedList<Novedad> ejemploNovedades() {
+
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
         LinkedList<Novedad> novedades = new LinkedList<Novedad>();
-        novedades.add(new Novedad("Sorpresa 20/09", "30% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "20/09/2018"));
-        novedades.add(new Novedad("Sorpresa 21/09", "40% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "21/09/2018"));
-        novedades.add(new Novedad("Sorpresa 22/09", "50% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "22/09/2018"));
-        novedades.add(new Novedad("Sorpresa 23/09", "60% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "23/09/2018"));
-        novedades.add(new Novedad("Sorpresa 24/09", "70% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "24/09/2018"));
-        novedades.add(new Novedad("Sorpresa 25/09", "80% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "25/09/2018"));
-        novedades.add(new Novedad("Sorpresa 26/09", "90% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "26/09/2018"));
-        novedades.add(new Novedad("Sorpresa 27/09", "100% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "27/09/2018"));
-        novedades.add(new Novedad("Sorpresa 28/09", "110% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "28/09/2018"));
-        novedades.add(new Novedad("Sorpresa 29/09", "120% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "29/09/2018"));
-        novedades.add(new Novedad("Sorpresa 30/09", "130% de descuento en merka loko, aguante el pity y batman",
-                "Este es el detalle de la novedad",
-                "30/09/2018"));
+        novedades.add(new Novedad("Sorpresa " + day + "/" + month, "15% de descuento en Perfumeria",
+                "Este es el detalle de la novedad sobre el Descuento",
+                day + "/" + month + "/" + year));
         return novedades;
     }
 

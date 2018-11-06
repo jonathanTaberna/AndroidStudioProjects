@@ -37,8 +37,10 @@ public class PopUpProductoDialogo {
     final ImageView ivPopUpProductoDialogoImagen;
     final TextView tvPopUpProductoDialogoDescripcion;
     final TextView tvPopUpProductoDialogoPuntos;
+    private Context contexto;
 
     public PopUpProductoDialogo(Context contexto, Bitmap imagen, String descripcion, int puntos) {
+        contexto = contexto;
         final Dialog dialogo = new Dialog(contexto);
         dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogo.setCancelable(true);
@@ -54,7 +56,7 @@ public class PopUpProductoDialogo {
         dialogo.show();
     }
 
-    public PopUpProductoDialogo(Context contexto, String codigoProd, String descripcion, int puntos, String comentario) {
+    public PopUpProductoDialogo(Context contexto, String codigoProd, String descripcion, int puntos, String comentario, String para) { //para = C:Cancje, P:Promociones
         final Dialog dialogo = new Dialog(contexto);
         dialogo.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogo.setCancelable(true);
@@ -73,7 +75,7 @@ public class PopUpProductoDialogo {
             tvPopUpProductoDialogoPuntos.setText("Puntos: " + puntos);
         }
 
-        getImageTask = new GetImageTask(codigoProd);
+        getImageTask = new GetImageTask(codigoProd, para);
         getImageTask.execute((Void) null);
 
         //para descargar imagen desde un servidor de imagenes
@@ -88,9 +90,11 @@ public class PopUpProductoDialogo {
         JSONObject jsonResp = null;
         private String codigoProd;
         private Bitmap foto1 = null;
+        private String para = "";
 
-        public GetImageTask (String codigoProd){
+        public GetImageTask (String codigoProd, String para){
             this.codigoProd = codigoProd;
+            this.para = para;
         }
 
 
@@ -113,6 +117,7 @@ public class PopUpProductoDialogo {
                 conn.setConnectTimeout(10000); //10 segundos
                 conn.connect();
                 obj.put("codigo", codigoProd);
+                obj.put("para", para);
 
                 Log.i("JSON", obj.toString());
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
@@ -177,11 +182,20 @@ public class PopUpProductoDialogo {
 
             } catch (Exception e) {
                 Log.i("catch onPost",e.getMessage());
-                salida = 9;
+                salida = 8;
             }
 
             switch (salida) {
                 case 1:
+                case 8:
+                    if (salida == 8) {
+                        if (status == 98|| status == 404  || status == 405) {
+                            Toast.makeText(contexto, contexto.getResources().getString(R.string.servidor_timeout),Toast.LENGTH_SHORT).show();
+                        }
+                        if (status == 200) {
+                            Toast.makeText(contexto, contexto.getResources().getString(R.string.servidor_error),Toast.LENGTH_SHORT).show();
+                        }
+                    }
                     if (success) {
                         ivPopUpProductoDialogoImagen.setImageBitmap(foto1);
                     } else {
