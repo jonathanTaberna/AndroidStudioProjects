@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -25,14 +26,18 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import hsfarmacia.farmaclub.constantes.constantes;
 import hsfarmacia.farmaclub.menu_lateral.CanjeFragment;
 import hsfarmacia.farmaclub.menu_lateral.MisDatosFragment;
 import hsfarmacia.farmaclub.menu_lateral.NovedadesFragment;
+import hsfarmacia.farmaclub.provisorios.Check;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ConfiguracionesDialogo.FinalizoConfiguracionesDialogo{
+        implements NavigationView.OnNavigationItemSelectedListener,
+                    ConfiguracionesDialogo.FinalizoConfiguracionesDialogo,
+                    PreferenciasDialogo.FinalizoPreferenciasDialogo {
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private String fragmentActual = "";
@@ -60,9 +65,11 @@ public class MainActivity extends AppCompatActivity
 
     private MisDatosFragment misDatosFragment;
     private UpdateDataPersonTask updateDataPersonTask = null;
+    private GetPreferenciasTask getPreferenciasTask = null;
 
     private NovedadesFragment novedadesFragment;
 
+    private ArrayList<Check> elementos = new ArrayList<Check>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +115,32 @@ public class MainActivity extends AppCompatActivity
         llamarNewInstanceCanje(fragmentActual);
         navigationView.getMenu().getItem(0).setChecked(true); //marca el primer item de la lista del menu lateral
 
+
+
+
+
+
+
+
+
+
+
+        elementos.add(new Check(1, "CheckBox 1", false));
+        elementos.add(new Check(2, "CheckBox 2", false));
+        elementos.add(new Check(3, "CheckBox 3", false));
+        elementos.add(new Check(4, "CheckBox 4", false));
+        elementos.add(new Check(5, "CheckBox 5", false));
+        elementos.add(new Check(6, "CheckBox 6", false));
+        elementos.add(new Check(7, "CheckBox 7", false));
+        elementos.add(new Check(8, "CheckBox 8", false));
+        elementos.add(new Check(9, "CheckBox 9", false));
+        elementos.add(new Check(10, "CheckBox 10", false));
+        elementos.add(new Check(11, "CheckBox 11", false));
+        elementos.add(new Check(12, "CheckBox 12", false));
+        elementos.add(new Check(13, "CheckBox 13", false));
+        elementos.add(new Check(14, "CheckBox 14", false));
+        elementos.add(new Check(15, "CheckBox 15", false));
+        elementos.add(new Check(16, "CheckBox 16", false));
     }
 
     @Override
@@ -149,6 +182,15 @@ public class MainActivity extends AppCompatActivity
             new ConfiguracionesDialogo(MainActivity.this, MainActivity.this, filtrarPor, ordenarPor,ordenar);
             return true;
         }
+        if (id == R.id.main2_action_preferences) {
+
+
+            getPreferenciasTask = new GetPreferenciasTask();
+            getPreferenciasTask.execute((Void) null);
+
+            //new PreferenciasDialogo(MainActivity.this, MainActivity.this, elementos);
+            return true;
+        }
         if (id == R.id.main2_action_edit_data) {
 
             toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
@@ -183,6 +225,7 @@ public class MainActivity extends AppCompatActivity
                 llamarNewInstanceCanje(fragmentActual);
                 //fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
                 toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(true);
+                toolbar.getMenu().findItem(R.id.main2_action_preferences).setVisible(false);
                 toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
 
                 this.filtrarPuntos = "todos";
@@ -204,6 +247,7 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
             */
             toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
+            toolbar.getMenu().findItem(R.id.main2_action_preferences).setVisible(true);
             toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
 
         } else if (id == R.id.nav_mis_datos) {
@@ -218,6 +262,7 @@ public class MainActivity extends AppCompatActivity
             //fragmentManager.beginTransaction().replace(R.id.contenedor, misDatosFragment).commit();
 
             toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
+            toolbar.getMenu().findItem(R.id.main2_action_preferences).setVisible(false);
             toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
 
         } else if (id == R.id.nav_novedades) {
@@ -225,6 +270,7 @@ public class MainActivity extends AppCompatActivity
             llamarNewInstanceNovedades(tarjeta);
             //fragmentManager.beginTransaction().replace(R.id.contenedor, new NovedadesFragment()).commit();
             toolbar.getMenu().findItem(R.id.main2_action_settings).setVisible(false);
+            toolbar.getMenu().findItem(R.id.main2_action_preferences).setVisible(false);
             toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
 
         } else if (id == R.id.nav_cerrar_sesion) {
@@ -233,6 +279,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_salir) {
             setResult(RESULT_CANCELED);
+            canjeFragment.productosVector.eliminaListaProductos();
             finish();
 
         }
@@ -283,6 +330,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void ResultadoPreferenciasDialogo(ArrayList<Check> elementos) {
+
+    }
+
     private void llamarNewInstanceNovedades(String tarjeta){
         novedadesFragment = NovedadesFragment.newInstance(tarjeta);
         fragmentManager.beginTransaction().replace(R.id.contenedor, novedadesFragment).commit();
@@ -308,6 +360,7 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.contenedor, canjeFragment).commit();
 
     }
+
 
     public class UpdateDataPersonTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -457,6 +510,160 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onCancelled() {
             updateDataPersonTask = null;
+        }
+    }
+
+
+    public class GetPreferenciasTask extends AsyncTask<Void, Void, Boolean> {
+        private int status = 0;
+        private int cantidadPreferencias = 0;
+        JSONObject jsonResp = null;
+
+        public GetPreferenciasTask() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            JSONObject obj = new JSONObject();
+            HttpURLConnection conn = null;
+
+            BufferedReader reader = null;
+            String JsonResponse = null;
+            try {
+
+                URL url = new URL(constantes.pathConnectionProductos + "getCatUsu");
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setConnectTimeout(10000); //10 segundos
+                conn.connect();
+                obj.put("tarjeta", tarjeta);
+
+                Log.i("JSON", obj.toString());
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(obj.toString());
+
+                os.flush();
+                os.close();
+
+                status = conn.getResponseCode();
+                Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                Log.i("MSG", conn.getResponseMessage());
+
+                if (status == 200) { //respuesta OK
+                    InputStream inputStream = conn.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String inputLine;
+                    while ((inputLine = reader.readLine()) != null) {
+                        buffer.append(inputLine + "\n");
+
+                    }
+                    JsonResponse = buffer.toString();
+                    jsonResp = new JSONObject(JsonResponse);
+
+                }
+
+            } catch (ConnectException ce) {
+                if (ce.getMessage().contains("ETIMEDOUT")) {
+                    status = 99;
+                } else {
+                    status = 98;
+                }
+            } catch (SocketTimeoutException e) {
+                status = 99;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                conn.disconnect();
+            }
+
+            if (status == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            getPreferenciasTask = null;
+            //showProgress(false);
+
+            int salida = 9;
+            String msj = "";
+            JSONArray jsonArray = null;
+
+            try {
+                salida = jsonResp.getInt("salida");
+                msj = jsonResp.getString("msj");
+                cantidadPreferencias = jsonResp.getInt("cantidad");
+                jsonArray = jsonResp.getJSONArray("preferencias");
+                System.out.println(jsonArray.toString());
+            } catch (Exception e) {
+                salida = 8;
+            }
+
+            switch (salida) {
+                case 1:
+                case 8:
+                    if (salida == 8) {
+                        if (status == 98) {
+                            Toast.makeText(MainActivity.this, getString(R.string.servidor_timeout), Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                        if (status == 404  || status == 405) {
+                            Toast.makeText(MainActivity.this, getString(R.string.servidor_error), Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                    }
+                    if (success) {
+
+                        Toast.makeText(MainActivity.this, "success",Toast.LENGTH_SHORT);
+                        Log.i("onPost","success");
+
+                        new PreferenciasDialogo(MainActivity.this, MainActivity.this, elementos);
+
+                        //updateUserTask = new UsuarioActivity.UpdateUserTask(usuario,edtPassword.getText().toString(),tarjeta);
+                        //updateUserTask.execute((Void) null);
+                    } else {
+                        Toast.makeText(MainActivity.this, "no success",Toast.LENGTH_SHORT);
+                        Log.i("onPost","no success");
+                        //edtUsuario.setError(getString(R.string.error_json));
+                        //edtUsuario.requestFocus();
+                    }
+                    break;
+
+                case 9:
+                    if (status == 99 || status == 404  || status == 405) {
+                        Toast.makeText(MainActivity.this, "status 99",Toast.LENGTH_SHORT);
+                        Log.i("onPost","status 99");
+                        //edtUsuario.setError(getString(R.string.servidor_timeout));
+                        //edtUsuario.requestFocus();
+                    } else {
+                        Toast.makeText(MainActivity.this, "status 9",Toast.LENGTH_SHORT);
+                        Log.i("onPost","status 9");
+                        //edtUsuario.setError(getString(R.string.usuario_existente));
+                        //edtUsuario.requestFocus();
+                    }
+                    break;
+                default:
+                    Toast.makeText(MainActivity.this, "default",Toast.LENGTH_SHORT);
+                    Log.i("onPost","default");
+                    //edtPassword.setError(getString(R.string.error_incorrect_password));
+                    //edtPassword.requestFocus();
+                    break;
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            //showProgress(false);
+            getPreferenciasTask = null;
         }
     }
 

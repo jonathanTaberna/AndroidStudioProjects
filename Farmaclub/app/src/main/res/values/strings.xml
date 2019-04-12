@@ -31,6 +31,7 @@
     <string name="btnReestablecer">Reestablecer</string>
     <string name="btnAceptar">Aceptar</string>
     <string name="btnCancelar">Cancelar</string>
+    <string name="btnVolver">Volver</string>
     <string name="btnPrev">&lt;</string>
     <string name="btnNext">&gt;</string>
     <string name="rbNombre">Nombre</string>
@@ -65,6 +66,7 @@
     <string name="action_settings">Configurar</string>
     -->
     <string name="action_settings">Ordenar</string>
+    <string name="action_preferences">Preferencias</string>
     <string name="action_edit_data">Editar Datos</string>
 
 

@@ -56,4 +56,6 @@ public class ProductosVector implements Productos {
         vectorLugares.set(id, producto);
     }
 
+    public void eliminaListaProductos() {vectorLugares.clear(); vectorLugares = null;}
+
 }

@@ -92,7 +92,7 @@ public class CanjeFragment extends Fragment {
     private TextView tvPagina;
     private View pbLoading;
 
-    ProductosVector productosVector = new ProductosVector();
+    public ProductosVector productosVector = new ProductosVector();
 
     private String fragmentVisible = "";
 
@@ -272,12 +272,14 @@ public class CanjeFragment extends Fragment {
             ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(1, 1));
             actualizarVista(productosVectorAux);
         } else {
-            //if (tamanyoArray + fromCantidadProducto < toCantidadProducto) {
-            //    toCantidadProducto = tamanyoArray;
+            if (tamanyoArray + fromCantidadProducto < toCantidadProducto) {
+                toCantidadProducto = tamanyoArray + 1;
+            }
+           // if (productosVector.tamanyo() > toCantidadProducto) {
+                ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
+                //productos = productosVector;
+                actualizarVista(productosVectorAux);
             //}
-            ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
-            //productos = productosVector;
-            actualizarVista(productosVectorAux);
         }
     }
 

@@ -7,4 +7,5 @@ public interface Productos {
     void borrar(int id); //Elimina el elemento con el id indicado
     int tamanyo(); //Devuelve el número de elementos
     void actualiza(int id, Producto lugar); //Reemplaza un elemento
+    void eliminaListaProductos();
 }
