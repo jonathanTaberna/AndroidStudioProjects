@@ -121,10 +121,13 @@ public class MainActivity extends AppCompatActivity
 
 
 
+        //elementos.clear();
+        getPreferenciasTask = new GetPreferenciasTask();
+        getPreferenciasTask.execute((Void) null);
 
 
 
-
+/*
         elementos.add(new Check(1, "CheckBox 1", false));
         elementos.add(new Check(2, "CheckBox 2", false));
         elementos.add(new Check(3, "CheckBox 3", false));
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity
         elementos.add(new Check(14, "CheckBox 14", false));
         elementos.add(new Check(15, "CheckBox 15", false));
         elementos.add(new Check(16, "CheckBox 16", false));
+        */
     }
 
     @Override
@@ -184,11 +188,11 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.main2_action_preferences) {
 
+            //elementos.clear();
+            //getPreferenciasTask = new GetPreferenciasTask();
+            //getPreferenciasTask.execute((Void) null);
 
-            getPreferenciasTask = new GetPreferenciasTask();
-            getPreferenciasTask.execute((Void) null);
-
-            //new PreferenciasDialogo(MainActivity.this, MainActivity.this, elementos);
+            new PreferenciasDialogo(MainActivity.this, MainActivity.this, elementos);
             return true;
         }
         if (id == R.id.main2_action_edit_data) {
@@ -531,7 +535,7 @@ public class MainActivity extends AppCompatActivity
             String JsonResponse = null;
             try {
 
-                URL url = new URL(constantes.pathConnectionProductos + "getCatUsu");
+                URL url = new URL(constantes.pathConnection + "getCatUsu");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -626,7 +630,25 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(MainActivity.this, "success",Toast.LENGTH_SHORT);
                         Log.i("onPost","success");
 
-                        new PreferenciasDialogo(MainActivity.this, MainActivity.this, elementos);
+
+                        for (int i=0; i < jsonArray.length(); i++) {
+                            try {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            int codigo = jsonObject.getInt("codigo");
+                            String descripcion = jsonObject.getString("descripcion");
+                            int activa = jsonObject.getInt("activa");
+                            Boolean marcado = (activa == 1) ? true:false; // si activa == 1 then true, else false
+
+                            elementos.add(new Check(codigo, descripcion, marcado));
+
+                            } catch (Exception e) {
+                                Log.e("getPreferencias", e.getMessage());
+                                break;
+                            }
+
+
+                        }
+                        //new PreferenciasDialogo(MainActivity.this, MainActivity.this, elementos);
 
                         //updateUserTask = new UsuarioActivity.UpdateUserTask(usuario,edtPassword.getText().toString(),tarjeta);
                         //updateUserTask.execute((Void) null);
