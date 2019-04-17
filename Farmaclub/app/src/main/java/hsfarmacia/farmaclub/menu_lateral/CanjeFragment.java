@@ -38,12 +38,14 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import hsfarmacia.farmaclub.ConfiguracionesDialogo;
 import hsfarmacia.farmaclub.PopUpProductoDialogo;
 import hsfarmacia.farmaclub.R;
 import hsfarmacia.farmaclub.adaptador.AdaptadorProductos;
 import hsfarmacia.farmaclub.constantes.constantes;
+import hsfarmacia.farmaclub.provisorios.Check;
 import hsfarmacia.farmaclub.provisorios.Producto;
 import hsfarmacia.farmaclub.provisorios.Productos;
 import hsfarmacia.farmaclub.provisorios.ProductosVector;
@@ -72,6 +74,7 @@ public class CanjeFragment extends Fragment {
     private int ordenarPor;
     private int ordenar;
     private int ultimaPaginaCargada = 0;
+    private ArrayList<Check> elementos;
 
 
 
@@ -124,6 +127,7 @@ public class CanjeFragment extends Fragment {
         this.tarjeta = bundle.getString("tarjeta");
         this.puntos = bundle.getInt("puntos");
         this.nombre = bundle.getString("nombre");
+        this.elementos = (ArrayList<Check>) bundle.getSerializable("elementos");
 
         //tarjeta = getActivity().getIntent().getStringExtra("tarjeta");
         //puntos = getActivity().getIntent().getIntExtra("puntos", 0);
@@ -141,7 +145,7 @@ public class CanjeFragment extends Fragment {
         tvCantidadPuntos.setText("" + puntos);
 
         showProgress(true);
-        getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto);
+        getCanjesTask = new GetCanjesTask(filtrarPuntos,fromCantidadProducto,toCantidadProducto,orderByProducto,elementos);
         getCanjesTask.execute((Void) null);
 
         btnPrev.setEnabled(false); //estado inicial
@@ -149,10 +153,16 @@ public class CanjeFragment extends Fragment {
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fromCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
-                toCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
                 paginaActual --;
                 showProgress(true);
+                ultimaPaginaCargada --;
+                if (paginaActual == 1) { //primer pagina
+                    fromCantidadProducto = 1;
+                    toCantidadProducto = CANTIDAD_PRODUCTOS_LISTA;
+                } else {
+                    fromCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
+                    toCantidadProducto -= CANTIDAD_PRODUCTOS_LISTA;
+                }
 
                 ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
                 actualizarVista(productosVectorAux);
@@ -174,7 +184,7 @@ public class CanjeFragment extends Fragment {
                 showProgress(true);
 
                 if (paginaActual > ultimaPaginaCargada) {
-                    getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto);
+                    getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto,elementos);
                     getCanjesTask.execute((Void) null);
                 } else {
                     ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
@@ -271,9 +281,12 @@ public class CanjeFragment extends Fragment {
             Toast.makeText(contexto, "No hay productos a Mostrar", Toast.LENGTH_SHORT).show();
             ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(1, 1));
             actualizarVista(productosVectorAux);
+            btnPrev.setEnabled(false); //estado inicial
+            btnNext.setEnabled(false);
+            tvPagina.setText("Pagina 0/0" );
         } else {
             if (tamanyoArray + fromCantidadProducto < toCantidadProducto) {
-                toCantidadProducto = tamanyoArray + 1;
+                toCantidadProducto = tamanyoArray + fromCantidadProducto - 1;
             }
            // if (productosVector.tamanyo() > toCantidadProducto) {
                 ProductosVector productosVectorAux = new ProductosVector(productosVector.getArray(fromCantidadProducto, toCantidadProducto));
@@ -300,7 +313,9 @@ public class CanjeFragment extends Fragment {
                 int id = (int) recyclerView.getChildAdapterPosition(v);
                 Producto prod = productos.elemento(id);
                 //cambiar esta llamada, por:
-
+                if (prod.getCodigo() == ""){
+                    return;
+                }
                 if (fragmentVisible == "canje"){
                     new PopUpProductoDialogo(contexto, prod.getCodigo(),prod.getNombre(),prod.getPuntos(), "","C");
                 }
@@ -334,12 +349,14 @@ public class CanjeFragment extends Fragment {
         private int toCantidad;
         private String orderBy;
         private String filtrarPuntos;
+        private ArrayList<Check> elementos;
 
-        public GetCanjesTask(String filtrarPuntos, int fromCantidad, int toCantidad, String orderBy) {
+        public GetCanjesTask(String filtrarPuntos, int fromCantidad, int toCantidad, String orderBy, ArrayList<Check> elementos) {
             this.filtrarPuntos = filtrarPuntos;
             this.fromCantidad = fromCantidad;
             this.toCantidad = toCantidad;
             this.orderBy = orderBy;
+            this.elementos = elementos;
         }
 
         @Override
@@ -354,7 +371,11 @@ public class CanjeFragment extends Fragment {
                 //URL url = new URL(constantes.lanzoniProductos + "getCanjes");
                 URL url;
                 if (filtrarPuntos == "todos") {
-                    url = new URL(constantes.pathConnectionProductos + "getProducts");
+                    if (fragmentVisible == "canje") {
+                        url = new URL(constantes.pathConnectionProductos + "getProducts");
+                    } else { //promociones
+                        url = new URL(constantes.pathConnectionProductos + "getProductsPrefer");
+                    }
                 } else {
                     url = new URL(constantes.pathConnectionProductos + "getCanjesXPuntos");
                 }
@@ -379,6 +400,19 @@ public class CanjeFragment extends Fragment {
                 }
                 if (fragmentVisible == "promociones"){
                     obj.put("para", "p");
+
+                    if (elementos != null ) {
+                        String categorias = "";
+                        for (Check c:elementos){
+                            if (c.marcado){
+                                if (categorias != ""){
+                                    categorias += ",";
+                                }
+                                categorias += c.id;
+                            }
+                        };
+                        obj.put("categorias", categorias);
+                    }
                 }
 
                 Log.i("JSON", obj.toString());
@@ -527,7 +561,22 @@ public class CanjeFragment extends Fragment {
 
         orderByProducto = orden + "," + orderBy;
         showProgress(true);
-        getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto);
+        getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto, orderByProducto, elementos);
+        getCanjesTask.execute((Void) null);
+        btnPrev.setEnabled(false); //estado inicial
+    }
+
+    public void actualizarVistaPreferencias(ArrayList<Check> elementos){
+        ultimaPaginaCargada = 0;
+        productosVector.ResetList();
+        this.flagPaso = 0;
+        paginaActual = 1;
+        fromCantidadProducto = 1;
+        toCantidadProducto = CANTIDAD_PRODUCTOS_LISTA;
+
+        showProgress(true);
+        orderByProducto = "nombre,asc";
+        getCanjesTask = new GetCanjesTask(filtrarPuntos, fromCantidadProducto, toCantidadProducto,orderByProducto, elementos);
         getCanjesTask.execute((Void) null);
         btnPrev.setEnabled(false); //estado inicial
     }

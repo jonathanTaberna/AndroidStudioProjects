@@ -1,6 +1,8 @@
 package hsfarmacia.farmaclub.provisorios;
 
-public class Check {
+import java.io.Serializable;
+
+public class Check implements Serializable {
     public int id;
     public String nombre;
     public Boolean marcado;

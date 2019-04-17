@@ -336,6 +336,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void ResultadoPreferenciasDialogo(ArrayList<Check> elementos) {
+        canjeFragment.actualizarVistaPreferencias(elementos);
 
     }
 
@@ -358,6 +359,7 @@ public class MainActivity extends AppCompatActivity
         argumentosCanje.putString("tarjeta", tarjeta);
         argumentosCanje.putInt("puntos", puntos);
         argumentosCanje.putString("nombre", nombre);
+        argumentosCanje.putSerializable("elementos",elementos);
 
         canjeFragment = new CanjeFragment();
         canjeFragment.setArguments(argumentosCanje);
