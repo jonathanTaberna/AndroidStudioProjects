@@ -825,7 +825,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 case 8:
                     if (salida == 8) {
                         if (respuestaStatus == 98) {
-                            Toast.makeText(LoginActivity.this, getString(R.string.servidor_timeout), Toast.LENGTH_SHORT);
+                            Toast.makeText(LoginActivity.this, getString(R.string.servidor_timeout), Toast.LENGTH_SHORT).show();
                             break;
                         }
                     }

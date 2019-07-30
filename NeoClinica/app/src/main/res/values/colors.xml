@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976d2</color>
+    <color name="colorAccent">#212121</color>
+    -->
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#00796B</color>
+    <color name="colorAccent">#FF5252</color>
+    <color name="window_background">#8bc34a</color>
+    <color name="button_background">#0dac9d</color>
+
+
+    <!-- colores NEOCLINICA -->
+    <color name="colorVerde">#008080</color>
+    <color name="colorLetraVerde">#dadada</color>
+    <color name="colorRojo">#800000</color>
+    <color name="colorLetraRojo">#dadada</color>
+    <color name="colorAmarillo">#f2f261</color>
+    <color name="colorLetraAmarillo">#000000</color>
+    <color name="colorAzul">#2650ab</color>
+    <color name="colorLetraAzul">#c50303</color>
+    <color name="colorGris">#dadada</color>
+    <color name="colorLetraGris">#c50303</color>
+    <color name="colorCeleste">#2cbbce</color>
+    <color name="colorLetraCeleste">#c50303</color>
+</resources>

@@ -319,14 +319,14 @@ public class MainActivity extends AppCompatActivity
         toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
 
         if (accion == "ACEPTAR") {
-            Toast.makeText(MainActivity.this,"APRETO ACEPTAR", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this,"APRETO ACEPTAR", Toast.LENGTH_SHORT).show();
 
             updateDataPersonTask = new UpdateDataPersonTask(nombre,correo,telefono, direccion, localidad, codpos, fecnac);
             updateDataPersonTask.execute((Void) null);
 
         }
         if (accion == "CANCELAR"){
-            Toast.makeText(MainActivity.this,"APRETO CANCELAR", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this,"APRETO CANCELAR", Toast.LENGTH_SHORT).show();
             llamarNewInstanceMisDatos(false);
             //enableView = false;
             //misDatosFragment = MisDatosFragment.newInstance(enableView, nombre, correo, telefono, direccion, localidad, codpos);
@@ -629,7 +629,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     if (success) {
 
-                        Toast.makeText(MainActivity.this, "success",Toast.LENGTH_SHORT);
+                        //Toast.makeText(MainActivity.this, "success",Toast.LENGTH_SHORT);
                         Log.i("onPost","success");
 
 
@@ -655,7 +655,7 @@ public class MainActivity extends AppCompatActivity
                         //updateUserTask = new UsuarioActivity.UpdateUserTask(usuario,edtPassword.getText().toString(),tarjeta);
                         //updateUserTask.execute((Void) null);
                     } else {
-                        Toast.makeText(MainActivity.this, "no success",Toast.LENGTH_SHORT);
+                        //Toast.makeText(MainActivity.this, "no success",Toast.LENGTH_SHORT);
                         Log.i("onPost","no success");
                         //edtUsuario.setError(getString(R.string.error_json));
                         //edtUsuario.requestFocus();
@@ -664,19 +664,19 @@ public class MainActivity extends AppCompatActivity
 
                 case 9:
                     if (status == 99 || status == 404  || status == 405) {
-                        Toast.makeText(MainActivity.this, "status 99",Toast.LENGTH_SHORT);
+                        //Toast.makeText(MainActivity.this, "status 99",Toast.LENGTH_SHORT);
                         Log.i("onPost","status 99");
                         //edtUsuario.setError(getString(R.string.servidor_timeout));
                         //edtUsuario.requestFocus();
                     } else {
-                        Toast.makeText(MainActivity.this, "status 9",Toast.LENGTH_SHORT);
+                        //Toast.makeText(MainActivity.this, "status 9",Toast.LENGTH_SHORT);
                         Log.i("onPost","status 9");
                         //edtUsuario.setError(getString(R.string.usuario_existente));
                         //edtUsuario.requestFocus();
                     }
                     break;
                 default:
-                    Toast.makeText(MainActivity.this, "default",Toast.LENGTH_SHORT);
+                    //Toast.makeText(MainActivity.this, "default",Toast.LENGTH_SHORT);
                     Log.i("onPost","default");
                     //edtPassword.setError(getString(R.string.error_incorrect_password));
                     //edtPassword.requestFocus();
