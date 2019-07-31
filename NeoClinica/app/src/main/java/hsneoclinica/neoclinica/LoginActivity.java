@@ -79,7 +79,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         //createShortCut();
 
         // Set up the login form.
@@ -650,6 +649,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                     }
                     if (success) {
+                        if (flag == 9) {
+                            mPasswordView.setError(nombre);
+                            mPasswordView.requestFocus();
+                            break;
+                        }
                         if (generarArchivo(constantes.neoclinicaConfig, matricula, profesional)) {
                             Log.i("JONATT", "GENERO BIEN LA CONFIG");
                             estadoArchivo = constantes.CONFIG_FOUND;

@@ -1,14 +1,19 @@
 package hsneoclinica.neoclinica;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.media.RatingCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,9 +40,7 @@ import hsneoclinica.neoclinica.provisorios.Check;
 import hsneoclinica.neoclinica.provisorios.Turno;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-                    ConfiguracionesDialogo.FinalizoConfiguracionesDialogo,
-                    PreferenciasDialogo.FinalizoPreferenciasDialogo {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private String fragmentActual = "";
@@ -83,10 +86,11 @@ public class MainActivity extends AppCompatActivity
         profesional = extras.getString("profesional");
         cookie = extras.getString("cookie");
         //elementos = (ArrayList<Turno>) extras.getSerializable("elementos");
-
         fragmentActual = "agenda";
+        //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
         llamarNewInstanceAgenda(fragmentActual);
         navigationView.getMenu().getItem(0).setChecked(true); //marca el primer item de la lista del menu lateral
+        navigationView.getMenu().getItem(0).setIconTintList(ColorStateList.valueOf(R.color.titleColor)); //marca el primer item de la lista del menu lateral
 
     }
 
@@ -124,8 +128,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.main2_action_refresh) {
-            fragmentActual = "agenda";
-            llamarNewInstanceAgenda(fragmentActual);
+            //fragmentActual = "agenda";
+            //llamarNewInstanceAgenda(fragmentActual);
             //new ConfiguracionesDialogo(MainActivity.this, MainActivity.this, 0, 0,0);
             return true;
         }
@@ -143,6 +147,11 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+            /*
+            SpannableString spanString = new SpannableString(item.getTitle().toString());
+            spanString.setSpan(new ForegroundColorSpan(R.color.titleColor), 0, spanString.length(), 0); // fix the color to white
+            item.setTitle(spanString);
+            */
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -152,20 +161,20 @@ public class MainActivity extends AppCompatActivity
                 fragmentActual = "agenda";
                 llamarNewInstanceAgenda(fragmentActual);
                 //fragmentManager.beginTransaction().replace(R.id.contenedor, turnoFragment).commit();
-                toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(true);
+                //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
                 //toolbar.getMenu().findItem(R.id.main2_action_preferences).setVisible(false);
                 //toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
 
             }
             // Handle the camera action
         } else if (id == R.id.nav_internados) {
-            toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
+            //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
             if (fragmentActual != "internados") {
                 fragmentActual = "internados";
             }
 
         } else if (id == R.id.nav_dias_no_atiendo) {
-            toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
+            //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
             if (fragmentActual != "diasNoAtiendo") {
                 fragmentActual = "diasNoAtiendo";
             }
@@ -184,17 +193,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void ResultadoConfiguracionesDialogo(String filtrarPuntos, String orden, String orderBy) {
-        //turnoFragment.actualizarVistaOrdenada(filtrarPuntos, orden, orderBy);
-    }
-
-    @Override
-    public void ResultadoPreferenciasDialogo(ArrayList<Check> elementos) {
-        //turnoFragment.actualizarVistaPreferencias(elementos);
-
     }
 
     private void llamarNewInstanceAgenda(String fragmentActual){

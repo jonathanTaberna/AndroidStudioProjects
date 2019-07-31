@@ -66,16 +66,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="@string/rbTodosPuntos"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="16dp" />
+                    <!--android:text="@string/rbTodosPuntos"-->
 
                 <RadioButton
                     android:id="@+id/rbPuntosDisponibles"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/rbPuntosDisponibles" />
+                    android:layout_weight="1" />
+                <!--
+                android:text="@string/rbPuntosDisponibles"
+                -->
 
             </RadioGroup>
 
@@ -123,16 +125,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="@string/rbNombre"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="16dp" />
+                <!--
+                    android:text="@string/rbNombre"
+                    -->
 
                 <RadioButton
                     android:id="@+id/rbPuntos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/rbPuntos" />
+                    android:layout_weight="1" />
+                <!--
+                android:text="@string/rbPuntos"
+                -->
 
             </RadioGroup>
 
@@ -182,16 +188,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="@string/rbAsc"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="16dp" />
+                <!--
+                android:text="@string/rbAsc"
+                -->
 
                 <RadioButton
                     android:id="@+id/rbDesc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/rbDesc" />
+                    android:layout_weight="1"/>
+                <!--
+                android:text="@string/rbDesc"
+                -->
 
             </RadioGroup>
 

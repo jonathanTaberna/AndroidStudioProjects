@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,10 +17,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -124,8 +128,15 @@ public class TurnoFragment extends Fragment {
         tvFecha = (TextView) view.findViewById(R.id.tvFecha);
         pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
 
-        tvNombre.setText("Bienvenido " + nombre);
-        tvNroMatricula.setText("" + matricula);
+        tvNombre.setText(nombre.trim());
+        //tvNombre.setGravity(Gravity.CENTER);
+        tvNroMatricula.setText(matricula);
+        tvFecha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
 
         showProgress(true);
 
@@ -272,6 +283,45 @@ public class TurnoFragment extends Fragment {
         return fecha;
     }
 
+    private void showDatePickerDialog() {
+
+        String [] dma = fecha.split("/");
+
+        int anio = Integer.parseInt(dma[2]);
+        int mes = Integer.parseInt(dma[1]) - 1; //los meses comienzan desde 0
+        int dia = Integer.parseInt(dma[0]);
+
+        DatePickerFragment newFragment = DatePickerFragment.newInstance(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                // +1 because january is zero
+                String dayStr = "";
+                String monthStr = "";
+
+                if (day < 10) {
+                    dayStr = "0" + day;
+                } else {
+                    dayStr = "" + day;
+                }
+                month++;
+                if (month < 10) {
+                    monthStr = "0" + month;
+                } else {
+                    monthStr = "" + month;
+                }
+
+                //final String selectedDate = dayStr + "/" + monthStr + "/" + year;
+                //tvFecha.setText(selectedDate);
+                productosVector.ResetList();
+                c.set(year, month - 1, day);
+                fecha = generarFecha(c);
+                getTurnosTask = new GetTurnosTask(fecha);
+                getTurnosTask.execute((Void) null);
+            }
+        }, anio, mes, dia);
+        newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+    }
+
     public class GetTurnosTask extends AsyncTask<Void, Void, Boolean> {
         private int status = 0;
         JSONObject jsonResp = null;
@@ -383,7 +433,14 @@ public class TurnoFragment extends Fragment {
                             Toast.makeText(contexto, nombre, Toast.LENGTH_SHORT).show();
                         } else {
                             tvFecha.setText(fecha);
-                            tvComentario.setText(comentario);
+                            tvComentario.setText(comentario.trim());
+                            //tvComentario.setGravity(Gravity.CENTER);
+                            if (!comentario.trim().isEmpty()) {
+                                tvComentario.setBackgroundColor(Color.BLACK);
+                                tvComentario.setTextColor(Color.WHITE);
+                            } else {
+                                tvComentario.setBackgroundColor(0);
+                            }
                             //Toast.makeText(contexto,  getString(R.string.servidor_error),Toast.LENGTH_SHORT).show();
                             inflarVista(turnos);
                         }

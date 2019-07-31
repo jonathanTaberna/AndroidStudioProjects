@@ -4,9 +4,9 @@
     android:id="@+id/rlElemento"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:theme="@style/AppTheme">
+    >
     <!--
-    "?android:attr/listPreferredItemHeight"
+    android:theme="@style/AppTheme"
     -->
 
     <TextView

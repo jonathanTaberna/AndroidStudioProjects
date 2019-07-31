@@ -8,15 +8,24 @@
         <item
             android:id="@+id/nav_agenda"
             android:icon="@drawable/ic_calendar"
-            android:title="Agenda" />
+            android:title="Agenda"
+            app:itemIconTint="@color/drawer_itam"
+            app:itemTextColor="@color/drawer_itam"
+            app:itemBackground="@android:color/transparent"
+            />
         <item
             android:id="@+id/nav_internados"
             android:icon="@drawable/ic_internados"
-            android:title="Internados" />
+            android:title="Internados"
+            app:itemIconTint="@color/drawer_itam"
+            app:itemTextColor="@color/drawer_itam"
+            app:itemBackground="@android:color/transparent"
+            />
         <item
             android:id="@+id/nav_dias_no_atiendo"
             android:icon="@drawable/ic_dias_no_atiendo"
-            android:title="Dias que NO atiendo" />
+            android:title="Dias que NO atiendo"
+            />
     </group>
 
     <item android:title="Acciones">
