@@ -169,7 +169,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
-
     private String leerMatriculaCargada(){
         String matricula = "";
         try {

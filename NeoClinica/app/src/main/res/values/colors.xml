@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#d7cfcf</color>
+    <color name="colorPrimary">#a31d1d</color>
     <color name="colorPrimaryDark">#da5952</color>
-    <color name="colorAccent">#a31d1d</color>
-    <color name="titleColor">#a31d1d</color>
+    <color name="colorAccent">#635353</color>
+    <color name="titleColor">#d7cfcf</color>
     <color name="button_background">#839391</color>
+
+    <color name="colorPrimaryDatePicker">#e24444</color>
+    <color name="colorPrimaryDarkDatePicker">#ab3730</color>
+    <color name="colorAccentDatePicker">#dc4a4a</color>
 
     <!-- colores NEOCLINICA -->
     <color name="colorVerde">#008080</color>

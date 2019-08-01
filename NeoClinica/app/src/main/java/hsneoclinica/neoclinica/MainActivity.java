@@ -2,8 +2,10 @@ package hsneoclinica.neoclinica;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.media.RatingCompat;
@@ -17,6 +19,8 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,14 +61,24 @@ public class MainActivity extends AppCompatActivity
     private TurnoFragment turnoFragment;
     private Bundle argumentosAgenda = new Bundle();
 
+    ConstraintLayout constraintLayout;
+    NavigationView navigationView;
+    ImageView imageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View hView =  navigationView.getHeaderView(0); //inflateHeaderView(R.layout.nav_header_main2);
+        ImageView imgvw = (ImageView)hView.findViewById(R.id.ivNavigator);
+        imgvw.setImageResource(R.drawable.neoclinica_logo);
+        this.setTitle("Este Titulo se puede modificar");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -90,7 +104,8 @@ public class MainActivity extends AppCompatActivity
         //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
         llamarNewInstanceAgenda(fragmentActual);
         navigationView.getMenu().getItem(0).setChecked(true); //marca el primer item de la lista del menu lateral
-        navigationView.getMenu().getItem(0).setIconTintList(ColorStateList.valueOf(R.color.titleColor)); //marca el primer item de la lista del menu lateral
+        //navigationView.getMenu().getItem(0).setIconTintList(ColorStateList.valueOf(R.color.titleColor)); //marca el primer item de la lista del menu lateral
+        //setTitleIconDrawer(navigationView);
 
     }
 
@@ -211,4 +226,14 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void setTitleIconDrawer(NavigationView navigationView){
+        SpannableString spanString;
+        MenuItem item;
+        for (int i=0; i < 3; i++) {
+            item = navigationView.getMenu().getItem(i);
+            spanString = new SpannableString(item.getTitle().toString());
+            spanString.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spanString.length(), 0); // fix the color to white
+            item.setTitle(spanString);
+        }
+    }
 }

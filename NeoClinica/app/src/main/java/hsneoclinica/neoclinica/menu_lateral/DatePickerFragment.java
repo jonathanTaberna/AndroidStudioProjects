@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
+import hsneoclinica.neoclinica.R;
+
 public class DatePickerFragment extends DialogFragment {
 
     private DatePickerDialog.OnDateSetListener listener;
@@ -42,7 +44,8 @@ public class DatePickerFragment extends DialogFragment {
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), listener, year, month, day);
         */
-        return new DatePickerDialog(getActivity(), listener, anio, mes, dia);
+        //return new DatePickerDialog(getActivity(), listener, anio, mes, dia);
+        return new DatePickerDialog(getActivity(),R.style.TimePickerTheme, listener, anio, mes, dia);
     }
 
 }
