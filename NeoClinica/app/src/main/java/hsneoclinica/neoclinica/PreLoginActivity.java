@@ -37,25 +37,92 @@ import hsneoclinica.neoclinica.constantes.constantes;
 
 
 public class PreLoginActivity extends AppCompatActivity {
-    private Button button;
+    private Button btnSanLucas;
+    private Button btnSanatorioPrivado;
+    private Button btnNeoclinica;
+    private Button btnOdontograssi;
+    private Button btnResonanciaR4;
+    private Button btnUrologico;
+    private Button btnClinicaPrivadaGralDeheza;
+    private Button btnHospitalComGralDeheza;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pre_login);
 
-        button = (Button) findViewById(R.id.btnIngresar);
-        button.setOnClickListener(new OnClickListener() {
+        btnSanLucas = (Button) findViewById(R.id.btnSanLucas);
+        btnSanLucas.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "SanLucas");
+                startActivity(i);
+            }
+        });
+        btnSanatorioPrivado = (Button) findViewById(R.id.btnSanatorioPrivado);
+        btnSanatorioPrivado.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "SanatorioPrivado");
+                startActivity(i);
+            }
+        });
+        btnNeoclinica = (Button) findViewById(R.id.btnNeoclinica);
+        btnNeoclinica.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "Neoclinica");
+                startActivity(i);
+            }
+        });
+        btnOdontograssi = (Button) findViewById(R.id.btnOdontograssi);
+        btnOdontograssi.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "Odontograssi");
+                startActivity(i);
+            }
+        });
+        btnResonanciaR4 = (Button) findViewById(R.id.btnResonanciaR4);
+        btnResonanciaR4.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "ResonanciaR4");
+                startActivity(i);
+            }
+        });
+        btnUrologico = (Button) findViewById(R.id.btnUrologico);
+        btnUrologico.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "Urologico");
+                startActivity(i);
+            }
+        });
+        btnClinicaPrivadaGralDeheza = (Button) findViewById(R.id.btnClinicaPrivadaGralDeheza);
+        btnClinicaPrivadaGralDeheza.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "ClinicaPrivGralDeheza");
+                startActivity(i);
+            }
+        });
+        btnHospitalComGralDeheza = (Button) findViewById(R.id.btnHospitalComGralDeheza);
+        btnHospitalComGralDeheza.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "HospitalComGralDeheza");
                 startActivity(i);
             }
         });
     }
-
-
-
-
 }
 

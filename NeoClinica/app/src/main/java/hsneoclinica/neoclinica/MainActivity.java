@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private Boolean enableView = false;
 
+    private String empresa;
     private String nombre;
     private String cookie;
     private String matricula;
@@ -74,11 +75,51 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras == null) {
+            return;
+        }
+
+        empresa = extras.getString("empresa");
+        nombre = extras.getString("nombre");
+        matricula = extras.getString("matricula");
+        password = extras.getString("password");
+        profesional = extras.getString("profesional");
+        cookie = extras.getString("cookie");
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         View hView =  navigationView.getHeaderView(0); //inflateHeaderView(R.layout.nav_header_main2);
         ImageView imgvw = (ImageView)hView.findViewById(R.id.ivNavigator);
-        imgvw.setImageResource(R.drawable.neoclinica_logo);
-        this.setTitle("Este Titulo se puede modificar");
+        this.setTitle(empresa);
+        switch (empresa){
+            case "SanLucas":
+                imgvw.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            case "SanatorioPrivado":
+                imgvw.setImageResource(R.drawable.sanatorio_privado_logo);
+                break;
+            case "Neoclinica":
+                imgvw.setImageResource(R.drawable.neoclinica_logo);
+                break;
+            case "Odontograssi":
+                imgvw.setImageResource(R.drawable.odontograssi_logo);
+                break;
+            case "ResonanciaR4":
+                imgvw.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            case "Urologico":
+                imgvw.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            case "ClinicaPrivGralDeheza":
+                imgvw.setImageResource(R.drawable.clinica_gral_deheza_logo);
+                break;
+            case "HospitalComGralDeheza":
+                imgvw.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            default:
+                 break;
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -89,16 +130,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras == null) {
-            return;
-        }
-
-        nombre = extras.getString("nombre");
-        matricula = extras.getString("matricula");
-        password = extras.getString("password");
-        profesional = extras.getString("profesional");
-        cookie = extras.getString("cookie");
         //elementos = (ArrayList<Turno>) extras.getSerializable("elementos");
         fragmentActual = "agenda";
         //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);

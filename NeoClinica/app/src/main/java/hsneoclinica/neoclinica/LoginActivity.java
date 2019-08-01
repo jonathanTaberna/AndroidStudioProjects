@@ -28,6 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -67,8 +68,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private CheckBox cbRecordarMatricula;
     private Button mIngresarButton;
     private TextInputLayout tilPassword;
+    private ImageView toolbarLogo;
 
-
+    private String empresa = "";
     private String estadoArchivo = "";
     private String matricula = "";
     private String profesional = "";
@@ -80,6 +82,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //createShortCut();
+
+        toolbarLogo = (ImageView) findViewById(R.id.toolbar_logo);
+        Bundle extras = getIntent().getExtras();
+        empresa = extras.getString("empresa");
+        switch (empresa){
+            case "SanLucas":
+                toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            case "SanatorioPrivado":
+                toolbarLogo.setImageResource(R.drawable.sanatorio_privado_logo);
+                break;
+            case "Neoclinica":
+                toolbarLogo.setImageResource(R.drawable.neoclinica_logo);
+                break;
+            case "Odontograssi":
+                toolbarLogo.setImageResource(R.drawable.odontograssi_logo);
+                break;
+            case "ResonanciaR4":
+                toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            case "Urologico":
+                toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            case "ClinicaPrivGralDeheza":
+                toolbarLogo.setImageResource(R.drawable.clinica_gral_deheza_logo);
+                break;
+            case "HospitalComGralDeheza":
+                toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            default:
+                break;
+        }
 
         // Set up the login form.
         mMatriculaView = (AutoCompleteTextView) findViewById(R.id.edtMatricula);
@@ -662,6 +696,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
 
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.putExtra("empresa", empresa);
                         i.putExtra("nombre", nombre);
                         i.putExtra("matricula", mMatricula);
                         i.putExtra("password", mPassword);

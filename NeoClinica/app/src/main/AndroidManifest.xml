@@ -22,7 +22,7 @@
         <!-- PRELOGIN ACTIVITY -->
         <activity
             android:name=".PreLoginActivity"
-            android:label="@string/title_activity_pre_login"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,7 +50,7 @@
         <!-- MAIN ACTIVITY -->
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main2"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
