@@ -5,9 +5,18 @@
     android:id="@+id/preLoginCoordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
+    android:fitsSystemWindows="true"
     tools:context=".PreLoginActivity">
 
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarPreLogin"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:theme="@style/AppTheme.PopupOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:elevation="4dp"
+        />
 
     <LinearLayout
         android:id="@+id/ll1"

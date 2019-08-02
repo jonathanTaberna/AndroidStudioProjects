@@ -1,20 +1,44 @@
 package hsneoclinica.neoclinica.menu_lateral;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.Calendar;
 
 import hsneoclinica.neoclinica.R;
 import hsneoclinica.neoclinica.adaptador.AdaptadorInternados;
+import hsneoclinica.neoclinica.constantes.constantes;
+import hsneoclinica.neoclinica.provisorios.Internado;
 import hsneoclinica.neoclinica.provisorios.Internados;
 import hsneoclinica.neoclinica.provisorios.InternadosVector;
 
@@ -85,6 +109,7 @@ public class InternadosFragment extends Fragment {
         pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
 
         tvNombre.setText(nombre.trim());
+        tvComentario.setText("");
         //tvNombre.setGravity(Gravity.CENTER);
         tvNroMatricula.setText(matricula);
         tvFecha.setOnClickListener(new View.OnClickListener() {
@@ -99,31 +124,39 @@ public class InternadosFragment extends Fragment {
         c = Calendar.getInstance();
         fecha = generarFecha(c);
 
-        getTurnosTask = new GetTurnosTask(fecha);
-        getTurnosTask.execute((Void) null);
+        getInternadosTask = new GetInternadosTask(fecha);
+        getInternadosTask.execute((Void) null);
 
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                btnNext.setEnabled(false);
+                btnPrev.setEnabled(false);
+
                 c.add(Calendar.DAY_OF_MONTH, -1);
                 fecha = generarFecha(c);
 
-                productosVector.ResetList();
+                internadosVector.ResetList();
 
-                getTurnosTask = new GetTurnosTask(fecha);
-                getTurnosTask.execute((Void) null);
+                getInternadosTask = new GetInternadosTask(fecha);
+                getInternadosTask.execute((Void) null);
             }
         });
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                btnNext.setEnabled(false);
+                btnPrev.setEnabled(false);
+
                 c.add(Calendar.DAY_OF_MONTH, 1);
                 fecha = generarFecha(c);
 
-                productosVector.ResetList();
+                internadosVector.ResetList();
 
-                getTurnosTask = new GetTurnosTask(fecha);
-                getTurnosTask.execute((Void) null);
+                getInternadosTask = new GetInternadosTask(fecha);
+                getInternadosTask.execute((Void) null);
             }
         });
 
@@ -167,7 +200,7 @@ public class InternadosFragment extends Fragment {
     }
 
     private void inflarVista(JSONArray jsonArray) {
-        Turno turno = null;
+        Internado internado = null;
         int tamanyoArray = jsonArray.length();
 
         if (jsonArray == null) {
@@ -178,34 +211,43 @@ public class InternadosFragment extends Fragment {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                String hora = jsonObject.getString("hora");
+                String egreso = jsonObject.getString("egreso");
+                String lugar = jsonObject.getString("lugar");
+                String icono = jsonObject.getString("icono");
                 String paciente = jsonObject.getString("paciente");
                 String mutual = jsonObject.getString("mutual");
-                String obs = jsonObject.getString("obs");
-                String color = jsonObject.getString("color");
+                String profesional = jsonObject.getString("profesional");
+                String motivo = jsonObject.getString("motivo");
+                String fechaIng = jsonObject.getString("fec_ingerso");
+                String fechaEgr = jsonObject.getString("fec_egreso");
+                String edad = jsonObject.getString("edad");
 
-                turno = new Turno(hora, paciente, mutual, obs, color);
-                productosVector.anyade(turno);
+                internado = new Internado(egreso, lugar, icono, paciente, mutual, profesional, motivo, fechaIng, fechaEgr, edad);
+                internadosVector.anyade(internado);
             } catch (Exception e) {
                 Log.e("inflarVista", e.getMessage());
             }
         }
 
         if (tamanyoArray == 0) { //no hay turnos para mostrar
-            turno = new Turno();
-            productosVector.anyade(turno);
+
+            //internado = new Internado();
+            //internadosVector.anyade(internado);
             Toast.makeText(contexto, "No hay turnos a Mostrar", Toast.LENGTH_SHORT).show();
+            actualizarVista(internadosVector);
+            /*
             TurnosVector productosVectorAux = new TurnosVector(productosVector.getArray(1, 1));
             actualizarVista(productosVectorAux);
+            */
         } else {
-            actualizarVista(productosVector);
+            actualizarVista(internadosVector);
         }
     }
 
-    public void actualizarVista(TurnosVector productosVector){
-        turnos = productosVector;
-        if (fragmentVisible == "agenda"){
-            adaptador = new AdaptadorTurnos(contexto, turnos);
+    public void actualizarVista(InternadosVector internadosVector){
+        internados = internadosVector;
+        if (fragmentVisible == "internados"){
+            adaptador = new AdaptadorInternados(contexto, internados);
         }
         /*
         if (fragmentVisible == "promociones"){
@@ -216,6 +258,9 @@ public class InternadosFragment extends Fragment {
         layoutManager = new LinearLayoutManager(contexto);
         recyclerView.setLayoutManager(layoutManager);
         showProgress(false);
+
+        btnNext.setEnabled(true);
+        btnPrev.setEnabled(true);
     }
 
     public String generarFecha (Calendar c) {
@@ -268,22 +313,22 @@ public class InternadosFragment extends Fragment {
 
                 //final String selectedDate = dayStr + "/" + monthStr + "/" + year;
                 //tvFecha.setText(selectedDate);
-                productosVector.ResetList();
+                internadosVector.ResetList();
                 c.set(year, month - 1, day);
                 fecha = generarFecha(c);
-                getTurnosTask = new GetTurnosTask(fecha);
-                getTurnosTask.execute((Void) null);
+                getInternadosTask = new GetInternadosTask(fecha);
+                getInternadosTask.execute((Void) null);
             }
         }, anio, mes, dia);
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 
-    public class GetTurnosTask extends AsyncTask<Void, Void, Boolean> {
+    public class GetInternadosTask extends AsyncTask<Void, Void, Boolean> {
         private int status = 0;
         JSONObject jsonResp = null;
         private String fecha;
 
-        public GetTurnosTask(String fecha) {
+        public GetInternadosTask(String fecha) {
             this.fecha = fecha;
         }
 
@@ -295,7 +340,7 @@ public class InternadosFragment extends Fragment {
             BufferedReader reader = null;
             String JsonResponse = null;
             try {
-                URL url = new URL( constantes.pathConnection + constantes.metodoGetAgendaDia);// + "get_matricula="+ mMatricula+"&get_pass=" + mPassword);
+                URL url = new URL( constantes.pathConnection + constantes.metodoGetInternacionesDia);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -306,8 +351,7 @@ public class InternadosFragment extends Fragment {
                 conn.setConnectTimeout(10000); //10 segundos
                 conn.connect();
 
-                obj.put("get_agenda_matricula", profesional);
-                obj.put("get_agenda_dia", fecha);
+                obj.put("get_fecha_res", fecha);
 
                 Log.i("JSON", obj.toString());
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
@@ -358,24 +402,20 @@ public class InternadosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            getTurnosTask = null;
+            getInternadosTask = null;
             showProgress(false);
 
             JSONObject jsonObject = null;
 
             int salida = 0;
-            int flag = 0;
-            String comentario = "";
-            JSONObject agenda = null;
-            JSONArray turnos = null;
+            JSONObject internaciones = null;
+            JSONArray lista = null;
 
             try {
                 jsonObject = jsonResp.getJSONObject("Response");
 
-                flag = jsonObject.getInt("flag");
-                comentario = jsonObject.getString("comentario");
-                agenda = jsonObject.getJSONObject("agenda");
-                turnos = agenda.getJSONArray("turnos");
+                internaciones = jsonObject.getJSONObject("internaciones");
+                lista = internaciones.getJSONArray("lista");
 
             } catch (Exception e){
                 salida = 8;
@@ -385,21 +425,8 @@ public class InternadosFragment extends Fragment {
                 case 0:
                 case 8:
                     if (success) {
-                        if (flag == 9) {
-                            Toast.makeText(contexto, nombre, Toast.LENGTH_SHORT).show();
-                        } else {
-                            tvFecha.setText(fecha);
-                            tvComentario.setText(comentario.trim());
-                            //tvComentario.setGravity(Gravity.CENTER);
-                            if (!comentario.trim().isEmpty()) {
-                                tvComentario.setBackgroundColor(Color.BLACK);
-                                tvComentario.setTextColor(Color.WHITE);
-                            } else {
-                                tvComentario.setBackgroundColor(0);
-                            }
-                            //Toast.makeText(contexto,  getString(R.string.servidor_error),Toast.LENGTH_SHORT).show();
-                            inflarVista(turnos);
-                        }
+                        tvFecha.setText(fecha);
+                        inflarVista(lista);
 
                     } else {
                         Toast.makeText(contexto,  getString(R.string.error_get_turnos),Toast.LENGTH_SHORT).show();
@@ -414,7 +441,7 @@ public class InternadosFragment extends Fragment {
         @Override
         protected void onCancelled() {
             showProgress(false);
-            getTurnosTask = null;
+            getInternadosTask = null;
         }
     }
 

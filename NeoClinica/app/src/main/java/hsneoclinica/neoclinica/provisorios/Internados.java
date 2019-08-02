@@ -7,5 +7,5 @@ public interface Internados {
     void borrar(int id); //Elimina el elemento con el id indicado
     int tamanyo(); //Devuelve el número de elementos
     void actualiza(int id, Internado internado); //Reemplaza un elemento
-    void eliminaListaProductos();
+    void eliminaListaInternados();
 }

@@ -463,6 +463,18 @@ public class TurnoFragment extends Fragment {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
 /*
     public void actualizarVistaOrdenada(String filtrarPuntos, String orden, String orderBy) {
         ultimaPaginaCargada = 0;

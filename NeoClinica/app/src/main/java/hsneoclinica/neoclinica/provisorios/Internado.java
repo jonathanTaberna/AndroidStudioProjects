@@ -4,30 +4,63 @@ public class Internado {
 
     private String egreso;
     private String lugar;
+    private String icono;
     private String paciente;
     private String mutual;
     private String profesional;
     private String motivo;
+    private String fechaIng;
+    private String fechaEgr;
     private String edad;
 
     public Internado() {
         this.egreso = "";
         this.lugar = "";
+        this.icono = "";
         this.paciente = "";
         this.mutual = "";
         this.profesional = "";
         this.motivo = "";
+        this.fechaIng = "";
+        this.fechaEgr = "";
         this.edad = "";
     }
 
-    public Internado(String egreso, String lugar, String paciente, String mutual, String profesional, String motivo, String edad) {
+    public Internado(String egreso, String lugar, String icono, String paciente, String mutual, String profesional, String motivo, String fechaIng, String fechaEgr, String edad) {
         this.egreso = egreso;
         this.lugar = lugar;
+        this.icono = icono;
         this.paciente = paciente;
         this.mutual = mutual;
         this.profesional = profesional;
         this.motivo = motivo;
+        this.fechaIng = fechaIng;
+        this.fechaEgr = fechaEgr;
         this.edad = edad;
+    }
+
+    public String getFechaIng() {
+        return fechaIng;
+    }
+
+    public void setFechaIng(String fechaIng) {
+        this.fechaIng = fechaIng;
+    }
+
+    public String getFechaEgr() {
+        return fechaEgr;
+    }
+
+    public void setFechaEgr(String fechaEgr) {
+        this.fechaEgr = fechaEgr;
+    }
+
+    public String getIcono() {
+        return icono;
+    }
+
+    public void setIcono(String icono) {
+        this.icono = icono;
     }
 
     public String getEgreso() {

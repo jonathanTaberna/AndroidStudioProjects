@@ -21,6 +21,7 @@ public class constantes {
     public static String metodoHsAgenda = "(HS-AGENDA)";
     public static String metodoValidaProfeIni = "(VALIDA_PROFE_INI)";
     public static String metodoGetAgendaDia = "(GET_AGENDA_DIA)";
+    public static String metodoGetInternacionesDia = "(GET_INTERNACIONES_DIA)";
 
     public static String pdfName = "NeoClinica Terminos y Condiciones.pdf";
 

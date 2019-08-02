@@ -2,11 +2,13 @@ package hsneoclinica.neoclinica.adaptador;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,12 +38,14 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //public TextView nombre, descripcion;
-        public TextView nombre, profesional, mutual, motivo;
-
+        public TextView nombre, profesional, mutual, motivo, tvLugarInternado;
         public RelativeLayout rlElementoInternado;
+        public ImageView ivIconoInternado;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            tvLugarInternado = (TextView) itemView.findViewById(R.id.tvLugarInternado);
+            ivIconoInternado = (ImageView) itemView.findViewById(R.id.ivIconoInternado);
             nombre = (TextView) itemView.findViewById(R.id.tvNombreInternado);
             profesional = (TextView) itemView.findViewById(R.id.tvProfesionalInternado);
             mutual = (TextView) itemView.findViewById(R.id.tvMutualInternado);
@@ -71,7 +75,7 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
 
         String nombreAux = "";
         if (!internado.getEdad().trim().isEmpty()) {
-            nombreAux = internado.getPaciente().trim() + "(" + internado.getEdad().trim() + ")";
+            nombreAux = internado.getPaciente().trim() + " (" + internado.getEdad().trim() + ")";
         } else {
             nombreAux = internado.getPaciente().trim();
         }
@@ -79,6 +83,37 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
         holder.profesional.setText(internado.getProfesional().trim());
         holder.mutual.setText(internado.getMutual().trim());
         holder.motivo.setText(internado.getMotivo().trim());
+        String lugarAux = internado.getLugar().trim();
+        if (!lugarAux.isEmpty()) {
+            if (lugarAux.length() > 20) {
+                holder.tvLugarInternado.setText(lugarAux.substring(0, 20));
+            } else {
+                holder.tvLugarInternado.setText(lugarAux);
+            }
+        } else {
+            holder.tvLugarInternado.setText("");
+        }
+
+        String iconoAux = internado.getIcono().trim();
+        switch (iconoAux) {
+            case "CAMA AZUL":
+                holder.ivIconoInternado.setImageResource(R.drawable.blue_bed_icon);
+                break;
+            case "CAMA ROSA":
+                holder.ivIconoInternado.setImageResource(R.drawable.pink_bed_icon);
+                break;
+            case "AMBULANCIA":
+                holder.ivIconoInternado.setImageResource(R.drawable.ambulance_icon);
+                break;
+            case "ALTA":
+                holder.ivIconoInternado.setImageResource(R.drawable.family_icon);
+                break;
+            case "CRUZ":
+                holder.ivIconoInternado.setImageResource(R.drawable.cross_icon);
+                break;
+            default:
+                break;
+        }
 
         ViewGroup.LayoutParams layoutParams;
         layoutParams = holder.rlElementoInternado.getLayoutParams();

@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -48,11 +49,17 @@ public class PreLoginActivity extends AppCompatActivity {
     private Button btnUrologico;
     private Button btnClinicaPrivadaGralDeheza;
     private Button btnHospitalComGralDeheza;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pre_login);
+
+        //toolbar = (Toolbar) findViewById(R.id.toolbarPreLogin);
+        //setSupportActionBar(toolbar);
+
+        //getSupportActionBar().setIcon(R.drawable.salud_icon);
 
         btnSanLucas = (Button) findViewById(R.id.btnSanLucas);
         btnSanLucas.setOnClickListener(new OnClickListener() {

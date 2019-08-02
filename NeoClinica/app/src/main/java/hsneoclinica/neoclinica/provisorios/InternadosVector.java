@@ -3,7 +3,7 @@ package hsneoclinica.neoclinica.provisorios;
 import java.util.LinkedList;
 import java.util.List;
 
-public class InternadosVector {
+public class InternadosVector implements Internados {
     protected List<Internado> vectorInternados;
 
     public InternadosVector() {
@@ -48,6 +48,7 @@ public class InternadosVector {
         vectorInternados.set(id, internado);
     }
 
+    @Override
     public void eliminaListaInternados() {
         vectorInternados.clear(); vectorInternados = null;}
 }
