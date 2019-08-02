@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,7 +41,7 @@ public class AdaptadorTurnos extends RecyclerView.Adapter<AdaptadorTurnos.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
             //nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre);
-            nombre = (TextView) itemView.findViewById(R.id.elemento_lista_descripcion);
+            nombre = (TextView) itemView.findViewById(R.id.tvNombreInternado);
             mutual = (TextView) itemView.findViewById(R.id.elemento_lista_mutual);
             obs = (TextView) itemView.findViewById(R.id.elemento_lista_obs);
             rlElemento = (RelativeLayout) itemView.findViewById(R.id.rlElemento);

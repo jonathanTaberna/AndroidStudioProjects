@@ -39,8 +39,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hsneoclinica.neoclinica.constantes.constantes;
+import hsneoclinica.neoclinica.menu_lateral.InternadosFragment;
 import hsneoclinica.neoclinica.menu_lateral.TurnoFragment;
 import hsneoclinica.neoclinica.provisorios.Check;
+import hsneoclinica.neoclinica.provisorios.Internados;
 import hsneoclinica.neoclinica.provisorios.Turno;
 
 public class MainActivity extends AppCompatActivity
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     private Boolean enableView = false;
 
     private String empresa;
+    private String nombreEmpresa;
     private String nombre;
     private String cookie;
     private String matricula;
@@ -60,7 +63,9 @@ public class MainActivity extends AppCompatActivity
     //private ArrayList<Turno> elementos = new ArrayList<Turno>();
 
     private TurnoFragment turnoFragment;
+    private InternadosFragment internadosFragment;
     private Bundle argumentosAgenda = new Bundle();
+    private Bundle argumentosInternado = new Bundle();
 
     ConstraintLayout constraintLayout;
     NavigationView navigationView;
@@ -81,6 +86,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         empresa = extras.getString("empresa");
+        nombreEmpresa = extras.getString("nombreEmpresa");
         nombre = extras.getString("nombre");
         matricula = extras.getString("matricula");
         password = extras.getString("password");
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         View hView =  navigationView.getHeaderView(0); //inflateHeaderView(R.layout.nav_header_main2);
         ImageView imgvw = (ImageView)hView.findViewById(R.id.ivNavigator);
-        this.setTitle(empresa);
+        this.setTitle(nombreEmpresa);
         switch (empresa){
             case "SanLucas":
                 imgvw.setImageResource(R.drawable.san_lucas_logo);
@@ -217,6 +223,7 @@ public class MainActivity extends AppCompatActivity
             //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
             if (fragmentActual != "internados") {
                 fragmentActual = "internados";
+                llamarNewInstanceInternado(fragmentActual);
             }
 
         } else if (id == R.id.nav_dias_no_atiendo) {
@@ -254,6 +261,22 @@ public class MainActivity extends AppCompatActivity
         turnoFragment = new TurnoFragment();
         turnoFragment.setArguments(argumentosAgenda);
         fragmentManager.beginTransaction().replace(R.id.contenedor, turnoFragment).commit();
+
+    }
+
+    private void llamarNewInstanceInternado(String fragmentActual){
+
+        argumentosInternado.putString("fragmentVisible", fragmentActual);
+        argumentosInternado.putString("nombre", nombre);
+        argumentosInternado.putString("matricula", matricula);
+        argumentosInternado.putString("profesional", profesional);
+        argumentosInternado.putString("password", password);
+        argumentosInternado.putString("cookie", cookie);
+        //argumentosAgenda.putSerializable("elementos",elementos);
+
+        internadosFragment = new InternadosFragment();
+        internadosFragment.setArguments(argumentosInternado);
+        fragmentManager.beginTransaction().replace(R.id.contenedor, internadosFragment).commit();
 
     }
 

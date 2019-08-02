@@ -17,7 +17,7 @@ public class constantes {
     public static String neoServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol"; //existeusu
     public static String hsServer = "http://192.168.2.121:8080/valida-prof/servlet/isCobol"; //(HS-AGENDA)";
 
-    public static String pathConnection = hsServer; //delPuebloNombre;
+    public static String pathConnection = neoServer; //delPuebloNombre;
     public static String metodoHsAgenda = "(HS-AGENDA)";
     public static String metodoValidaProfeIni = "(VALIDA_PROFE_INI)";
     public static String metodoGetAgendaDia = "(GET_AGENDA_DIA)";

@@ -658,12 +658,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             int flag = 0;
             String nombre = "";
             String fecha = "";
+            String nombreEmpresa = "";
 
             try {
                 jsonObject = jsonResp.getJSONObject("Response");
 
                 flag = jsonObject.getInt("flag");
                 nombre = jsonObject.getString("nombre");
+                nombreEmpresa = jsonObject.getString("comentario");
                 profesional = jsonObject.getString("profesional");
 
             } catch (Exception e){
@@ -697,6 +699,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         i.putExtra("empresa", empresa);
+                        i.putExtra("nombreEmpresa", nombreEmpresa);
                         i.putExtra("nombre", nombre);
                         i.putExtra("matricula", mMatricula);
                         i.putExtra("password", mPassword);
