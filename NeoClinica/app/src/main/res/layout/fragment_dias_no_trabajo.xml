@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/tvNombreDiasNoTrabajo"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:text="nombre"
         android:textAppearance="@android:style/TextAppearance.Medium"
@@ -19,16 +19,20 @@
         android:layout_height="5dp"
         android:layout_below="@+id/tvNombreDiasNoTrabajo"
         android:background="@color/button_background" />
-
+<!--
     <TableLayout
-        android:id="@+id/tlDiasNoTrabajo"
+        android:id="@+id/tlTituloDiasNoTrabajo"
         android:layout_width="match_parent"
-        android:layout_height="473dp"
-        android:layout_below="@+id/divider5">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider5"
+        android:padding="0dp"
+        android:shrinkColumns="2,3"
+        android:stretchColumns="*">
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark">
 
             <TextView
                 android:id="@+id/tvDesdeDiasNoTrabajo"
@@ -60,7 +64,133 @@
                 android:layout_height="wrap_content"
                 android:text="Cuando" />
         </TableRow>
-
     </TableLayout>
+-->
 
+    <ScrollView
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/divider5">
+
+        <TableLayout
+            android:id="@+id/tlDiasNoTrabajo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider5"
+            android:isScrollContainer="true"
+            android:padding="0dp"
+            android:shrinkColumns="2"
+            android:stretchColumns="*">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark">
+
+                <TextView
+                    android:id="@+id/tvDesdeDiasNoTrabajo"
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:text="Desde"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tvHastaDiasNoTrabajo"
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:text="Hasta"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tvMotivoDiasNoTrabajo"
+                    android:layout_width="133dp"
+                    android:layout_height="wrap_content"
+                    android:text="Motivo"
+                    android:textSize="20sp" />
+                <!--
+                <TextView
+                    android:id="@+id/tvQuienDiasNoTrabajo"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="Quien cargo" />
+
+                <TextView
+                    android:id="@+id/tvCuandoDiasNoTrabajo"
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:text="Cuando" />
+               -->
+            </TableRow>
+        </TableLayout>
+
+    </ScrollView>
+
+<!--
+    <ScrollView
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/divider5"
+        android:layout_marginTop="5dip"
+        android:fillViewport="true"
+        android:scrollbarStyle="outsideInset"
+        android:scrollbars="horizontal|vertical">
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:scrollbars="horizontal|vertical">
+
+            <TableLayout
+                android:id="@+id/tlDiasNoTrabajo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/divider5"
+                android:isScrollContainer="true">
+                >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimaryDark">
+
+                    <TextView
+                        android:id="@+id/tvDesdeDiasNoTrabajo"
+                        android:layout_width="65dp"
+                        android:layout_height="wrap_content"
+                        android:text="Desde" />
+
+                    <TextView
+                        android:id="@+id/tvHastaDiasNoTrabajo"
+                        android:layout_width="65dp"
+                        android:layout_height="wrap_content"
+                        android:text="Hasta" />
+
+                    <TextView
+                        android:id="@+id/tvMotivoDiasNoTrabajo"
+                        android:layout_width="133dp"
+                        android:layout_height="wrap_content"
+                        android:text="Motivo" />
+
+                    <TextView
+                        android:id="@+id/tvQuienDiasNoTrabajo"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="Quien cargo" />
+
+                    <TextView
+                        android:id="@+id/tvCuandoDiasNoTrabajo"
+                        android:layout_width="65dp"
+                        android:layout_height="wrap_content"
+                        android:text="Cuando" />
+                </TableRow>
+
+            </TableLayout>
+        </HorizontalScrollView>
+
+    </ScrollView>
+-->
 </RelativeLayout>

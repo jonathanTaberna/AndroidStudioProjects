@@ -23,8 +23,9 @@ public class constantes {
     public static String metodoGetAgendaDia = "(GET_AGENDA_DIA)";
     public static String metodoGetInternacionesDia = "(GET_INTERNACIONES_DIA)";
     public static String metodoGetNoJob = "(GET_NO_JOB)";
+    public static String metodoGetProfesionales = "(GET_PROFESIONALES)";
 
-    public static String pdfName = "NeoClinica Terminos y Condiciones.pdf";
-
+    public static String cuitHS = "30640685782";
+    public static String passHS = "HS852";
 
 }

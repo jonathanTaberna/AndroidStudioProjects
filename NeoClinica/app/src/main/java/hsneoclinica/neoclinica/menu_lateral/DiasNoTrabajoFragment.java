@@ -1,6 +1,8 @@
 package hsneoclinica.neoclinica.menu_lateral;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -66,6 +69,10 @@ public class DiasNoTrabajoFragment extends Fragment {
 
         tvNombreDiasNoTrabajo = (TextView) view.findViewById(R.id.tvNombreDiasNoTrabajo);
         tlDiasNoTrabajo = (TableLayout) view.findViewById(R.id.tlDiasNoTrabajo);
+        tlDiasNoTrabajo.setStretchAllColumns(true);
+        //tlDiasNoTrabajo.setShrinkAllColumns(true);
+        //tlDiasNoTrabajo.setDividerDrawable(getResources().getDrawable(R.drawable.divider_vertical));
+        //tlDiasNoTrabajo.setDividerPadding(2);
 
         tvNombreDiasNoTrabajo.setText(nombre.trim());
 
@@ -93,34 +100,70 @@ public class DiasNoTrabajoFragment extends Fragment {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                String desde = jsonObject.getString("desde");
-                String hasta = jsonObject.getString("hasta");
-                String motivo = jsonObject.getString("motivo");
-                String cargo = jsonObject.getString("cargo");
-                String fecha = jsonObject.getString("fecha");
-                String hora = jsonObject.getString("hora");
+                String desde = jsonObject.getString("desde").trim() + " | ";
+                String hasta = jsonObject.getString("hasta").trim() + " | ";
+                String motivo = jsonObject.getString("motivo").trim();
+                //String cargo = jsonObject.getString("cargo").trim();
+                //String fecha = jsonObject.getString("fecha");
+                //String hora = jsonObject.getString("hora");
 
-                TableRow fila = new TableRow(contexto);
+                //TableRow fila = new TableRow(contexto);
                 TextView textView1 = new TextView(contexto);
                 TextView textView2 = new TextView(contexto);
                 TextView textView3 = new TextView(contexto);
-                TextView textView4 = new TextView(contexto);
-                TextView textView5 = new TextView(contexto);
+                //TextView textView4 = new TextView(contexto);
+                //TextView textView5 = new TextView(contexto);
                 textView1.setText(desde);
+                textView1.setTextSize(20);
                 textView2.setText(hasta);
+                textView2.setTextSize(20);
                 textView3.setText(motivo);
-                textView4.setText(cargo);
-                textView5.setText(fecha);
+                textView3.setTextSize(20);
+                //textView4.setText(cargo);
+                //textView4.setTextSize(14);
+                //textView5.setText(fecha);
+                //textView5.setTextSize(14);
 
-                fila.addView(textView1);
-                fila.addView(textView2);
-                fila.addView(textView3);
-                fila.addView(textView4);
-                fila.addView(textView5);
+                View v = new View(contexto);
+                //v.setLayoutParams(new TableRow.LayoutParams(1, TableRow.LayoutParams.MATCH_PARENT));
+                v.setLayoutParams(new TableRow.LayoutParams(1, TableRow.LayoutParams.WRAP_CONTENT));
+                v.setBackgroundColor(R.color.colorPrimary);
+                //ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                //v.setLayoutParams(params);
+
+                final TableRow tr = new TableRow(contexto);
+                tr.setId(i + 1);
+                TableLayout.LayoutParams trParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.WRAP_CONTENT);
+                trParams.setMargins(0, 0, 0, 0);
+                tr.setPadding(0,0,0,0);
+                tr.setLayoutParams(trParams);
+                tr.addView(textView1);
+                //tr.addView(v);
+                tr.addView(textView2);
+                tr.addView(textView3);
+                //tr.addView(textView4);
+                //tr.addView(textView5);
+                tlDiasNoTrabajo.addView(tr, trParams);
+
+                // add separator row
+                final TableRow trSep = new TableRow(contexto);
+                TableLayout.LayoutParams trParamsSep = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.WRAP_CONTENT);
+                trParamsSep.setMargins(0, 0, 0, 0);
+                trSep.setLayoutParams(trParamsSep);
+                TextView tvSep = new TextView(contexto);
+                TableRow.LayoutParams tvSepLay = new TableRow.LayoutParams();
+                tvSepLay.span = 4;
+                tvSep.setLayoutParams(tvSepLay);
+                tvSep.setBackgroundColor(R.color.colorPrimaryDark);
+                tvSep.setHeight(1);
+                trSep.addView(tvSep);
+                tlDiasNoTrabajo.addView(trSep, trParamsSep);
+                //tlDiasNoTrabajo.addView(trSep);
 
 
-                tlDiasNoTrabajo.addView(fila);
-
+                //tlDiasNoTrabajo.addView(fila);
             } catch (Exception e) {
                 Log.e("inflarVista", e.getMessage());
             }

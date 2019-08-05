@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
@@ -58,6 +59,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private int status = 0;
     private UserLoginTask userLoginTaskTask = null;
     private ValidaIniTask validaIniTask = null;
+    private HsLoginTask hsLoginTask = null;
     private String cookie = "";
 
     // UI references.
@@ -528,9 +530,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             switch (status) {
                 case "OK":
                     if (success) {
-
-                        userLoginTaskTask = new UserLoginTask(mMatricula, mPassword);
-                        userLoginTaskTask.execute((Void) null);
+                        if (mMatricula.trim().equals(constantes.cuitHS) && mPassword.trim().toUpperCase().equals(constantes.passHS)){
+                            hsLoginTask = new HsLoginTask();
+                            hsLoginTask.execute((Void) null);
+                        } else {
+                            userLoginTaskTask = new UserLoginTask(mMatricula, mPassword);
+                            userLoginTaskTask.execute((Void) null);
+                        }
 
                         /*
                         if (generarArchivo(constantes.neoclinicaConfig, matricula)) {
@@ -737,6 +743,161 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onCancelled() {
             userLoginTaskTask = null;
+            showProgress(false);
+        }
+    }
+
+    public class HsLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mMatricula;
+        private final String mPassword;
+        private JSONObject jsonResp = null;
+
+        public HsLoginTask() {
+            mMatricula = constantes.cuitHS;
+            mPassword = constantes.passHS;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            JSONObject obj = new JSONObject();
+            HttpURLConnection conn = null;
+
+            BufferedReader reader = null;
+            String JsonResponse = null;
+            try {
+                URL url = new URL( constantes.pathConnection + constantes.metodoGetProfesionales);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept","application/json");
+                conn.setRequestProperty("Cookie",cookie);
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setConnectTimeout(10000); //10 segundos
+                conn.connect();
+
+                Log.i("JSON", obj.toString());
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(obj.toString());
+
+                os.flush();
+                os.close();
+
+                status = conn.getResponseCode();
+                Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                Log.i("MSG" , conn.getResponseMessage().toString());
+
+                if (status == 200){ //respuesta OK
+                    InputStream inputStream = conn.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String inputLine;
+                    while ((inputLine = reader.readLine()) != null) {
+                        buffer.append(inputLine + "\n");
+                        jsonResp = new JSONObject(inputLine);
+                    }
+                    JsonResponse = buffer.toString();
+                    Log.i("RESPONSE",JsonResponse);
+
+                }
+
+            } catch (ConnectException ce) {
+                if (ce.getMessage().contains("ETIMEDOUT")) {
+                    status = 99;
+                } else {
+                    status = 98;
+                }
+            }catch (SocketTimeoutException e) {
+                status = 99;
+            } catch (Exception e){
+                e.printStackTrace();
+            }  finally {
+                conn.disconnect();
+            }
+
+            if (status == 200) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            hsLoginTask = null;
+            showProgress(false);
+
+            JSONObject jsonObject = null;
+            JSONArray profesionales = null;
+
+            int salida = 0;
+            int registros = 0;
+            String nombre = "";
+            String fecha = "";
+            String nombreEmpresa = "";
+
+            try {
+                jsonObject = jsonResp.getJSONObject("Response");
+
+                registros = jsonObject.getInt("registros");
+                profesionales = jsonObject.getJSONArray("Profesionales");
+
+            } catch (Exception e){
+                salida = 8;
+            }
+
+            switch (salida) {
+                case 0:
+                case 8:
+                    if (salida == 8) {
+                        Log.i("Login", "error en casteo JSON");
+                        if (status == 98) {
+                            mPasswordView.setError(getString(R.string.servidor_error));
+                            mPasswordView.requestFocus();
+                            break;
+                        }
+                    }
+                    if (success) {
+                        Intent i = new Intent(getApplicationContext(), HsActivity.class);
+                        i.putExtra("empresa", empresa);
+                        i.putExtra("nombreEmpresa", nombreEmpresa);
+                        i.putExtra("nombre", nombre);
+                        i.putExtra("cookie", cookie);
+                        i.putExtra("profesionales", profesionales.toString());
+                        startActivity(i);
+
+                    } else {
+                        if (status == 99) {
+                            mPasswordView.setError(getString(R.string.servidor_timeout));
+                            mPasswordView.requestFocus();
+                            break;
+                        } else {
+                            mPasswordView.setError(getString(R.string.error_incorrect_password));
+                            mPasswordView.requestFocus();
+                        }
+                    }
+                    break;
+                case 9:
+                    if (status == 99 || status == 404  || status == 405) {
+                        mPasswordView.setError(getString(R.string.servidor_timeout));
+                        mPasswordView.requestFocus();
+                    } else {
+                        mPasswordView.setError(getString(R.string.usuario_deconocido));
+                        mPasswordView.requestFocus();
+                    }
+                    break;
+                default:
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                    break;
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            hsLoginTask = null;
             showProgress(false);
         }
     }
