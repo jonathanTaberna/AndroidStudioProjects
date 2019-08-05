@@ -31,6 +31,7 @@
     <string name="passwords_diferentes">Las contraseñas no coinciden.</string>
     <string name="usuario_invalido">Usuario no valido.</string>
     <string name="error_get_turnos">No se pudo obtener la agenda de Turnos.</string>
+    <string name="error_get_dias_no_trabajo">No se pudo obtener la tabla de dias No Laborables.</string>
 
     <!-- menu -->
     <!--

@@ -154,6 +154,11 @@ public class TurnoFragment extends Fragment {
                 fecha = generarFecha(c);
 
                 productosVector.ResetList();
+                if (productosVector.tamanyo() > 0 ) {
+                    recyclerView.stopScroll();
+                    //turnos.limpiaListaProductos();
+                    adaptador.notifyDataSetChanged();
+                }
 
                 getTurnosTask = new GetTurnosTask(fecha);
                 getTurnosTask.execute((Void) null);
@@ -166,7 +171,11 @@ public class TurnoFragment extends Fragment {
                 fecha = generarFecha(c);
 
                 productosVector.ResetList();
-
+                if (productosVector.tamanyo() > 0 ) {
+                    recyclerView.stopScroll();
+                    //turnos.limpiaListaProductos();
+                    adaptador.notifyDataSetChanged();
+                }
                 getTurnosTask = new GetTurnosTask(fecha);
                 getTurnosTask.execute((Void) null);
             }

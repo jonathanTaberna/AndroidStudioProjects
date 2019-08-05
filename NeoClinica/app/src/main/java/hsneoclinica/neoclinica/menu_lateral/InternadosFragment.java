@@ -138,6 +138,8 @@ public class InternadosFragment extends Fragment {
                 fecha = generarFecha(c);
 
                 internadosVector.ResetList();
+                recyclerView.stopScroll();
+                adaptador.notifyDataSetChanged();
 
                 getInternadosTask = new GetInternadosTask(fecha);
                 getInternadosTask.execute((Void) null);
@@ -154,6 +156,8 @@ public class InternadosFragment extends Fragment {
                 fecha = generarFecha(c);
 
                 internadosVector.ResetList();
+                recyclerView.stopScroll();
+                adaptador.notifyDataSetChanged();
 
                 getInternadosTask = new GetInternadosTask(fecha);
                 getInternadosTask.execute((Void) null);
@@ -249,11 +253,8 @@ public class InternadosFragment extends Fragment {
         if (fragmentVisible == "internados"){
             adaptador = new AdaptadorInternados(contexto, internados);
         }
-        /*
-        if (fragmentVisible == "promociones"){
-            adaptador = new AdaptadorTurnos(contexto, turnos);
-        }
-        */
+
+        //recyclerView.swapAdapter(adaptador,true);
         recyclerView.setAdapter(adaptador);
         layoutManager = new LinearLayoutManager(contexto);
         recyclerView.setLayoutManager(layoutManager);

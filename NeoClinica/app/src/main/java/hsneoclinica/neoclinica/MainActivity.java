@@ -39,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hsneoclinica.neoclinica.constantes.constantes;
+import hsneoclinica.neoclinica.menu_lateral.DiasNoTrabajoFragment;
 import hsneoclinica.neoclinica.menu_lateral.InternadosFragment;
 import hsneoclinica.neoclinica.menu_lateral.TurnoFragment;
 import hsneoclinica.neoclinica.provisorios.Check;
@@ -64,8 +65,10 @@ public class MainActivity extends AppCompatActivity
 
     private TurnoFragment turnoFragment;
     private InternadosFragment internadosFragment;
+    private DiasNoTrabajoFragment diasNoTrabajoFragment;
     private Bundle argumentosAgenda = new Bundle();
     private Bundle argumentosInternado = new Bundle();
+    private Bundle argumentosDiasNoTrabajo = new Bundle();
 
     ConstraintLayout constraintLayout;
     NavigationView navigationView;
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //getSupportActionBar().setIcon(R.drawable.salud_icon);
 
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
@@ -230,6 +234,7 @@ public class MainActivity extends AppCompatActivity
             //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
             if (fragmentActual != "diasNoAtiendo") {
                 fragmentActual = "diasNoAtiendo";
+                llamarNewInstanceDiasNoAtiendo(fragmentActual);
             }
 
         } else if (id == R.id.nav_cerrar_sesion) {
@@ -277,6 +282,20 @@ public class MainActivity extends AppCompatActivity
         internadosFragment = new InternadosFragment();
         internadosFragment.setArguments(argumentosInternado);
         fragmentManager.beginTransaction().replace(R.id.contenedor, internadosFragment).commit();
+
+    }
+    
+    private void llamarNewInstanceDiasNoAtiendo(String fragmentActual){
+
+        argumentosDiasNoTrabajo.putString("nombre", nombre);
+        argumentosDiasNoTrabajo.putString("profesional", profesional);
+        argumentosDiasNoTrabajo.putString("password", password);
+        argumentosDiasNoTrabajo.putString("cookie", cookie);
+        //argumentosAgenda.putSerializable("elementos",elementos);
+
+        diasNoTrabajoFragment = new DiasNoTrabajoFragment();
+        diasNoTrabajoFragment.setArguments(argumentosDiasNoTrabajo);
+        fragmentManager.beginTransaction().replace(R.id.contenedor, diasNoTrabajoFragment).commit();
 
     }
 

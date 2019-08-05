@@ -1,9 +1,6 @@
 package hsneoclinica.neoclinica.adaptador;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.provider.ContactsContract;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +9,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.StringTokenizer;
-
 import hsneoclinica.neoclinica.R;
 import hsneoclinica.neoclinica.provisorios.Internado;
 import hsneoclinica.neoclinica.provisorios.Internados;
-import hsneoclinica.neoclinica.provisorios.Turno;
-import hsneoclinica.neoclinica.provisorios.Turnos;
-
-import static hsneoclinica.neoclinica.constantes.constantes.TAMANYO_ELEMENTO_OBS;
-import static hsneoclinica.neoclinica.constantes.constantes.TAMANYO_ELEMENTO_SIN_OBS;
 
 public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternados.ViewHolder> {
     protected Internados internados;       //Turnos a mostrar
@@ -46,7 +36,7 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
             super(itemView);
             tvLugarInternado = (TextView) itemView.findViewById(R.id.tvLugarInternado);
             ivIconoInternado = (ImageView) itemView.findViewById(R.id.ivIconoInternado);
-            nombre = (TextView) itemView.findViewById(R.id.tvNombreInternado);
+            nombre = (TextView) itemView.findViewById(R.id.tvMotivoDiaNoTrabajo);
             profesional = (TextView) itemView.findViewById(R.id.tvProfesionalInternado);
             mutual = (TextView) itemView.findViewById(R.id.tvMutualInternado);
             motivo = (TextView) itemView.findViewById(R.id.tvMotivoInternado);

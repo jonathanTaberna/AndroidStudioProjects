@@ -6,22 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:theme="@style/AppTheme.NoActionBar"
     tools:context=".PreLoginActivity">
 
-
+    <!--
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbarPreLogin"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:theme="@style/AppTheme.PopupOverlay"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:theme="@style/AppTheme"
         android:elevation="4dp"
         />
+    -->
 
     <LinearLayout
         android:id="@+id/ll1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbarPreLogin"
         android:orientation="horizontal">
 
         <Button

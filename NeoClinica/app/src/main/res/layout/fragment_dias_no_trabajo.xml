@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvNombreDiasNoTrabajo"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="nombre"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textSize="25sp" />
+
+    <View
+        android:id="@+id/divider5"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_below="@+id/tvNombreDiasNoTrabajo"
+        android:background="@color/button_background" />
+
+    <TableLayout
+        android:id="@+id/tlDiasNoTrabajo"
+        android:layout_width="match_parent"
+        android:layout_height="473dp"
+        android:layout_below="@+id/divider5">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvDesdeDiasNoTrabajo"
+                android:layout_width="65dp"
+                android:layout_height="wrap_content"
+                android:text="Desde" />
+
+            <TextView
+                android:id="@+id/tvHastaDiasNoTrabajo"
+                android:layout_width="65dp"
+                android:layout_height="wrap_content"
+                android:text="Hasta" />
+
+            <TextView
+                android:id="@+id/tvMotivoDiasNoTrabajo"
+                android:layout_width="133dp"
+                android:layout_height="wrap_content"
+                android:text="Motivo" />
+
+            <TextView
+                android:id="@+id/tvQuienDiasNoTrabajo"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="Quien cargo" />
+
+            <TextView
+                android:id="@+id/tvCuandoDiasNoTrabajo"
+                android:layout_width="65dp"
+                android:layout_height="wrap_content"
+                android:text="Cuando" />
+        </TableRow>
+
+    </TableLayout>
+
+</RelativeLayout>

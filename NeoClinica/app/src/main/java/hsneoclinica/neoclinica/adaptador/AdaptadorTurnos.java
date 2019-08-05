@@ -41,7 +41,7 @@ public class AdaptadorTurnos extends RecyclerView.Adapter<AdaptadorTurnos.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
             //nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre);
-            nombre = (TextView) itemView.findViewById(R.id.tvNombreInternado);
+            nombre = (TextView) itemView.findViewById(R.id.tvMotivoDiaNoTrabajo);
             mutual = (TextView) itemView.findViewById(R.id.elemento_lista_mutual);
             obs = (TextView) itemView.findViewById(R.id.elemento_lista_obs);
             rlElemento = (RelativeLayout) itemView.findViewById(R.id.rlElemento);
