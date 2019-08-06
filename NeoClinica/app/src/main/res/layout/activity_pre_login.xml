@@ -137,6 +137,24 @@
 
 
     <LinearLayout
+        android:id="@+id/ll5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll4"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnHS"
+            android:layout_width="200dp"
+            android:layout_height="70dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_weight="1"
+            android:text="HS Server (ip)"
+            tools:layout_editor_absoluteX="218dp"
+            tools:layout_editor_absoluteY="16dp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

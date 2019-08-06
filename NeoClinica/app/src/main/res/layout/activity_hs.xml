@@ -4,58 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme">
-
+    <!--
     <TableLayout
         android:id="@+id/tlTituloHsActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/divider5"
         android:padding="0dp"
-        android:shrinkColumns="2,3"
+        android:shrinkColumns="2"
         android:stretchColumns="*">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimaryDark"
-            android:divider="@drawable/divider_vertical">
-
-            <TextView
-                android:id="@+id/tvMatriculaHsActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mat."
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvProfesionalHsActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Prof."
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvNombreHsActivity"
-                android:layout_width="133dp"
-                android:layout_height="wrap_content"
-                android:text="Nombre"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvEspecialidadHsActivity"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="Esp."
-                android:textSize="15sp" />
-
-        </TableRow>
     </TableLayout>
+
+
+        android:layout_below="@+id/tlTituloHsActivity"
+    -->
 
     <ScrollView
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tlTituloHsActivity">
+        android:layout_height="match_parent">
 
         <TableLayout
             android:id="@+id/tlProfesionalesHsActivity"
@@ -67,6 +35,42 @@
             android:shrinkColumns="2"
             android:stretchColumns="*">
 
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimaryDark"
+                android:divider="@drawable/divider_vertical">
+
+                <TextView
+                    android:id="@+id/tvMatriculaHsActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mat."
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tvProfesionalHsActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Prof."
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tvNombreHsActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre"
+                    android:textSize="20sp" />
+                <!--
+            <TextView
+                android:id="@+id/tvEspecialidadHsActivity"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="Esp."
+                android:textSize="20sp" />
+            -->
+
+            </TableRow>
         </TableLayout>
 
     </ScrollView>

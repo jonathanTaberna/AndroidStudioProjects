@@ -80,6 +80,7 @@
                     android:hint="@string/edtUsuario"
                     android:inputType="number"
                     android:maxLines="1"
+                    android:imeOptions="actionNext"
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>

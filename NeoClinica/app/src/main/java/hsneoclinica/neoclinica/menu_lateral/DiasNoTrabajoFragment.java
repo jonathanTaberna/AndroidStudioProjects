@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
+import hsneoclinica.neoclinica.PopUpDiasNoTrabajo;
 import hsneoclinica.neoclinica.R;
 import hsneoclinica.neoclinica.constantes.constantes;
 
@@ -103,9 +104,9 @@ public class DiasNoTrabajoFragment extends Fragment {
                 String desde = jsonObject.getString("desde").trim() + " | ";
                 String hasta = jsonObject.getString("hasta").trim() + " | ";
                 String motivo = jsonObject.getString("motivo").trim();
-                //String cargo = jsonObject.getString("cargo").trim();
-                //String fecha = jsonObject.getString("fecha");
-                //String hora = jsonObject.getString("hora");
+                final String cargo = jsonObject.getString("cargo").trim();
+                final String fecha = jsonObject.getString("fecha");
+                final String hora = jsonObject.getString("hora");
 
                 //TableRow fila = new TableRow(contexto);
                 TextView textView1 = new TextView(contexto);
@@ -144,6 +145,17 @@ public class DiasNoTrabajoFragment extends Fragment {
                 tr.addView(textView3);
                 //tr.addView(textView4);
                 //tr.addView(textView5);
+
+                tr.setOnLongClickListener(new View.OnLongClickListener()
+                {
+                    @Override
+                    public boolean onLongClick(View v)
+                    {
+                        tr.setBackgroundColor(R.color.colorPrimaryDark);
+                        new PopUpDiasNoTrabajo(contexto, "Cargó: " + cargo,fecha + " (" + hora.trim() + ")", tr);
+                        return true;
+                    }
+                });
                 tlDiasNoTrabajo.addView(tr, trParams);
 
                 // add separator row
@@ -189,7 +201,7 @@ public class DiasNoTrabajoFragment extends Fragment {
                 URL url = new URL( constantes.pathConnection + constantes.metodoGetNoJob);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Content-Type: application/json", "charset=utf-8");
                 conn.setRequestProperty("Accept","application/json");
                 conn.setRequestProperty("Cookie",cookie);
                 conn.setDoOutput(true);

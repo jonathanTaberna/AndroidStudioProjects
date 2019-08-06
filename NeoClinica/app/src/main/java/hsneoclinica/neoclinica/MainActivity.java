@@ -19,6 +19,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,6 +47,8 @@ import hsneoclinica.neoclinica.provisorios.Check;
 import hsneoclinica.neoclinica.provisorios.Internados;
 import hsneoclinica.neoclinica.provisorios.Turno;
 
+import static hsneoclinica.neoclinica.constantes.constantes.RESULT_CERRAR_SESION;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private Boolean enableView = false;
 
+    private String activity;
     private String empresa;
     private String nombreEmpresa;
     private String nombre;
@@ -89,6 +93,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        activity = extras.getString("activity");
         empresa = extras.getString("empresa");
         nombreEmpresa = extras.getString("nombreEmpresa");
         nombre = extras.getString("nombre");
@@ -126,8 +131,29 @@ public class MainActivity extends AppCompatActivity
             case "HospitalComGralDeheza":
                 imgvw.setImageResource(R.drawable.san_lucas_logo);
                 break;
+            case "HS":
+                break;
             default:
                  break;
+        }
+        if (!activity.equals(constantes.HS_ACTIVITY)){
+            Menu menu = navigationView.getMenu();
+            for (int menuItemIndex = 0; menuItemIndex < menu.size(); menuItemIndex++) {
+                MenuItem menuItem = menu.getItem(menuItemIndex);
+                if (menuItem.getTitle().equals("Acciones")) {
+                    SubMenu subMenu =  menuItem.getSubMenu();
+                    for (int i = 0; i < subMenu.size(); i++) {
+                        MenuItem menuItem1 = subMenu.getItem(i);
+                        if (menuItem1.getItemId() == R.id.nav_hs_menu_item) {
+                            menuItem1.setVisible(false);
+                        }
+                    }
+                    //menuItem.setVisible(false);
+                }
+                //if (menuItem.getItemId() == R.id.nav_hs_menu_item) {
+                //    menuItem.setVisible(false);
+                //}
+            }
         }
 
 
@@ -237,15 +263,19 @@ public class MainActivity extends AppCompatActivity
                 llamarNewInstanceDiasNoAtiendo(fragmentActual);
             }
 
+        } else if (id == R.id.nav_hs_menu_item) {
+            setResult(constantes.RESULT_HS_ACTIVITY);
+            turnoFragment.productosVector.eliminaListaProductos();
+            finish();
+
         } else if (id == R.id.nav_cerrar_sesion) {
-            setResult(RESULT_FIRST_USER);
+            setResult(RESULT_CERRAR_SESION);
             finish();
 
         } else if (id == R.id.nav_salir) {
             setResult(RESULT_CANCELED);
             turnoFragment.productosVector.eliminaListaProductos();
             finish();
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

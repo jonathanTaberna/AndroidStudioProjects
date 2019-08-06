@@ -51,6 +51,7 @@ public class PreLoginActivity extends AppCompatActivity {
     private Button btnUrologico;
     private Button btnClinicaPrivadaGralDeheza;
     private Button btnHospitalComGralDeheza;
+    private Button btnHS;
     private Toolbar toolbar;
 
     @Override
@@ -132,6 +133,15 @@ public class PreLoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 i.putExtra("empresa", "HospitalComGralDeheza");
+                startActivity(i);
+            }
+        });
+        btnHS = (Button) findViewById(R.id.btnHS);
+        btnHS.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                i.putExtra("empresa", "HS");
                 startActivity(i);
             }
         });

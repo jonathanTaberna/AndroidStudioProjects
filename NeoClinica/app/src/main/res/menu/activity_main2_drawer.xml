@@ -31,6 +31,10 @@
     <item android:title="Acciones">
         <menu>
             <item
+                android:id="@+id/nav_hs_menu_item"
+                android:icon="@drawable/ic_profesionales"
+                android:title="Ir a Seleccion de Profesional" />
+            <item
                 android:id="@+id/nav_cerrar_sesion"
                 android:icon="@drawable/ic_cerrar_sesion"
                 android:title="Cerrar Sesion" />

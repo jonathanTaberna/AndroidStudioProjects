@@ -8,16 +8,26 @@ public class constantes {
     //constantes
     public static String CONFIG_NOT_FOUND = "CONFIG_NOT_FOUND";
     public static String CONFIG_FOUND = "CONFIG_FOUND";
-    public static int RESULT_NUEVO_USUARIO = 111;
+    public static String HS_ACTIVITY = "HS_ACTIVITY";
+    public static String LOGIN_ACTIVITY = "LOGIN_ACTIVITY";
+    public static int RESULT_CERRAR_SESION = 111;
     public static int RESULT_MAIN_ACTIVITY = 222;
-    public static int CANTIDAD_TURNOS_LISTA = 10;
+    public static int RESULT_HS_ACTIVITY = 333;
     public static int TAMANYO_ELEMENTO_OBS = 280;
     public static int TAMANYO_ELEMENTO_SIN_OBS = 150;
 
-    public static String neoServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol"; //existeusu
+
+    public static String sanLucasServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
+    public static String neoServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
+    public static String sanatorioPrivadoServer  = "http://sanatorioprivado.no-ip.org:9500/valida-prof/servlet/isCobol";
+    public static String odontograssiServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
+    public static String resonanciaR4Server  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
+    public static String hospitalGralDehezaServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
+    public static String urologicoServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
+    public static String clinicaPrivadaGralDehezaServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
     public static String hsServer = "http://192.168.2.121:8080/valida-prof/servlet/isCobol"; //(HS-AGENDA)";
 
-    public static String pathConnection = neoServer; //delPuebloNombre;
+    public static String pathConnection;// = neoServer;
     public static String metodoHsAgenda = "(HS-AGENDA)";
     public static String metodoValidaProfeIni = "(VALIDA_PROFE_INI)";
     public static String metodoGetAgendaDia = "(GET_AGENDA_DIA)";
@@ -26,6 +36,6 @@ public class constantes {
     public static String metodoGetProfesionales = "(GET_PROFESIONALES)";
 
     public static String cuitHS = "30640685782";
-    public static String passHS = "HS852";
+    public static String passHS = "H"; //"HS852";
 
 }

@@ -53,6 +53,10 @@ import java.util.ArrayList;
 import hsneoclinica.neoclinica.constantes.constantes;
 import hsneoclinica.neoclinica.provisorios.Turno;
 
+import static hsneoclinica.neoclinica.constantes.constantes.RESULT_CERRAR_SESION;
+import static hsneoclinica.neoclinica.constantes.constantes.RESULT_HS_ACTIVITY;
+import static hsneoclinica.neoclinica.constantes.constantes.neoServer;
+
 
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
@@ -73,9 +77,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private ImageView toolbarLogo;
 
     private String empresa = "";
+    private String nombre = "";
+    private String nombreEmpresa = "";
     private String estadoArchivo = "";
     private String matricula = "";
+    private String password = "";
     private String profesional = "";
+    private JSONArray profesionales = null;
 
     //private ArrayList<Turno> elementos = new ArrayList<Turno>();
 
@@ -90,28 +98,39 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         empresa = extras.getString("empresa");
         switch (empresa){
             case "SanLucas":
+                constantes.pathConnection = constantes.sanLucasServer;
                 toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
                 break;
             case "SanatorioPrivado":
+                constantes.pathConnection = constantes.sanatorioPrivadoServer;
                 toolbarLogo.setImageResource(R.drawable.sanatorio_privado_logo);
                 break;
             case "Neoclinica":
+                constantes.pathConnection = constantes.neoServer;
                 toolbarLogo.setImageResource(R.drawable.neoclinica_logo);
                 break;
             case "Odontograssi":
+                constantes.pathConnection = constantes.odontograssiServer;
                 toolbarLogo.setImageResource(R.drawable.odontograssi_logo);
                 break;
             case "ResonanciaR4":
+                constantes.pathConnection = constantes.resonanciaR4Server;
                 toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
                 break;
             case "Urologico":
+                constantes.pathConnection = constantes.urologicoServer;
                 toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
                 break;
             case "ClinicaPrivGralDeheza":
+                constantes.pathConnection = constantes.clinicaPrivadaGralDehezaServer;
                 toolbarLogo.setImageResource(R.drawable.clinica_gral_deheza_logo);
                 break;
             case "HospitalComGralDeheza":
+                constantes.pathConnection = constantes.hospitalGralDehezaServer;
                 toolbarLogo.setImageResource(R.drawable.san_lucas_logo);
+                break;
+            case "HS":
+                constantes.pathConnection = constantes.hsServer;
                 break;
             default:
                 break;
@@ -279,8 +298,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mMatriculaView.setError(null);
         mPasswordView.setError(null);
 
-        String matricula = mMatriculaView.getText().toString().trim();
-        String password = mPasswordView.getText().toString().trim();
+        matricula = mMatriculaView.getText().toString().trim();
+        password = mPasswordView.getText().toString().trim();
 
         boolean cancel = false;
         View focusView = null;
@@ -400,6 +419,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*
         if (requestCode == constantes.RESULT_NUEVO_USUARIO ) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.i("RESULT", "RESULT_NUEVO_USUARIO OK");
@@ -417,14 +437,48 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }
         }
+        */
 
         if (requestCode == constantes.RESULT_MAIN_ACTIVITY ) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 finish();
             }
-            if (resultCode == Activity.RESULT_FIRST_USER) {
+            if (resultCode == RESULT_CERRAR_SESION) {
                 mPasswordView.setText("");
                 mPasswordView.requestFocus();
+            }
+            if (resultCode == RESULT_HS_ACTIVITY) {
+                Intent i = new Intent(getApplicationContext(), HsActivity.class);
+                i.putExtra("empresa", empresa);
+                i.putExtra("nombreEmpresa", nombreEmpresa);
+                i.putExtra("nombre", nombre);
+                i.putExtra("cookie", cookie);
+                i.putExtra("profesionales", profesionales.toString());
+                startActivityForResult(i, RESULT_HS_ACTIVITY);
+            }
+        }
+
+        if (requestCode == RESULT_HS_ACTIVITY ) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                finish();
+            }
+            if (resultCode == Activity.RESULT_OK) {
+
+                matricula = data.getStringExtra("RESULT_MATRICULA");
+                nombre = data.getStringExtra("RESULT_NOMBRE");
+                profesional = data.getStringExtra("RESULT_PROFESIONAL");
+                password = "";
+
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                i.putExtra("activity", constantes.HS_ACTIVITY);
+                i.putExtra("empresa", empresa);
+                i.putExtra("nombreEmpresa", nombreEmpresa);
+                i.putExtra("nombre", nombre);
+                i.putExtra("matricula", matricula);
+                i.putExtra("password", password);
+                i.putExtra("profesional", profesional);
+                i.putExtra("cookie", cookie);
+                startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
             }
         }
 
@@ -453,7 +507,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 URL url = new URL( constantes.pathConnection + constantes.metodoHsAgenda);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Content-Type: application/json", "charset=utf-8");
                 conn.setRequestProperty("Accept","application/json");
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
@@ -595,7 +649,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 URL url = new URL( constantes.pathConnection + constantes.metodoValidaProfeIni);// + "get_matricula="+ mMatricula+"&get_pass=" + mPassword);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Content-Type: application/json", "charset=utf-8");
                 conn.setRequestProperty("Accept","application/json");
                 conn.setRequestProperty("Cookie",cookie);
                 conn.setDoOutput(true);
@@ -662,9 +716,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             int salida = 0;
             int flag = 0;
-            String nombre = "";
+            nombre = "";
             String fecha = "";
-            String nombreEmpresa = "";
+            nombreEmpresa = "";
 
             try {
                 jsonObject = jsonResp.getJSONObject("Response");
@@ -704,6 +758,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
 
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.putExtra("activity", constantes.LOGIN_ACTIVITY);
                         i.putExtra("empresa", empresa);
                         i.putExtra("nombreEmpresa", nombreEmpresa);
                         i.putExtra("nombre", nombre);
@@ -769,7 +824,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 URL url = new URL( constantes.pathConnection + constantes.metodoGetProfesionales);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Content-Type: application/json", "charset=utf-8");
                 conn.setRequestProperty("Accept","application/json");
                 conn.setRequestProperty("Cookie",cookie);
                 conn.setDoOutput(true);
@@ -830,7 +885,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             JSONObject jsonObject = null;
-            JSONArray profesionales = null;
+            profesionales = null;
 
             int salida = 0;
             int registros = 0;
@@ -866,7 +921,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         i.putExtra("nombre", nombre);
                         i.putExtra("cookie", cookie);
                         i.putExtra("profesionales", profesionales.toString());
-                        startActivity(i);
+                        //startActivity(i);
+                        startActivityForResult(i, RESULT_HS_ACTIVITY);
 
                     } else {
                         if (status == 99) {
