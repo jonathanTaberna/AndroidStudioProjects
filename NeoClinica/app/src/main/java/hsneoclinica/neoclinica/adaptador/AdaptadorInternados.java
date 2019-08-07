@@ -36,7 +36,7 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
             super(itemView);
             tvLugarInternado = (TextView) itemView.findViewById(R.id.tvLugarInternado);
             ivIconoInternado = (ImageView) itemView.findViewById(R.id.ivIconoInternado);
-            nombre = (TextView) itemView.findViewById(R.id.tvMotivoDiaNoTrabajo);
+            nombre = (TextView) itemView.findViewById(R.id.tvPacienteInternado);
             profesional = (TextView) itemView.findViewById(R.id.tvProfesionalInternado);
             mutual = (TextView) itemView.findViewById(R.id.tvMutualInternado);
             motivo = (TextView) itemView.findViewById(R.id.tvMotivoInternado);

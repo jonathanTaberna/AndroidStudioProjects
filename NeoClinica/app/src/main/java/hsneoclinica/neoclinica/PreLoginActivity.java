@@ -59,11 +59,6 @@ public class PreLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pre_login);
 
-        //toolbar = (Toolbar) findViewById(R.id.toolbarPreLogin);
-        //setSupportActionBar(toolbar);
-
-        //getSupportActionBar().setIcon(R.drawable.salud_icon);
-
         btnSanLucas = (Button) findViewById(R.id.btnSanLucas);
         btnSanLucas.setOnClickListener(new OnClickListener() {
             @Override

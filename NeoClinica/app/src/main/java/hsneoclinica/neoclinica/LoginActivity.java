@@ -85,7 +85,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String profesional = "";
     private JSONArray profesionales = null;
 
-    //private ArrayList<Turno> elementos = new ArrayList<Turno>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,8 +167,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         File archivo = new File(getBaseContext().getFilesDir()+ "/" + constantes.neoclinicaConfig);
         if (archivo.exists()) {
             estadoArchivo = constantes.CONFIG_FOUND;
-            //cbRecordarMatricula.setVisibility(View.VISIBLE);
-            //mMatriculaView.setInputType(InputType.TYPE_CLASS_TEXT);
             String matriculaCargada = leerMatriculaCargada();
             if (!matriculaCargada.isEmpty()) {
                 mMatriculaView.setText(matriculaCargada);
@@ -177,8 +174,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         } else  {
             estadoArchivo = constantes.CONFIG_NOT_FOUND;
-            //cbRecordarMatricula.setVisibility(View.INVISIBLE);
-            //mMatriculaView.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
 
     }
@@ -241,7 +236,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         String parte2 = partes[1];
                         profesional = partes[1];
                     }
-                    //mMatriculaView.setText(parte2);
                 }
                 if (linea.contains("matricula_utilizada:")) {
                     partes = linea.split("matricula_utilizada:");
@@ -250,7 +244,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         String parte2 = partes[1];
                         matricula = partes[1];
                     }
-                    //mMatriculaView.setText(parte2);
                 }
                 linea = buffreader.readLine(); //lee proxima fila
             }
@@ -419,26 +412,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        /*
-        if (requestCode == constantes.RESULT_NUEVO_USUARIO ) {
-            if (resultCode == Activity.RESULT_OK) {
-                Log.i("RESULT", "RESULT_NUEVO_USUARIO OK");
-                mMatriculaView.setText(data.getStringExtra("usuario"));
-                mMatriculaView.setInputType(InputType.TYPE_CLASS_TEXT);
-                mPasswordView.setText("");
-                if (generarArchivo(constantes.neoclinicaConfig, matricula, profesional)){
-                    Log.i("JONATT", "GENERO BIEN LA CONFIG");
-                    estadoArchivo = constantes.CONFIG_FOUND;
-                    cbRecordarMatricula.setVisibility(View.VISIBLE);
-                    cbRecordarMatricula.setChecked(true);
-                    mPasswordView.requestFocus();
-                } else {
-                    Log.i("JONATT", "NO SE GENERO LA CONFIG");
-                }
-            }
-        }
-        */
-
         if (requestCode == constantes.RESULT_MAIN_ACTIVITY ) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 finish();
@@ -591,23 +564,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             userLoginTaskTask = new UserLoginTask(mMatricula, mPassword);
                             userLoginTaskTask.execute((Void) null);
                         }
-
-                        /*
-                        if (generarArchivo(constantes.neoclinicaConfig, matricula)) {
-                            Log.i("JONATT", "GENERO BIEN LA CONFIG");
-                            estadoArchivo = constantes.CONFIG_FOUND;
-                            guardarMatricula();
-                        } else {
-                            Log.i("JONATT", "NO SE GENERO LA CONFIG");
-                        }
-
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        i.putExtra("matricula", mMatricula);
-                        i.putExtra("password", mPassword);
-                        i.putExtra("cookie", cookie);
-                        startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
-                        */
-
                     } else {
                         mMatriculaView.setError(getString(R.string.servidor_timeout));
                         mMatriculaView.requestFocus();
@@ -921,7 +877,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         i.putExtra("nombre", nombre);
                         i.putExtra("cookie", cookie);
                         i.putExtra("profesionales", profesionales.toString());
-                        //startActivity(i);
                         startActivityForResult(i, RESULT_HS_ACTIVITY);
 
                     } else {

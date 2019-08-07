@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import hsneoclinica.neoclinica.constantes.constantes;
+
 public class HsActivity extends AppCompatActivity {
 
 
@@ -25,7 +27,6 @@ public class HsActivity extends AppCompatActivity {
     private String nombre;
     private String cookie;
     private JSONArray profesionales;
-    //private TableLayout tlTituloHsActivity;
     private TableLayout tlProfesionalesHsActivity;
     private Context contexto;
     @Override
@@ -33,7 +34,6 @@ public class HsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hs);
 
-        //tlTituloHsActivity = (TableLayout) findViewById(R.id.tlTituloHsActivity);
         tlProfesionalesHsActivity = (TableLayout) findViewById(R.id.tlProfesionalesHsActivity);
 
         Bundle extras = getIntent().getExtras();
@@ -46,7 +46,6 @@ public class HsActivity extends AppCompatActivity {
         empresa = extras.getString("empresa");
         nombreEmpresa = extras.getString("nombreEmpresa");
         nombre = extras.getString("nombre");
-        //profesionales = extras.getString("profesionales");
         cookie = extras.getString("cookie");
         String jsonArray = extras.getString("profesionales");
 
@@ -115,20 +114,19 @@ public class HsActivity extends AppCompatActivity {
                 //TextView textView4 = new TextView(contexto);
                 //TextView textView5 = new TextView(this);
                 textView1.setText(matricula);
-                textView1.setTextSize(20);
+                textView1.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 //textView1.setHeight(15);
                 textView2.setText(clave);
-                textView2.setTextSize(20);
+                textView2.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 //textView1.setHeight(15);
                 textView3.setText(nombre.trim() + " [" + especialidad.trim() + "]");
-                textView3.setTextSize(20);
+                textView3.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 //textView4.setText(especialidad);
-                //textView4.setTextSize(20);
+                //textView4.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 //textView5.setText(fecha);
-                //textView5.setTextSize(14);
+                //textView5.setTextSize(constantes.TAMANYO_TEXT_SIZE);
 
                 View v = new View(contexto);
-                //v.setLayoutParams(new TableRow.LayoutParams(1, TableRow.LayoutParams.MATCH_PARENT));
                 v.setLayoutParams(new TableRow.LayoutParams(1, TableRow.LayoutParams.WRAP_CONTENT));
                 v.setBackgroundColor(R.color.colorPrimary);
 
@@ -151,9 +149,6 @@ public class HsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v)
                     {
-                        //tr.setBackgroundColor(android.R.color.holo_blue_dark);
-                        //tr.setBackgroundColor(R.color.colorPrimaryDark);
-
                         Intent intent=new Intent();
                         intent.putExtra("RESULT_MATRICULA", textView1.getText());
                         intent.putExtra("RESULT_PROFESIONAL", textView2.getText());
@@ -162,20 +157,6 @@ public class HsActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-                /*
-                tr.setOnLongClickListener(new View.OnLongClickListener()
-                {
-                    @Override
-                    public boolean onLongClick(View v)
-                    {
-                        //tr.setBackgroundColor(android.R.color.holo_blue_dark);
-                        tr.setBackgroundColor(R.color.colorAmarillo);
-
-                        new PopUpDiasNoTrabajo(contexto, "lalala","20/05/2020");
-                        return true;
-                    }
-                });
-                */
                 tlProfesionalesHsActivity.addView(tr, trParams);
 
                 // add separator row
@@ -192,10 +173,6 @@ public class HsActivity extends AppCompatActivity {
                 tvSep.setHeight(1);
                 trSep.addView(tvSep);
                 tlProfesionalesHsActivity.addView(trSep, trParamsSep);
-                //tlTituloHsActivity.addView(trSep);
-
-
-                //tlTituloHsActivity.addView(fila);
             } catch (Exception e) {
                 Log.e("hsActivity", e.getMessage());
             }

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +53,6 @@ public class InternadosFragment extends Fragment {
     private String nombre;
     private String fecha;
     private String cookie;
-    //private ArrayList<Turno> elementos = new ArrayList<Turno>();
 
     private int flagPaso = 0;
     private Context contexto;
@@ -65,8 +65,9 @@ public class InternadosFragment extends Fragment {
     private RecyclerView recyclerView;
     public AdaptadorInternados adaptador;
     private RecyclerView.LayoutManager layoutManager;
-    //private TextView tvTarjeta;
+    private LinearLayout llMatriculaMain;
     private TextView tvNroMatricula;
+    private TextView tvNroMat;
     private TextView tvNombre;
     private TextView tvComentario;
     private Button btnPrev;
@@ -88,7 +89,7 @@ public class InternadosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_main, container, false);
 
-        contexto = container.getContext(); //getActivity().getApplicationContext();
+        contexto = container.getContext();
 
         Bundle bundle = getArguments();
 
@@ -99,8 +100,10 @@ public class InternadosFragment extends Fragment {
         this.password = bundle.getString("password");
         this.cookie = bundle.getString("cookie");
 
+        llMatriculaMain = (LinearLayout) view.findViewById(R.id.llMatriculaMain);
         tvNombre = (TextView) view.findViewById(R.id.tvNombre);
         tvNroMatricula = (TextView) view.findViewById(R.id.tvNroMatricula);
+        tvNroMat = (TextView) view.findViewById(R.id.tvNroMat);
         tvComentario = (TextView) view.findViewById(R.id.tvComentario);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         btnPrev = (Button) view.findViewById(R.id.btnPrev);
@@ -110,8 +113,13 @@ public class InternadosFragment extends Fragment {
 
         tvNombre.setText(nombre.trim());
         tvComentario.setText("");
-        //tvNombre.setGravity(Gravity.CENTER);
-        tvNroMatricula.setText(matricula);
+        tvComentario.setHeight(0);
+        if (matricula.trim().equals("0")) {
+            tvNroMat.setHeight(0);
+            tvNroMatricula.setHeight(0);
+        } else {
+            tvNroMatricula.setText(matricula);
+        }
         tvFecha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,9 +243,7 @@ public class InternadosFragment extends Fragment {
 
         if (tamanyoArray == 0) { //no hay turnos para mostrar
 
-            //internado = new Internado();
-            //internadosVector.anyade(internado);
-            Toast.makeText(contexto, "No hay turnos a Mostrar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(contexto, "No hay internados a Mostrar", Toast.LENGTH_SHORT).show();
             actualizarVista(internadosVector);
             /*
             TurnosVector productosVectorAux = new TurnosVector(productosVector.getArray(1, 1));
@@ -312,8 +318,6 @@ public class InternadosFragment extends Fragment {
                     monthStr = "" + month;
                 }
 
-                //final String selectedDate = dayStr + "/" + monthStr + "/" + year;
-                //tvFecha.setText(selectedDate);
                 internadosVector.ResetList();
                 c.set(year, month - 1, day);
                 fecha = generarFecha(c);

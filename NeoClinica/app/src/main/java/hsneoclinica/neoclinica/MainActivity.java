@@ -1,14 +1,10 @@
 package hsneoclinica.neoclinica;
 
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.media.Image;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.media.RatingCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,36 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.util.ArrayList;
 
 import hsneoclinica.neoclinica.constantes.constantes;
 import hsneoclinica.neoclinica.menu_lateral.DiasNoTrabajoFragment;
 import hsneoclinica.neoclinica.menu_lateral.InternadosFragment;
 import hsneoclinica.neoclinica.menu_lateral.TurnoFragment;
-import hsneoclinica.neoclinica.provisorios.Check;
-import hsneoclinica.neoclinica.provisorios.Internados;
-import hsneoclinica.neoclinica.provisorios.Turno;
 
 import static hsneoclinica.neoclinica.constantes.constantes.RESULT_CERRAR_SESION;
 
@@ -86,7 +62,6 @@ public class MainActivity extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setIcon(R.drawable.salud_icon);
 
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
@@ -103,7 +78,7 @@ public class MainActivity extends AppCompatActivity
         cookie = extras.getString("cookie");
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View hView =  navigationView.getHeaderView(0); //inflateHeaderView(R.layout.nav_header_main2);
+        View hView =  navigationView.getHeaderView(0);
         ImageView imgvw = (ImageView)hView.findViewById(R.id.ivNavigator);
         this.setTitle(nombreEmpresa);
         switch (empresa){
@@ -148,11 +123,7 @@ public class MainActivity extends AppCompatActivity
                             menuItem1.setVisible(false);
                         }
                     }
-                    //menuItem.setVisible(false);
                 }
-                //if (menuItem.getItemId() == R.id.nav_hs_menu_item) {
-                //    menuItem.setVisible(false);
-                //}
             }
         }
 
@@ -166,14 +137,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //elementos = (ArrayList<Turno>) extras.getSerializable("elementos");
         fragmentActual = "agenda";
-        //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
         llamarNewInstanceAgenda(fragmentActual);
         navigationView.getMenu().getItem(0).setChecked(true); //marca el primer item de la lista del menu lateral
-        //navigationView.getMenu().getItem(0).setIconTintList(ColorStateList.valueOf(R.color.titleColor)); //marca el primer item de la lista del menu lateral
-        //setTitleIconDrawer(navigationView);
-
     }
 
     @Override
@@ -183,14 +149,6 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             drawer.openDrawer(GravityCompat.START);
-            /*
-            if (fragmentActual == "mis_datos" && enableView) {
-                toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(true);
-                llamarNewInstanceMisDatos(false);
-
-            } else {
-            }*/
-            //super.onBackPressed(); //close the app
         }
     }
 
@@ -242,11 +200,6 @@ public class MainActivity extends AppCompatActivity
             if (fragmentActual != "agenda") {
                 fragmentActual = "agenda";
                 llamarNewInstanceAgenda(fragmentActual);
-                //fragmentManager.beginTransaction().replace(R.id.contenedor, turnoFragment).commit();
-                //toolbar.getMenu().findItem(R.id.main2_action_refresh).setVisible(false);
-                //toolbar.getMenu().findItem(R.id.main2_action_preferences).setVisible(false);
-                //toolbar.getMenu().findItem(R.id.main2_action_edit_data).setVisible(false);
-
             }
             // Handle the camera action
         } else if (id == R.id.nav_internados) {
@@ -307,7 +260,6 @@ public class MainActivity extends AppCompatActivity
         argumentosInternado.putString("profesional", profesional);
         argumentosInternado.putString("password", password);
         argumentosInternado.putString("cookie", cookie);
-        //argumentosAgenda.putSerializable("elementos",elementos);
 
         internadosFragment = new InternadosFragment();
         internadosFragment.setArguments(argumentosInternado);
@@ -321,7 +273,6 @@ public class MainActivity extends AppCompatActivity
         argumentosDiasNoTrabajo.putString("profesional", profesional);
         argumentosDiasNoTrabajo.putString("password", password);
         argumentosDiasNoTrabajo.putString("cookie", cookie);
-        //argumentosAgenda.putSerializable("elementos",elementos);
 
         diasNoTrabajoFragment = new DiasNoTrabajoFragment();
         diasNoTrabajoFragment.setArguments(argumentosDiasNoTrabajo);

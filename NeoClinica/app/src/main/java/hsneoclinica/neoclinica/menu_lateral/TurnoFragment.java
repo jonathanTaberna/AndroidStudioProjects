@@ -54,7 +54,6 @@ public class TurnoFragment extends Fragment {
     private String nombre;
     private String fecha;
     private String cookie;
-    //private ArrayList<Turno> elementos = new ArrayList<Turno>();
 
     private int flagPaso = 0;
     private Context contexto;
@@ -67,8 +66,8 @@ public class TurnoFragment extends Fragment {
     private RecyclerView recyclerView;
     public AdaptadorTurnos adaptador;
     private RecyclerView.LayoutManager layoutManager;
-    //private TextView tvTarjeta;
     private TextView tvNroMatricula;
+    private TextView tvNroMat;
     private TextView tvNombre;
     private TextView tvComentario;
     private Button btnPrev;
@@ -86,21 +85,12 @@ public class TurnoFragment extends Fragment {
     private int day;
 
     //fin variables main activity
-    /*
-    @SuppressLint("ValidFragment")
-    public TurnoFragment(String tarjeta, int puntos, String nombre){s
-        this.tarjeta = tarjeta;
-        this.puntos = puntos;
-        this.nombre = nombre;
-    }
-    */
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_main, container, false);
 
-        contexto = container.getContext(); //getActivity().getApplicationContext();
+        contexto = container.getContext();
 
         Bundle bundle = getArguments();
 
@@ -110,10 +100,10 @@ public class TurnoFragment extends Fragment {
         this.profesional = bundle.getString("profesional");
         this.password = bundle.getString("password");
         this.cookie = bundle.getString("cookie");
-        //this.elementos = (ArrayList<Turno>) bundle.getSerializable("elementos");
 
         tvNombre = (TextView) view.findViewById(R.id.tvNombre);
         tvNroMatricula = (TextView) view.findViewById(R.id.tvNroMatricula);
+        tvNroMat = (TextView) view.findViewById(R.id.tvNroMat);
         tvComentario = (TextView) view.findViewById(R.id.tvComentario);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         btnPrev = (Button) view.findViewById(R.id.btnPrev);
@@ -122,8 +112,12 @@ public class TurnoFragment extends Fragment {
         pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
 
         tvNombre.setText(nombre.trim());
-        //tvNombre.setGravity(Gravity.CENTER);
-        tvNroMatricula.setText(matricula);
+        if (matricula.trim().equals("0")) {
+            tvNroMat.setHeight(0);
+            tvNroMatricula.setHeight(0);
+        } else {
+            tvNroMatricula.setText(matricula);
+        }
         tvFecha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,7 +142,6 @@ public class TurnoFragment extends Fragment {
                 productosVector.ResetList();
                 if (productosVector.tamanyo() > 0 ) {
                     recyclerView.stopScroll();
-                    //turnos.limpiaListaProductos();
                     adaptador.notifyDataSetChanged();
                 }
 
@@ -165,7 +158,6 @@ public class TurnoFragment extends Fragment {
                 productosVector.ResetList();
                 if (productosVector.tamanyo() > 0 ) {
                     recyclerView.stopScroll();
-                    //turnos.limpiaListaProductos();
                     adaptador.notifyDataSetChanged();
                 }
                 getTurnosTask = new GetTurnosTask(fecha);
@@ -253,11 +245,6 @@ public class TurnoFragment extends Fragment {
         if (fragmentVisible == "agenda"){
             adaptador = new AdaptadorTurnos(contexto, turnos);
         }
-        /*
-        if (fragmentVisible == "promociones"){
-            adaptador = new AdaptadorTurnos(contexto, turnos);
-        }
-        */
         recyclerView.setAdapter(adaptador);
         layoutManager = new LinearLayoutManager(contexto);
         recyclerView.setLayoutManager(layoutManager);
@@ -312,8 +299,6 @@ public class TurnoFragment extends Fragment {
                     monthStr = "" + month;
                 }
 
-                //final String selectedDate = dayStr + "/" + monthStr + "/" + year;
-                //tvFecha.setText(selectedDate);
                 productosVector.ResetList();
                 c.set(year, month - 1, day);
                 fecha = generarFecha(c);
@@ -436,14 +421,20 @@ public class TurnoFragment extends Fragment {
                         } else {
                             tvFecha.setText(fecha);
                             tvComentario.setText(comentario.trim());
-                            //tvComentario.setGravity(Gravity.CENTER);
+                            ViewGroup.LayoutParams params = tvComentario.getLayoutParams();
                             if (!comentario.trim().isEmpty()) {
                                 tvComentario.setBackgroundColor(Color.BLACK);
                                 tvComentario.setTextColor(Color.WHITE);
+                                tvComentario.setTextSize(constantes.TAMANYO_TEXT_SIZE);
+
+                                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
                             } else {
                                 tvComentario.setBackgroundColor(0);
+
+                                params.height = 0;
                             }
-                            //Toast.makeText(contexto,  getString(R.string.servidor_error),Toast.LENGTH_SHORT).show();
+                            tvComentario.setLayoutParams(params);
                             inflarVista(turnos);
                         }
 
@@ -463,46 +454,4 @@ public class TurnoFragment extends Fragment {
             getTurnosTask = null;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-    public void actualizarVistaOrdenada(String filtrarPuntos, String orden, String orderBy) {
-        ultimaPaginaCargada = 0;
-        productosVector.ResetList();
-        this.flagPaso = 0;
-        paginaActual = 1;
-        fromCantidadTurnos = 1;
-        toCantidadTurnos = constantes.CANTIDAD_TURNOS_LISTA;
-
-        orderByProducto = orden + "," + orderBy;
-        showProgress(true);
-        getTurnosTask = new getTurnosTask(filtrarPuntos, fromCantidadTurnos, toCantidadTurnos, orderByProducto, elementos);
-        getTurnosTask.execute((Void) null);
-    }
-
-    public void actualizarVistaPreferencias(ArrayList<Check> elementos){
-        ultimaPaginaCargada = 0;
-        productosVector.ResetList();
-        this.flagPaso = 0;
-        paginaActual = 1;
-        fromCantidadTurnos = 1;
-        toCantidadTurnos = constantes.CANTIDAD_TURNOS_LISTA;
-
-        showProgress(true);
-        orderByProducto = "nombre,asc";
-        getTurnosTask = new getTurnosTask(filtrarPuntos, fromCantidadTurnos, toCantidadTurnos,orderByProducto, elementos);
-        getTurnosTask.execute((Void) null);
-    }
-    */
 }

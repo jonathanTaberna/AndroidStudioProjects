@@ -10,7 +10,7 @@
     -->
 
     <TextView
-        android:id="@+id/tvMotivoDiaNoTrabajo"
+        android:id="@+id/elemento_lista_nombre_paciente"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/tvMotivoDiaNoTrabajo"
+        android:layout_below="@+id/elemento_lista_nombre_paciente"
         android:singleLine="true"
         android:text="mutual" />
 

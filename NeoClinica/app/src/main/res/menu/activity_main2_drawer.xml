@@ -33,7 +33,7 @@
             <item
                 android:id="@+id/nav_hs_menu_item"
                 android:icon="@drawable/ic_profesionales"
-                android:title="Ir a Seleccion de Profesional" />
+                android:title="Seleccionar Profesional" />
             <item
                 android:id="@+id/nav_cerrar_sesion"
                 android:icon="@drawable/ic_cerrar_sesion"

@@ -71,9 +71,6 @@ public class DiasNoTrabajoFragment extends Fragment {
         tvNombreDiasNoTrabajo = (TextView) view.findViewById(R.id.tvNombreDiasNoTrabajo);
         tlDiasNoTrabajo = (TableLayout) view.findViewById(R.id.tlDiasNoTrabajo);
         tlDiasNoTrabajo.setStretchAllColumns(true);
-        //tlDiasNoTrabajo.setShrinkAllColumns(true);
-        //tlDiasNoTrabajo.setDividerDrawable(getResources().getDrawable(R.drawable.divider_vertical));
-        //tlDiasNoTrabajo.setDividerPadding(2);
 
         tvNombreDiasNoTrabajo.setText(nombre.trim());
 
@@ -115,22 +112,19 @@ public class DiasNoTrabajoFragment extends Fragment {
                 //TextView textView4 = new TextView(contexto);
                 //TextView textView5 = new TextView(contexto);
                 textView1.setText(desde);
-                textView1.setTextSize(20);
+                textView1.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 textView2.setText(hasta);
-                textView2.setTextSize(20);
+                textView2.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 textView3.setText(motivo);
-                textView3.setTextSize(20);
+                textView3.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 //textView4.setText(cargo);
-                //textView4.setTextSize(14);
+                //textView4.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 //textView5.setText(fecha);
-                //textView5.setTextSize(14);
+                //textView5.setTextSize(constantes.TAMANYO_TEXT_SIZE);
 
                 View v = new View(contexto);
-                //v.setLayoutParams(new TableRow.LayoutParams(1, TableRow.LayoutParams.MATCH_PARENT));
                 v.setLayoutParams(new TableRow.LayoutParams(1, TableRow.LayoutParams.WRAP_CONTENT));
                 v.setBackgroundColor(R.color.colorPrimary);
-                //ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-                //v.setLayoutParams(params);
 
                 final TableRow tr = new TableRow(contexto);
                 tr.setId(i + 1);
@@ -172,10 +166,6 @@ public class DiasNoTrabajoFragment extends Fragment {
                 tvSep.setHeight(1);
                 trSep.addView(tvSep);
                 tlDiasNoTrabajo.addView(trSep, trParamsSep);
-                //tlDiasNoTrabajo.addView(trSep);
-
-
-                //tlDiasNoTrabajo.addView(fila);
             } catch (Exception e) {
                 Log.e("inflarVista", e.getMessage());
             }

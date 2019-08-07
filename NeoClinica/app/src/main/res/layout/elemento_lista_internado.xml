@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rlElementoInternado"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:layout_weight="1">
     <!--
     android:theme="@style/AppTheme"
@@ -12,12 +12,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="142dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -41,12 +41,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvMotivoDiaNoTrabajo"
+                android:id="@+id/tvPacienteInternado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -58,7 +58,7 @@
             <TextView
                 android:id="@+id/tvProfesionalInternado"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:text="Profesional" />
 
             <TextView
@@ -70,10 +70,10 @@
             <TextView
                 android:id="@+id/tvMotivoInternado"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="false"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/tvMotivoDiaNoTrabajo"
+                android:layout_below="@+id/tvPacienteInternado"
                 android:singleLine="true"
                 android:text="Motivo" />
         </LinearLayout>
