@@ -153,6 +153,7 @@ public class HsActivity extends AppCompatActivity {
                         intent.putExtra("RESULT_MATRICULA", textView1.getText());
                         intent.putExtra("RESULT_PROFESIONAL", textView2.getText());
                         intent.putExtra("RESULT_NOMBRE", textView3.getText());
+                        intent.putExtra("RESULT_NOMBRE_EMPRESA", nombreEmpresa);
                         setResult(RESULT_OK, intent);
                         finish();
                     }

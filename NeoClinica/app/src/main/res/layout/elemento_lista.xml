@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rlElemento"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:layout_weight="1">
     <!--
     android:theme="@style/AppTheme"
@@ -14,9 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:singleLine="true"
+        android:maxLines="2"
+        android:singleLine="false"
         android:text="hora | nombre del paciente"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/elemento_lista_mutual"
@@ -25,16 +27,20 @@
         android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/elemento_lista_nombre_paciente"
-        android:singleLine="true"
-        android:text="mutual" />
+        android:maxLines="2"
+        android:singleLine="false"
+        android:text="mutual"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/elemento_lista_obs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@+id/elemento_lista_mutual"
         android:maxLines="4"
-        android:text="Obs" />
+        android:text="Obs"
+        android:textSize="15sp" />
 
     <View
         android:id="@+id/divider"

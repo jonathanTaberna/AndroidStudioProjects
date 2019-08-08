@@ -134,19 +134,34 @@ public class AdaptadorTurnos extends RecyclerView.Adapter<AdaptadorTurnos.ViewHo
 
         }
 
-        holder.rlElemento.setBackgroundColor(color);
+        //holder.rlElemento.setBackgroundColor(color);
         holder.nombre.setTextColor(colorLetra);
+        holder.nombre.setBackgroundColor(color);
         holder.mutual.setTextColor(colorLetra);
-        holder.obs.setTextColor(colorLetra);
+        holder.mutual.setBackgroundColor(color);
+        //holder.obs.setTextColor(colorLetra);
+        ViewGroup.LayoutParams params = holder.obs.getLayoutParams();
+        if (obsAux.trim().isEmpty()){
+            params.height = 0;
+        } else {
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            holder.obs.setTextColor(Color.BLACK);
+            holder.obs.setBackgroundColor(Color.YELLOW);
+        }
+        holder.obs.setLayoutParams(params);
 
+        /*
         ViewGroup.LayoutParams layoutParams;
         layoutParams = holder.rlElemento.getLayoutParams();
         if (obsAux.trim().isEmpty()){
             layoutParams.height = TAMANYO_ELEMENTO_SIN_OBS;
         } else {
             layoutParams.height = TAMANYO_ELEMENTO_OBS;
+            holder.obs.setTextColor(R.color.colorLetraAmarillo);
+            holder.obs.setBackgroundColor(R.color.colorAmarillo);
         }
         holder.rlElemento.setLayoutParams(layoutParams);
+        */
     }
 
     // Indicamos el número de elementos de la lista

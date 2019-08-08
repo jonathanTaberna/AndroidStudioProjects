@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -169,6 +170,22 @@ public class TurnoFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
+
+    /*
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if(newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE){
+            //Log.e("On Config Change","LANDSCAPE");
+            Toast.makeText(contexto, "LANDSCAPE", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            //Log.e("On Config Change","PORTRAIT");
+            Toast.makeText(contexto, "PORTRAIT", Toast.LENGTH_SHORT).show();
+        }
+    }
+    */
 
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)

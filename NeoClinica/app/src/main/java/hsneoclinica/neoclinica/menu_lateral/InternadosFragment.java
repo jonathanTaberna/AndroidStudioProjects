@@ -348,7 +348,7 @@ public class InternadosFragment extends Fragment {
                 URL url = new URL( constantes.pathConnection + constantes.metodoGetInternacionesDia);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Content-Type: application/json", "charset=utf-8");
                 conn.setRequestProperty("Accept","application/json");
                 conn.setRequestProperty("Cookie",cookie);
                 conn.setDoOutput(true);

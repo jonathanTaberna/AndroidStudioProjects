@@ -46,7 +46,7 @@
             android:layout_centerHorizontal="true"
             android:text="Fecha"
             android:textAppearance="@android:style/TextAppearance.Medium"
-            android:textSize="25sp" />
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/btnNext"

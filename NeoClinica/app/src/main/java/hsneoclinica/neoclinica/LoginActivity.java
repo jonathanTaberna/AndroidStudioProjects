@@ -1,5 +1,6 @@
 package hsneoclinica.neoclinica;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -9,7 +10,10 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,6 +21,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -58,7 +63,8 @@ import static hsneoclinica.neoclinica.constantes.constantes.RESULT_HS_ACTIVITY;
 import static hsneoclinica.neoclinica.constantes.constantes.neoServer;
 
 
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,
+                                                                ActivityCompat.OnRequestPermissionsResultCallback {
 
     private int status = 0;
     private UserLoginTask userLoginTaskTask = null;
@@ -85,6 +91,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String profesional = "";
     private JSONArray profesionales = null;
 
+    /*Se declara una variable de tipo LocationManager encargada de proporcionar acceso al servicio de localizaciÃ³n del sistema.*/
+    private LocationManager locManager;
+    /*Se declara una variable de tipo Location que accederÃ¡ a la Ãºltima posiciÃ³n conocida proporcionada por el proveedor.*/
+    private Location loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,11 +338,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             this.matricula = matricula;
 
-            validaIniTask = new ValidaIniTask(matricula, password);
-            validaIniTask.execute((Void) null);
+            if (constantes.activarGeoLocalizacion) {
+                capturarGeoLocalizacion();
+            } else {
+                validaIniTask = new ValidaIniTask(matricula, password);
+                validaIniTask.execute((Void) null);
+            }
             //mAuthTask = new UserLoginTask(matricula, password);
             //mAuthTask.execute((Void) null);
         }
+    }
+
+    private void capturarGeoLocalizacion(){
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        //Intent i = new Intent(getApplicationContext(), GeoLocalizacionActivity.class);
+        //startActivityForResult(i, constantes.RESULT_GEOLOCALIZACION);
     }
 
 
@@ -411,6 +431,58 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                    /*Se asigna a la clase LocationManager el servicio a nivel de sistema a partir del nombre.*/
+                    locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    //tvLatitud.setText(String.valueOf(loc.getLatitude()));
+                    //tvLongitud.setText(String.valueOf(loc.getLongitude()));
+                    //tvAltura.setText()String.valueOf(loc.getAltitude());
+                    //tvPrecision.setText(String.valueOf(loc.getAccuracy()));
+                    String text = "lat: " + String.valueOf(loc.getLatitude()).trim() + ", long: " + String.valueOf(loc.getLongitude()).trim() + ", alt: " + String.valueOf(loc.getAltitude()).trim() + ", precision: " + String.valueOf(loc.getAccuracy()).trim();
+                    //Toast.makeText(this, "PASAMOS LA Geolocalizacion Correctamente", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, text , Toast.LENGTH_SHORT).show();
+                    validaIniTask = new ValidaIniTask(matricula, password);
+                    validaIniTask.execute((Void) null);
+                    //setResult(RESULT_OK);
+                    //finish();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                    //tvLatitud.setText("No se han definido los permisos necesarios.");
+                    //tvLongitud.setText("");
+                    //tvAltura.setText("");
+                    //tvPrecision.setText("");
+                    Toast.makeText(this, "No se han definido los permisos necesarios. Se cancela la operacion", Toast.LENGTH_SHORT).show();
+                    //setResult(constantes.RESULT_FAIL);
+                    finish();
+                }
+                return;
+            }
+            default: {
+                //tvLatitud.setText("No se han definido los permisos necesarios.");
+                //tvLongitud.setText("");
+                //tvAltura.setText("");
+                //tvPrecision.setText("");
+                Toast.makeText(this, "No se han definido los permisos necesarios. Se cancela la operacion", Toast.LENGTH_SHORT).show();
+                //setResult(constantes.RESULT_FAIL);
+                //finish();
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == constantes.RESULT_MAIN_ACTIVITY ) {
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -440,6 +512,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 matricula = data.getStringExtra("RESULT_MATRICULA");
                 nombre = data.getStringExtra("RESULT_NOMBRE");
                 profesional = data.getStringExtra("RESULT_PROFESIONAL");
+                nombreEmpresa = data.getStringExtra("RESULT_NOMBRE_EMPRESA");
                 password = "";
 
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -452,6 +525,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 i.putExtra("profesional", profesional);
                 i.putExtra("cookie", cookie);
                 startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
+            }
+        }
+
+        if (requestCode == constantes.RESULT_GEOLOCALIZACION ) {
+            if (resultCode == constantes.RESULT_FAIL) {
+                finish();
+            }
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "PASAMOS LA Geolocalizacion Correctamente", Toast.LENGTH_SHORT).show();
+                validaIniTask = new ValidaIniTask(matricula, password);
+                validaIniTask.execute((Void) null);
             }
         }
 
@@ -853,6 +937,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 jsonObject = jsonResp.getJSONObject("Response");
 
                 registros = jsonObject.getInt("registros");
+                nombreEmpresa = jsonObject.getString("empresa");
                 profesionales = jsonObject.getJSONArray("Profesionales");
 
             } catch (Exception e){
