@@ -41,5 +41,7 @@ public class constantes {
     public static String cuitHS = "30640685782";
     public static String passHS = "H"; //"HS852";
     public static Boolean activarGeoLocalizacion = true; //activa o desactiva la geolocalizacion
+    public static double presicionGeolocalizacion = 30;
+    public static double presicionInicialGeolocalizacion = 55;
 
 }

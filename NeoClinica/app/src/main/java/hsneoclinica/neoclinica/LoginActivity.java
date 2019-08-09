@@ -6,18 +6,23 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
@@ -56,6 +61,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hsneoclinica.neoclinica.constantes.constantes;
+import hsneoclinica.neoclinica.geolocalizacion.GeoLocalizacionActivity;
 import hsneoclinica.neoclinica.provisorios.Turno;
 
 import static hsneoclinica.neoclinica.constantes.constantes.RESULT_CERRAR_SESION;
@@ -67,9 +73,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                                                 ActivityCompat.OnRequestPermissionsResultCallback {
 
     private int status = 0;
-    private UserLoginTask userLoginTaskTask = null;
+    private UserLoginTask userLoginTask = null;
     private ValidaIniTask validaIniTask = null;
     private HsLoginTask hsLoginTask = null;
+    //private GeolocalizacionTask geolocalizacionTask = null;
+    //private FetchCordinates fetchCordinates = null;
     private String cookie = "";
 
     // UI references.
@@ -91,10 +99,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String profesional = "";
     private JSONArray profesionales = null;
 
-    /*Se declara una variable de tipo LocationManager encargada de proporcionar acceso al servicio de localizaciÃ³n del sistema.*/
+    private double latitud;
+    private double longitud;
+    private double precision;
+    //private String[] datos;
+    /*Se declara la clase encargada de proporcionar acceso al servicio
+    de localizacion del sistema.*/
     private LocationManager locManager;
-    /*Se declara una variable de tipo Location que accederÃ¡ a la Ãºltima posiciÃ³n conocida proporcionada por el proveedor.*/
-    private Location loc;
+    /*Interfaz encargada de recibir las notificaciones del LocationManager
+    cuando se cambia la localizacion.*/
+    private LocationListener locListener;
+    /*Se declara una variable de tipo Location que accedera a la ultima posicion conocida proporcionada por el proveedor.*/
+    //private Location loc;
+    private  Boolean precisionCorrecta = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -339,7 +356,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             this.matricula = matricula;
 
             if (constantes.activarGeoLocalizacion) {
-                capturarGeoLocalizacion();
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                //while (precisionCorrecta == false) {
+                    // // //capturarGeoLocalizacion();
+
+                //}
+                //if (precisionCorrecta) {
+                //    validaIniTask = new ValidaIniTask(matricula, password);
+                //    validaIniTask.execute((Void) null);
+                //}
             } else {
                 validaIniTask = new ValidaIniTask(matricula, password);
                 validaIniTask.execute((Void) null);
@@ -349,12 +374,99 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    /*
     private void capturarGeoLocalizacion(){
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         //Intent i = new Intent(getApplicationContext(), GeoLocalizacionActivity.class);
         //startActivityForResult(i, constantes.RESULT_GEOLOCALIZACION);
+
+        //rastreoGPS();
+        //if (precisionCorrecta) {return;}
+    }
+    */
+
+    /*Metodo encargado de actualizar la posicion del dispositivo
+    GPS cuando este cambie de localizacion.*/
+    private void rastreoGPS() {
+        /*Se asigna a la clase LocationManager el servicio a nivel de sistema a partir del nombre.*/
+        locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        //Se define la interfaz LocationListener, que debera implementarse con los siguientes metodos.
+        locListener = new LocationListener() {
+            //Metodo que sera llamado cuando cambie la localizacion.
+            @Override
+            public void onLocationChanged(Location location) {
+                capturarPosicion(location);
+                if (precisionCorrecta) {return;}
+            }
+
+            //Metodo que sera llamado cuando se produzcan cambios en el estado del proveedor.
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras)
+            {
+            }
+
+            //Metodo que sera llamado cuando el proveedor este habilitado para el usuario.
+            @Override
+            public void onProviderEnabled(String provider)
+            {
+            }
+
+            //Metodo que sera llamado cuando el proveedor este deshabilitado para el usuario.
+            @Override
+            public void onProviderDisabled(String provider)
+            {
+            }
+        };
+        /*Se llama al metodo encargado establecer la localizacion actualizada,
+        recibiendo como parametros de entrada el nombre del proveedor, el intervalo de tiempo entre cada
+        actualizacion, distancia en metros entre localizaciones actualizadas, y la variable de tipo LocationListener
+        que actualizara la localizacion en caso de producirse nuevos cambios.*/
+        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+
+        /*Se declara y asigna a la clase Location la ultima posicion conocida proporcionada por el proveedor.*/
+        Location loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        /*
+        if (precision == 0.0) {
+            loc.setAccuracy((float) constantes.presicionInicialGeolocalizacion);
+        }
+        */
+        capturarPosicion(loc);
+        if (precisionCorrecta) {return;}
+
     }
 
+    /*Metodo que recibe como parametro de entrada una variable de tipo Location, y que permitira
+    mostrar los diferentes datos de la ubicacion geografica del dispositivo. En el supuesto de no
+    tener habilitada la opcion de ubicacion, se estableceran valores por defecto (dichos valores se almacenaran en un
+    array de datos de tipo String).*/
+    //private String[] capturarPosicion(Location loc) {
+    private void capturarPosicion(Location loc) {
+
+        if(loc != null) {
+            precision = loc.getAccuracy();
+            if (precision < constantes.presicionGeolocalizacion && precision > 0) {
+                latitud = loc.getLatitude();
+                longitud = loc.getLongitude();
+                precisionCorrecta = true;
+            } else {
+                precisionCorrecta = false;
+            }
+        }
+        /*
+        datos = new String[0];
+        if(loc != null) {
+            float prec = loc.getAccuracy();
+            if (prec < constantes.presicionGeolocalizacion) {
+                precisionCorrecta = true;
+                //tvPorDefecto.setText("Precision de +-25 mts ");
+                datos = new String[]{String.valueOf(loc.getLatitude()),String.valueOf(loc.getLongitude()),String.valueOf(loc.getAccuracy())};
+            } else {
+                precisionCorrecta = false;
+            }
+        }
+        return datos;
+        */
+    }
 
     private boolean isPasswordValid(String password) {
         return password.length() >= 1 && password.length() < 15;
@@ -440,14 +552,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     // contacts-related task you need to do.
 
                     /*Se asigna a la clase LocationManager el servicio a nivel de sistema a partir del nombre.*/
-                    locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    //locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    //loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     //tvLatitud.setText(String.valueOf(loc.getLatitude()));
                     //tvLongitud.setText(String.valueOf(loc.getLongitude()));
                     //tvAltura.setText()String.valueOf(loc.getAltitude());
                     //tvPrecision.setText(String.valueOf(loc.getAccuracy()));
-                    String text = "lat: " + String.valueOf(loc.getLatitude()).trim() + ", long: " + String.valueOf(loc.getLongitude()).trim() + ", alt: " + String.valueOf(loc.getAltitude()).trim() + ", precision: " + String.valueOf(loc.getAccuracy()).trim();
+                    //String text = "lat: " + String.valueOf(loc.getLatitude()).trim() + ", long: " + String.valueOf(loc.getLongitude()).trim() + ", alt: " + String.valueOf(loc.getAltitude()).trim() + ", precision: " + String.valueOf(loc.getAccuracy()).trim();
                     //Toast.makeText(this, "PASAMOS LA Geolocalizacion Correctamente", Toast.LENGTH_LONG).show();
+
+                    while (precisionCorrecta == false) {
+                        rastreoGPS();
+                    }
+                    String text = "lat: " + latitud + ", long: " + longitud + ", precision: " + precision;
                     Toast.makeText(this, text , Toast.LENGTH_SHORT).show();
                     validaIniTask = new ValidaIniTask(matricula, password);
                     validaIniTask.execute((Void) null);
@@ -527,17 +644,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
             }
         }
-
+        /*
         if (requestCode == constantes.RESULT_GEOLOCALIZACION ) {
             if (resultCode == constantes.RESULT_FAIL) {
                 finish();
             }
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "PASAMOS LA Geolocalizacion Correctamente", Toast.LENGTH_SHORT).show();
-                validaIniTask = new ValidaIniTask(matricula, password);
-                validaIniTask.execute((Void) null);
+
+
+                datos = data.getStringArrayExtra("RESULT_DATOS");
+                String msj = "lat: " + datos[0] + ", long: " + datos[1] + ", precision: " + datos[2];
+
+                Toast.makeText(this, msj, Toast.LENGTH_LONG).show();
+                //validaIniTask = new ValidaIniTask(matricula, password);
+                //validaIniTask.execute((Void) null);
             }
         }
+        */
 
     }
 
@@ -556,6 +679,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
+
             JSONObject obj = new JSONObject();
             HttpURLConnection conn = null;
             BufferedReader reader = null;
@@ -620,6 +744,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected void onPostExecute(final Boolean success) {
+
             validaIniTask = null;
             showProgress(false);
 
@@ -641,12 +766,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             switch (status) {
                 case "OK":
                     if (success) {
+                        //geolocalizacionTask = new GeolocalizacionTask();
+                        //geolocalizacionTask.execute((Void) null);
+
+                        //fetchCordinates = new FetchCordinates();
+                        //fetchCordinates.execute();
+
                         if (mMatricula.trim().equals(constantes.cuitHS) && mPassword.trim().toUpperCase().equals(constantes.passHS)){
                             hsLoginTask = new HsLoginTask();
                             hsLoginTask.execute((Void) null);
                         } else {
-                            userLoginTaskTask = new UserLoginTask(mMatricula, mPassword);
-                            userLoginTaskTask.execute((Void) null);
+                            userLoginTask = new UserLoginTask(mMatricula, mPassword);
+                            userLoginTask.execute((Void) null);
                         }
                     } else {
                         mMatriculaView.setError(getString(R.string.servidor_timeout));
@@ -749,7 +880,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            userLoginTaskTask = null;
+            userLoginTask = null;
             showProgress(false);
 
             JSONObject jsonObject = null;
@@ -837,7 +968,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected void onCancelled() {
-            userLoginTaskTask = null;
+            userLoginTask = null;
             showProgress(false);
         }
     }
@@ -999,30 +1130,154 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
-}
 
 
 
+/*
+    public class GeolocalizacionTask extends AsyncTask<Void, Void, Boolean> {
 
+        private final float latitud;
+        private final float longitud;
+        private final float precision;
 
+        public GeolocalizacionTask() {
+            latitud = 0;
+            longitud = 0;
+            precision = 0;
+        }
 
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            capturarGeoLocalizacion();
+            return precisionCorrecta;
+        }
 
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (success) {
 
-//crea acceso directo
-    /*
-    public void createShortCut(){
-        // a Intent to create a shortCut
-        Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-        //repeat to create is forbidden
-        shortcutintent.putExtra("duplicate", false);
-        //set the name of shortCut
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-        //set icon
-        Parcelable icon = Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.mipmap.ic_launcher);
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
-        //set the application to lunch when you click the icon
-        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext() , LoginActivity.class));
-        //sendBroadcast,done
-        sendBroadcast(shortcutintent);
+                String mensaje = "lat: " + latitud + ", long: " + longitud + ", precision: " + precision;
+                //String mensaje = "lat: " + datos[0] + ", long: " + datos[1] + ", precision: " + datos[2];
+                Toast.makeText(LoginActivity.this, mensaje, Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            geolocalizacionTask = null;
+            showProgress(false);
+        }
     }
-    */
+
+    public class FetchCordinates extends AsyncTask<String, Integer, String> {
+        ProgressDialog progDailog = null;
+
+        public double lati = 0.0;
+        public double longi = 0.0;
+        public double precision = constantes.presicionInicialGeolocalizacion;
+
+        public LocationManager mLocationManager;
+        public VeggsterLocationListener mVeggsterLocationListener;
+
+        @Override
+        protected void onPreExecute() {
+            mVeggsterLocationListener = new VeggsterLocationListener();
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 0, 0,
+                    mVeggsterLocationListener);
+
+
+            progDailog = new ProgressDialog(LoginActivity.this);
+            progDailog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    FetchCordinates.this.cancel(true);
+                }
+            });
+            progDailog.setMessage("Loading...");
+            progDailog.setIndeterminate(true);
+            progDailog.setCancelable(true);
+            progDailog.show();
+
+
+        }
+
+        @Override
+        protected void onCancelled(){
+            System.out.println("Cancelled by user!");
+            progDailog.dismiss();
+            mLocationManager.removeUpdates(mVeggsterLocationListener);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            progDailog.dismiss();
+
+            Toast.makeText(LoginActivity.this,
+                    "LATITUDE :" + lati + " LONGITUDE :" + longi + " PRECISION :" + precision,
+                    Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+
+            //while (this.lati == 0.0) {
+            while (this.precision > constantes.presicionGeolocalizacion) {
+
+            }
+            return null;
+        }
+
+        public class VeggsterLocationListener implements LocationListener {
+
+            @Override
+            public void onLocationChanged(Location location) {
+
+                int lat = (int) location.getLatitude(); // * 1E6);
+                int log = (int) location.getLongitude(); // * 1E6);
+                int acc = (int) (location.getAccuracy());
+
+                String info = location.getProvider();
+                try {
+
+                    // LocatorService.myLatitude=location.getLatitude();
+
+                    // LocatorService.myLongitude=location.getLongitude();
+
+                    lati = location.getLatitude();
+                    longi = location.getLongitude();
+                    precision = location.getAccuracy();
+
+                } catch (Exception e) {
+                    // progDailog.dismiss();
+                    // Toast.makeText(getApplicationContext(),"Unable to get Location"
+                    // , Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.i("OnProviderDisabled", "OnProviderDisabled");
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.i("onProviderEnabled", "onProviderEnabled");
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status,
+                                        Bundle extras) {
+                Log.i("onStatusChanged", "onStatusChanged");
+
+            }
+
+        }
+
+    }
+*/
+}
