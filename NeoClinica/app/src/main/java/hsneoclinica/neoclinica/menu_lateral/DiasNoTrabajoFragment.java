@@ -105,22 +105,15 @@ public class DiasNoTrabajoFragment extends Fragment {
                 final String fecha = jsonObject.getString("fecha");
                 final String hora = jsonObject.getString("hora");
 
-                //TableRow fila = new TableRow(contexto);
                 TextView textView1 = new TextView(contexto);
                 TextView textView2 = new TextView(contexto);
                 TextView textView3 = new TextView(contexto);
-                //TextView textView4 = new TextView(contexto);
-                //TextView textView5 = new TextView(contexto);
                 textView1.setText(desde);
                 textView1.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 textView2.setText(hasta);
                 textView2.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 textView3.setText(motivo);
                 textView3.setTextSize(constantes.TAMANYO_TEXT_SIZE);
-                //textView4.setText(cargo);
-                //textView4.setTextSize(constantes.TAMANYO_TEXT_SIZE);
-                //textView5.setText(fecha);
-                //textView5.setTextSize(constantes.TAMANYO_TEXT_SIZE);
 
                 View v = new View(contexto);
                 v.setLayoutParams(new TableRow.LayoutParams(1, TableRow.LayoutParams.WRAP_CONTENT));
@@ -134,11 +127,8 @@ public class DiasNoTrabajoFragment extends Fragment {
                 tr.setPadding(0,0,0,0);
                 tr.setLayoutParams(trParams);
                 tr.addView(textView1);
-                //tr.addView(v);
                 tr.addView(textView2);
                 tr.addView(textView3);
-                //tr.addView(textView4);
-                //tr.addView(textView5);
 
                 tr.setOnLongClickListener(new View.OnLongClickListener()
                 {
@@ -146,7 +136,7 @@ public class DiasNoTrabajoFragment extends Fragment {
                     public boolean onLongClick(View v)
                     {
                         tr.setBackgroundColor(R.color.colorPrimaryDark);
-                        new PopUpDiasNoTrabajo(contexto, "Cargó: " + cargo,fecha + " (" + hora.trim() + ")", tr);
+                        new PopUpDiasNoTrabajo(contexto, "Fue cargado por " + cargo,"El día " + fecha + " a las " + hora.trim(), tr);
                         return true;
                     }
                 });

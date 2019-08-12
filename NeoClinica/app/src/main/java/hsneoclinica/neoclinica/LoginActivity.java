@@ -6,10 +6,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
@@ -21,9 +19,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
@@ -53,31 +48,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import hsneoclinica.neoclinica.constantes.constantes;
-import hsneoclinica.neoclinica.geolocalizacion.GeoLocalizacionActivity;
-import hsneoclinica.neoclinica.provisorios.Turno;
 
 import static hsneoclinica.neoclinica.constantes.constantes.RESULT_CERRAR_SESION;
 import static hsneoclinica.neoclinica.constantes.constantes.RESULT_HS_ACTIVITY;
-import static hsneoclinica.neoclinica.constantes.constantes.neoServer;
 
 
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,
-                                                                ActivityCompat.OnRequestPermissionsResultCallback {
+public class LoginActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private int status = 0;
     private UserLoginTask userLoginTask = null;
     private ValidaIniTask validaIniTask = null;
     private HsLoginTask hsLoginTask = null;
-    //private GeolocalizacionTask geolocalizacionTask = null;
-    //private FetchCordinates fetchCordinates = null;
+    private RegPosicionTask regPosicionTask = null;
     private String cookie = "";
 
     // UI references.
@@ -102,16 +92,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private double latitud;
     private double longitud;
     private double precision;
-    //private String[] datos;
-    /*Se declara la clase encargada de proporcionar acceso al servicio
-    de localizacion del sistema.*/
+    //Se declara la clase encargada de proporcionar acceso al servicio de localizacion del sistema.
     private LocationManager locManager;
-    /*Interfaz encargada de recibir las notificaciones del LocationManager
-    cuando se cambia la localizacion.*/
+    //Interfaz encargada de recibir las notificaciones del LocationManager cuando se cambia la localizacion.
     private LocationListener locListener;
-    /*Se declara una variable de tipo Location que accedera a la ultima posicion conocida proporcionada por el proveedor.*/
-    //private Location loc;
     private  Boolean precisionCorrecta = false;
+    private Date tiempoInicialGeoLocalizacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -356,116 +342,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             this.matricula = matricula;
 
             if (constantes.activarGeoLocalizacion) {
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                //while (precisionCorrecta == false) {
-                    // // //capturarGeoLocalizacion();
-
-                //}
-                //if (precisionCorrecta) {
-                //    validaIniTask = new ValidaIniTask(matricula, password);
-                //    validaIniTask.execute((Void) null);
-                //}
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, constantes.REQUEST_CODE_GEOLOCALIZACION);
             } else {
                 validaIniTask = new ValidaIniTask(matricula, password);
                 validaIniTask.execute((Void) null);
             }
-            //mAuthTask = new UserLoginTask(matricula, password);
-            //mAuthTask.execute((Void) null);
         }
-    }
-
-    /*
-    private void capturarGeoLocalizacion(){
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        //Intent i = new Intent(getApplicationContext(), GeoLocalizacionActivity.class);
-        //startActivityForResult(i, constantes.RESULT_GEOLOCALIZACION);
-
-        //rastreoGPS();
-        //if (precisionCorrecta) {return;}
-    }
-    */
-
-    /*Metodo encargado de actualizar la posicion del dispositivo
-    GPS cuando este cambie de localizacion.*/
-    private void rastreoGPS() {
-        /*Se asigna a la clase LocationManager el servicio a nivel de sistema a partir del nombre.*/
-        locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        //Se define la interfaz LocationListener, que debera implementarse con los siguientes metodos.
-        locListener = new LocationListener() {
-            //Metodo que sera llamado cuando cambie la localizacion.
-            @Override
-            public void onLocationChanged(Location location) {
-                capturarPosicion(location);
-                if (precisionCorrecta) {return;}
-            }
-
-            //Metodo que sera llamado cuando se produzcan cambios en el estado del proveedor.
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras)
-            {
-            }
-
-            //Metodo que sera llamado cuando el proveedor este habilitado para el usuario.
-            @Override
-            public void onProviderEnabled(String provider)
-            {
-            }
-
-            //Metodo que sera llamado cuando el proveedor este deshabilitado para el usuario.
-            @Override
-            public void onProviderDisabled(String provider)
-            {
-            }
-        };
-        /*Se llama al metodo encargado establecer la localizacion actualizada,
-        recibiendo como parametros de entrada el nombre del proveedor, el intervalo de tiempo entre cada
-        actualizacion, distancia en metros entre localizaciones actualizadas, y la variable de tipo LocationListener
-        que actualizara la localizacion en caso de producirse nuevos cambios.*/
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
-
-        /*Se declara y asigna a la clase Location la ultima posicion conocida proporcionada por el proveedor.*/
-        Location loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        /*
-        if (precision == 0.0) {
-            loc.setAccuracy((float) constantes.presicionInicialGeolocalizacion);
-        }
-        */
-        capturarPosicion(loc);
-        if (precisionCorrecta) {return;}
-
-    }
-
-    /*Metodo que recibe como parametro de entrada una variable de tipo Location, y que permitira
-    mostrar los diferentes datos de la ubicacion geografica del dispositivo. En el supuesto de no
-    tener habilitada la opcion de ubicacion, se estableceran valores por defecto (dichos valores se almacenaran en un
-    array de datos de tipo String).*/
-    //private String[] capturarPosicion(Location loc) {
-    private void capturarPosicion(Location loc) {
-
-        if(loc != null) {
-            precision = loc.getAccuracy();
-            if (precision < constantes.presicionGeolocalizacion && precision > 0) {
-                latitud = loc.getLatitude();
-                longitud = loc.getLongitude();
-                precisionCorrecta = true;
-            } else {
-                precisionCorrecta = false;
-            }
-        }
-        /*
-        datos = new String[0];
-        if(loc != null) {
-            float prec = loc.getAccuracy();
-            if (prec < constantes.presicionGeolocalizacion) {
-                precisionCorrecta = true;
-                //tvPorDefecto.setText("Precision de +-25 mts ");
-                datos = new String[]{String.valueOf(loc.getLatitude()),String.valueOf(loc.getLongitude()),String.valueOf(loc.getAccuracy())};
-            } else {
-                precisionCorrecta = false;
-            }
-        }
-        return datos;
-        */
     }
 
     private boolean isPasswordValid(String password) {
@@ -509,93 +391,144 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Nickname
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Nickname.NAME,
-                ContactsContract.CommonDataKinds.Nickname.IS_PRIMARY,
-        };
-
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case 1: {
+            case constantes.REQUEST_CODE_GEOLOCALIZACION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                    /*Se asigna a la clase LocationManager el servicio a nivel de sistema a partir del nombre.*/
-                    //locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    //loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    //tvLatitud.setText(String.valueOf(loc.getLatitude()));
-                    //tvLongitud.setText(String.valueOf(loc.getLongitude()));
-                    //tvAltura.setText()String.valueOf(loc.getAltitude());
-                    //tvPrecision.setText(String.valueOf(loc.getAccuracy()));
-                    //String text = "lat: " + String.valueOf(loc.getLatitude()).trim() + ", long: " + String.valueOf(loc.getLongitude()).trim() + ", alt: " + String.valueOf(loc.getAltitude()).trim() + ", precision: " + String.valueOf(loc.getAccuracy()).trim();
-                    //Toast.makeText(this, "PASAMOS LA Geolocalizacion Correctamente", Toast.LENGTH_LONG).show();
-
-                    while (precisionCorrecta == false) {
-                        rastreoGPS();
-                    }
-                    String text = "lat: " + latitud + ", long: " + longitud + ", precision: " + precision;
-                    Toast.makeText(this, text , Toast.LENGTH_SHORT).show();
                     validaIniTask = new ValidaIniTask(matricula, password);
                     validaIniTask.execute((Void) null);
-                    //setResult(RESULT_OK);
-                    //finish();
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
-                    //tvLatitud.setText("No se han definido los permisos necesarios.");
-                    //tvLongitud.setText("");
-                    //tvAltura.setText("");
-                    //tvPrecision.setText("");
                     Toast.makeText(this, "No se han definido los permisos necesarios. Se cancela la operacion", Toast.LENGTH_SHORT).show();
-                    //setResult(constantes.RESULT_FAIL);
                     finish();
                 }
                 return;
             }
             default: {
-                //tvLatitud.setText("No se han definido los permisos necesarios.");
-                //tvLongitud.setText("");
-                //tvAltura.setText("");
-                //tvPrecision.setText("");
                 Toast.makeText(this, "No se han definido los permisos necesarios. Se cancela la operacion", Toast.LENGTH_SHORT).show();
-                //setResult(constantes.RESULT_FAIL);
-                //finish();
+            }
+        }
+    }
+
+    //Metodo encargado de actualizar la posicion del dispositivo GPS cuando este cambie de localizacion.
+    private void rastreoGPS() {
+        if (precisionCorrecta) {
+            return;
+        }
+        //Se asigna a la clase LocationManager el servicio a nivel de sistema a partir del nombre.*/
+        locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        //Se define la interfaz LocationListener, que debera implementarse con los siguientes metodos.
+        locListener = new LocationListener() {
+            //Metodo que sera llamado cuando cambie la localizacion.
+            @Override
+            public void onLocationChanged(Location location) {
+                Date tiempoActualGeoLocalizacion = Calendar.getInstance().getTime();
+                long difference = Math.abs(tiempoActualGeoLocalizacion.getTime() - tiempoInicialGeoLocalizacion.getTime());
+                //obtienes la diferencia en minutos ya que la diferencia anterior esta en milisegundos
+                difference= difference / (60 * 1000); //60000
+
+                if (difference > 1) { //> a 5 minutos
+                    cancelarGeoLocalizacion();
+
+                    regPosicionTask = new RegPosicionTask("Tiempo de espera caducado.", matricula, "", "", "");
+                    regPosicionTask.execute((Void) null);
+                    return;
+                }
+                capturarPosicion(location);
+                if (precisionCorrecta) {
+                    if (locListener != null) {
+                        cancelarGeoLocalizacion();
+                        if (matricula.equals(constantes.cuitHS)) {
+                            regPosicionTask = new RegPosicionTask("login HS", matricula, String.valueOf(latitud), String.valueOf(longitud), String.valueOf(precision));
+                            regPosicionTask.execute((Void) null);
+                        } else {
+                            regPosicionTask = new RegPosicionTask(profesional, matricula, String.valueOf(latitud), String.valueOf(longitud), String.valueOf(precision));
+                            regPosicionTask.execute((Void) null);
+                        }
+                        return;
+                    }
+                }
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request.
+            //Metodo que sera llamado cuando se produzcan cambios en el estado del proveedor.
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras)
+            {
+            }
+
+            //Metodo que sera llamado cuando el proveedor este habilitado para el usuario.
+            @Override
+            public void onProviderEnabled(String provider)
+            {
+            }
+
+            //Metodo que sera llamado cuando el proveedor este deshabilitado para el usuario.
+            @Override
+            public void onProviderDisabled(String provider)
+            {
+            }
+        };
+
+        // Se llama al metodo encargado establecer la localizacion actualizada,
+        // recibiendo como parametros de entrada el nombre del proveedor, el intervalo de tiempo entre cada
+        // actualizacion, distancia en metros entre localizaciones actualizadas, y la variable de tipo LocationListener
+        // que actualizara la localizacion en caso de producirse nuevos cambios.
+        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+
+        //Se declara y asigna a la clase Location la ultima posicion conocida proporcionada por el proveedor.
+        Location loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        capturarPosicion(loc);
+        if (precisionCorrecta) {return;}
+
+    }
+
+    // Metodo que recibe como parametro de entrada una variable de tipo Location, y que permitira
+    // mostrar los diferentes datos de la ubicacion geografica del dispositivo. En el supuesto de no
+    // tener habilitada la opcion de ubicacion, se estableceran valores por defecto (dichos valores se almacenaran en un
+    // array de datos de tipo String).
+    private void capturarPosicion(Location loc) {
+
+        if(loc != null) {
+            precision = loc.getAccuracy();
+            if (precision < constantes.presicionGeolocalizacion && precision > 0) {
+                latitud = loc.getLatitude();
+                longitud = loc.getLongitude();
+                precisionCorrecta = true;
+            } else {
+                precisionCorrecta = false;
+            }
+        }
+    }
+
+    private void geoLocalizacion(){
+        tiempoInicialGeoLocalizacion = Calendar.getInstance().getTime();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // DO your work here
+                // get the data
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // update UI
+                        rastreoGPS();
+                        if (precisionCorrecta) {
+                            return;
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void cancelarGeoLocalizacion() {
+        if (locManager != null) {
+            locManager.removeUpdates(locListener);
+            locManager = null;
+            Toast.makeText(LoginActivity.this, "GeoLocalizacion CANCELADA", Toast.LENGTH_LONG).show();
+        }
+        if (locListener != null) {
+            locListener = null;
         }
     }
 
@@ -603,9 +536,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == constantes.RESULT_MAIN_ACTIVITY ) {
             if (resultCode == Activity.RESULT_CANCELED) {
+                cancelarGeoLocalizacion();
                 finish();
             }
             if (resultCode == RESULT_CERRAR_SESION) {
+                cancelarGeoLocalizacion();
                 mPasswordView.setText("");
                 mPasswordView.requestFocus();
             }
@@ -622,6 +557,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         if (requestCode == RESULT_HS_ACTIVITY ) {
             if (resultCode == Activity.RESULT_CANCELED) {
+                cancelarGeoLocalizacion();
                 finish();
             }
             if (resultCode == Activity.RESULT_OK) {
@@ -644,24 +580,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivityForResult(i,constantes.RESULT_MAIN_ACTIVITY);
             }
         }
-        /*
-        if (requestCode == constantes.RESULT_GEOLOCALIZACION ) {
-            if (resultCode == constantes.RESULT_FAIL) {
-                finish();
-            }
-            if (resultCode == RESULT_OK) {
-
-
-                datos = data.getStringArrayExtra("RESULT_DATOS");
-                String msj = "lat: " + datos[0] + ", long: " + datos[1] + ", precision: " + datos[2];
-
-                Toast.makeText(this, msj, Toast.LENGTH_LONG).show();
-                //validaIniTask = new ValidaIniTask(matricula, password);
-                //validaIniTask.execute((Void) null);
-            }
-        }
-        */
-
     }
 
     public class ValidaIniTask extends AsyncTask<Void, Void, Boolean> {
@@ -766,12 +684,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             switch (status) {
                 case "OK":
                     if (success) {
-                        //geolocalizacionTask = new GeolocalizacionTask();
-                        //geolocalizacionTask.execute((Void) null);
-
-                        //fetchCordinates = new FetchCordinates();
-                        //fetchCordinates.execute();
-
                         if (mMatricula.trim().equals(constantes.cuitHS) && mPassword.trim().toUpperCase().equals(constantes.passHS)){
                             hsLoginTask = new HsLoginTask();
                             hsLoginTask.execute((Void) null);
@@ -927,6 +839,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         } else {
                             Log.i("JONATT", "NO SE GENERO LA CONFIG");
                         }
+                        geoLocalizacion();
 
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         i.putExtra("activity", constantes.LOGIN_ACTIVITY);
@@ -1087,6 +1000,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                     }
                     if (success) {
+                        geoLocalizacion();
                         Intent i = new Intent(getApplicationContext(), HsActivity.class);
                         i.putExtra("empresa", empresa);
                         i.putExtra("nombreEmpresa", nombreEmpresa);
@@ -1129,155 +1043,134 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    public class RegPosicionTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String posProfe;
+        private final String posMatricula;
+        private final String posLatitud;
+        private final String posLongitud;
+        private final String posPrecision;
+        private JSONObject jsonResp = null;
 
 
-
-
-/*
-    public class GeolocalizacionTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final float latitud;
-        private final float longitud;
-        private final float precision;
-
-        public GeolocalizacionTask() {
-            latitud = 0;
-            longitud = 0;
-            precision = 0;
+        RegPosicionTask(String posProfe, String posMatricula, String posLatitud, String posLongitud, String posPrecision) {
+            this.posProfe = posProfe;
+            this.posMatricula = posMatricula;
+            this.posLatitud = posLatitud;
+            this.posLongitud = posLongitud;
+            this.posPrecision = posPrecision;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            capturarGeoLocalizacion();
-            return precisionCorrecta;
+            JSONObject obj = new JSONObject();
+            HttpURLConnection conn = null;
+
+            BufferedReader reader = null;
+            String JsonResponse = null;
+            try {
+                URL url = new URL( constantes.pathConnection + constantes.metodoRegPosicion);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type: application/json", "charset=utf-8");
+                conn.setRequestProperty("Accept","application/json");
+                conn.setRequestProperty("Cookie",cookie);
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setConnectTimeout(10000); //10 segundos
+                conn.connect();
+
+                obj.put("pos_profe", posProfe);
+                obj.put("pos_matricula", posMatricula);
+                obj.put("pos_latitud", posLatitud);
+                obj.put("pos_longitud", posLongitud);
+                obj.put("pos_precision", posPrecision);
+
+                Log.i("JSON", obj.toString());
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(obj.toString());
+
+                os.flush();
+                os.close();
+
+                status = conn.getResponseCode();
+                Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                Log.i("MSG" , conn.getResponseMessage().toString());
+
+                if (status == 200){ //respuesta OK
+                    InputStream inputStream = conn.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String inputLine;
+                    while ((inputLine = reader.readLine()) != null) {
+                        buffer.append(inputLine + "\n");
+                        jsonResp = new JSONObject(inputLine);
+                    }
+                    JsonResponse = buffer.toString();
+                    Log.i("RESPONSE",JsonResponse);
+
+                }
+
+            } catch (ConnectException ce) {
+                if (ce.getMessage().contains("ETIMEDOUT")) {
+                    status = 99;
+                } else {
+                    status = 98;
+                }
+            }catch (SocketTimeoutException e) {
+                status = 99;
+            } catch (Exception e){
+                e.printStackTrace();
+            }  finally {
+                conn.disconnect();
+            }
+
+            if (status == 200) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            if (success) {
+            regPosicionTask = null;
+            showProgress(false);
 
-                String mensaje = "lat: " + latitud + ", long: " + longitud + ", precision: " + precision;
-                //String mensaje = "lat: " + datos[0] + ", long: " + datos[1] + ", precision: " + datos[2];
-                Toast.makeText(LoginActivity.this, mensaje, Toast.LENGTH_LONG).show();
+            JSONObject jsonObject = null;
+
+            String estado = "";
+            String mensaje = "";
+            status = 0;
+
+            try {
+                jsonObject = jsonResp.getJSONObject("_comm_buffer");
+
+                estado = jsonObject.getString("_status");
+                mensaje = jsonObject.getString("_message");
+
+            } catch (Exception e){
+                status = 8;
+            }
+
+            switch (estado) {
+                case "OK":
+                    if (!success) {
+                        Toast.makeText(LoginActivity.this, R.string.servidor_timeout, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                default:
+                    Toast.makeText(LoginActivity.this, R.string.servidor_timeout, Toast.LENGTH_LONG).show();
+                    break;
             }
         }
 
         @Override
         protected void onCancelled() {
-            geolocalizacionTask = null;
+            regPosicionTask = null;
             showProgress(false);
         }
     }
 
-    public class FetchCordinates extends AsyncTask<String, Integer, String> {
-        ProgressDialog progDailog = null;
-
-        public double lati = 0.0;
-        public double longi = 0.0;
-        public double precision = constantes.presicionInicialGeolocalizacion;
-
-        public LocationManager mLocationManager;
-        public VeggsterLocationListener mVeggsterLocationListener;
-
-        @Override
-        protected void onPreExecute() {
-            mVeggsterLocationListener = new VeggsterLocationListener();
-            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, 0, 0,
-                    mVeggsterLocationListener);
-
-
-            progDailog = new ProgressDialog(LoginActivity.this);
-            progDailog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    FetchCordinates.this.cancel(true);
-                }
-            });
-            progDailog.setMessage("Loading...");
-            progDailog.setIndeterminate(true);
-            progDailog.setCancelable(true);
-            progDailog.show();
-
-
-        }
-
-        @Override
-        protected void onCancelled(){
-            System.out.println("Cancelled by user!");
-            progDailog.dismiss();
-            mLocationManager.removeUpdates(mVeggsterLocationListener);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            progDailog.dismiss();
-
-            Toast.makeText(LoginActivity.this,
-                    "LATITUDE :" + lati + " LONGITUDE :" + longi + " PRECISION :" + precision,
-                    Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO Auto-generated method stub
-
-            //while (this.lati == 0.0) {
-            while (this.precision > constantes.presicionGeolocalizacion) {
-
-            }
-            return null;
-        }
-
-        public class VeggsterLocationListener implements LocationListener {
-
-            @Override
-            public void onLocationChanged(Location location) {
-
-                int lat = (int) location.getLatitude(); // * 1E6);
-                int log = (int) location.getLongitude(); // * 1E6);
-                int acc = (int) (location.getAccuracy());
-
-                String info = location.getProvider();
-                try {
-
-                    // LocatorService.myLatitude=location.getLatitude();
-
-                    // LocatorService.myLongitude=location.getLongitude();
-
-                    lati = location.getLatitude();
-                    longi = location.getLongitude();
-                    precision = location.getAccuracy();
-
-                } catch (Exception e) {
-                    // progDailog.dismiss();
-                    // Toast.makeText(getApplicationContext(),"Unable to get Location"
-                    // , Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Log.i("OnProviderDisabled", "OnProviderDisabled");
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                Log.i("onProviderEnabled", "onProviderEnabled");
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status,
-                                        Bundle extras) {
-                Log.i("onStatusChanged", "onStatusChanged");
-
-            }
-
-        }
-
-    }
-*/
 }

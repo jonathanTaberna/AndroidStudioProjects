@@ -139,8 +139,7 @@ public class InternadosFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                btnNext.setEnabled(false);
-                btnPrev.setEnabled(false);
+                setearEnable(false);
 
                 c.add(Calendar.DAY_OF_MONTH, -1);
                 fecha = generarFecha(c);
@@ -157,8 +156,7 @@ public class InternadosFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                btnNext.setEnabled(false);
-                btnPrev.setEnabled(false);
+                setearEnable(false);
 
                 c.add(Calendar.DAY_OF_MONTH, 1);
                 fecha = generarFecha(c);
@@ -266,8 +264,7 @@ public class InternadosFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         showProgress(false);
 
-        btnNext.setEnabled(true);
-        btnPrev.setEnabled(true);
+        setearEnable(true);
     }
 
     public String generarFecha (Calendar c) {
@@ -326,6 +323,12 @@ public class InternadosFragment extends Fragment {
             }
         }, anio, mes, dia);
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+    }
+
+    public void setearEnable(boolean enable){
+        btnNext.setEnabled(enable);
+        btnPrev.setEnabled(enable);
+        tvFecha.setEnabled(enable);
     }
 
     public class GetInternadosTask extends AsyncTask<Void, Void, Boolean> {
@@ -426,19 +429,23 @@ public class InternadosFragment extends Fragment {
                 salida = 8;
             }
 
+            tvFecha.setText(fecha);
+
             switch (salida) {
                 case 0:
                 case 8:
                     if (success) {
-                        tvFecha.setText(fecha);
+                        setearEnable(true);
                         inflarVista(lista);
 
                     } else {
-                        Toast.makeText(contexto,  getString(R.string.error_get_turnos),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(contexto,  getString(R.string.error_get_internados),Toast.LENGTH_SHORT).show();
+                        setearEnable(false);
                     }
                     break;
                 default:
-                    Toast.makeText(contexto,  getString(R.string.error_get_turnos),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(contexto,  getString(R.string.error_get_internados),Toast.LENGTH_SHORT).show();
+                    setearEnable(false);
                     break;
             }
         }

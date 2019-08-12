@@ -137,6 +137,8 @@ public class TurnoFragment extends Fragment {
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setearEnable(false);
+
                 c.add(Calendar.DAY_OF_MONTH, -1);
                 fecha = generarFecha(c);
 
@@ -153,6 +155,9 @@ public class TurnoFragment extends Fragment {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                setearEnable(false);
+
                 c.add(Calendar.DAY_OF_MONTH, 1);
                 fecha = generarFecha(c);
 
@@ -170,23 +175,6 @@ public class TurnoFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
-
-    /*
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if(newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE){
-            //Log.e("On Config Change","LANDSCAPE");
-            Toast.makeText(contexto, "LANDSCAPE", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            //Log.e("On Config Change","PORTRAIT");
-            Toast.makeText(contexto, "PORTRAIT", Toast.LENGTH_SHORT).show();
-        }
-    }
-    */
-
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -266,6 +254,8 @@ public class TurnoFragment extends Fragment {
         layoutManager = new LinearLayoutManager(contexto);
         recyclerView.setLayoutManager(layoutManager);
         showProgress(false);
+
+        setearEnable(true);
     }
 
     public String generarFecha (Calendar c) {
@@ -324,6 +314,12 @@ public class TurnoFragment extends Fragment {
             }
         }, anio, mes, dia);
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+    }
+
+    public void setearEnable(boolean enable){
+        btnNext.setEnabled(enable);
+        btnPrev.setEnabled(enable);
+        tvFecha.setEnabled(enable);
     }
 
     public class GetTurnosTask extends AsyncTask<Void, Void, Boolean> {
@@ -429,14 +425,16 @@ public class TurnoFragment extends Fragment {
                 salida = 8;
             }
 
+            tvFecha.setText(fecha);
+
             switch (salida) {
                 case 0:
                 case 8:
                     if (success) {
                         if (flag == 9) {
                             Toast.makeText(contexto, nombre, Toast.LENGTH_SHORT).show();
+                            setearEnable(false);
                         } else {
-                            tvFecha.setText(fecha);
                             tvComentario.setText(comentario.trim());
                             ViewGroup.LayoutParams params = tvComentario.getLayoutParams();
                             if (!comentario.trim().isEmpty()) {
@@ -452,14 +450,17 @@ public class TurnoFragment extends Fragment {
                                 params.height = 0;
                             }
                             tvComentario.setLayoutParams(params);
+                            setearEnable(true);
                             inflarVista(turnos);
                         }
 
                     } else {
+                        setearEnable(false);
                         Toast.makeText(contexto,  getString(R.string.error_get_turnos),Toast.LENGTH_SHORT).show();
                     }
                     break;
                 default:
+                    setearEnable(false);
                     Toast.makeText(contexto,  getString(R.string.error_get_turnos),Toast.LENGTH_SHORT).show();
                     break;
             }
