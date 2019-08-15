@@ -5,21 +5,15 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -425,13 +419,14 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
                 Date tiempoActualGeoLocalizacion = Calendar.getInstance().getTime();
                 long difference = Math.abs(tiempoActualGeoLocalizacion.getTime() - tiempoInicialGeoLocalizacion.getTime());
                 //obtienes la diferencia en minutos ya que la diferencia anterior esta en milisegundos
-                difference= difference / (60 * 1000); //60000
+                double diff = (double) difference / (60 * 1000); //60000
 
-                if (difference > 1) { //> a 5 minutos
+                if (diff > constantes.tiempoEsperaGeolocalizacion) {
+                    if (locManager != null) {
+                        regPosicionTask = new RegPosicionTask("", matricula, "", "", "", "Tiempo de espera caducado.");
+                        regPosicionTask.execute((Void) null);
+                    }
                     cancelarGeoLocalizacion();
-
-                    regPosicionTask = new RegPosicionTask("Tiempo de espera caducado.", matricula, "", "", "");
-                    regPosicionTask.execute((Void) null);
                     return;
                 }
                 capturarPosicion(location);
@@ -439,10 +434,10 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
                     if (locListener != null) {
                         cancelarGeoLocalizacion();
                         if (matricula.equals(constantes.cuitHS)) {
-                            regPosicionTask = new RegPosicionTask("login HS", matricula, String.valueOf(latitud), String.valueOf(longitud), String.valueOf(precision));
+                            regPosicionTask = new RegPosicionTask("", matricula, String.valueOf(latitud), String.valueOf(longitud), String.valueOf(precision), "login HS");
                             regPosicionTask.execute((Void) null);
                         } else {
-                            regPosicionTask = new RegPosicionTask(profesional, matricula, String.valueOf(latitud), String.valueOf(longitud), String.valueOf(precision));
+                            regPosicionTask = new RegPosicionTask(profesional, matricula, String.valueOf(latitud), String.valueOf(longitud), String.valueOf(precision), "");
                             regPosicionTask.execute((Void) null);
                         }
                         return;
@@ -452,20 +447,19 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
 
             //Metodo que sera llamado cuando se produzcan cambios en el estado del proveedor.
             @Override
-            public void onStatusChanged(String provider, int status, Bundle extras)
-            {
+            public void onStatusChanged(String provider, int status, Bundle extras){
             }
 
             //Metodo que sera llamado cuando el proveedor este habilitado para el usuario.
             @Override
-            public void onProviderEnabled(String provider)
-            {
+            public void onProviderEnabled(String provider){
+                Toast.makeText(LoginActivity.this, R.string.onProviderEnabled, Toast.LENGTH_LONG).show();
             }
 
             //Metodo que sera llamado cuando el proveedor este deshabilitado para el usuario.
             @Override
-            public void onProviderDisabled(String provider)
-            {
+            public void onProviderDisabled(String provider){
+                Toast.makeText(LoginActivity.this, R.string.onProviderDisabled, Toast.LENGTH_LONG).show();
             }
         };
 
@@ -525,7 +519,7 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
         if (locManager != null) {
             locManager.removeUpdates(locListener);
             locManager = null;
-            Toast.makeText(LoginActivity.this, "GeoLocalizacion CANCELADA", Toast.LENGTH_LONG).show();
+            //Toast.makeText(LoginActivity.this, "GeoLocalizacion CANCELADA", Toast.LENGTH_LONG).show();
         }
         if (locListener != null) {
             locListener = null;
@@ -678,7 +672,7 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
                 msj = jsonObject.getString("_message");
             } catch (Exception e){
                 status = "8";
-                return;
+                //return;
             }
 
             switch (status) {
@@ -692,12 +686,21 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
                             userLoginTask.execute((Void) null);
                         }
                     } else {
+                        mMatriculaView.setError(getString(R.string.servidor_error));
+                        mMatriculaView.requestFocus();
+                    }
+                    break;
+                case "8":
+                    if (respuestaStatus == 99 || respuestaStatus == 98) {
                         mMatriculaView.setError(getString(R.string.servidor_timeout));
+                        mMatriculaView.requestFocus();
+                    } else {
+                        mMatriculaView.setError(getString(R.string.servidor_error));
                         mMatriculaView.requestFocus();
                     }
                     break;
                 default:
-                    mMatriculaView.setError(getString(R.string.servidor_timeout));
+                    mMatriculaView.setError(getString(R.string.servidor_error));
                     mMatriculaView.requestFocus();
                     break;
             }
@@ -839,7 +842,9 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
                         } else {
                             Log.i("JONATT", "NO SE GENERO LA CONFIG");
                         }
-                        geoLocalizacion();
+                        if (constantes.activarGeoLocalizacion) {
+                            geoLocalizacion();
+                        }
 
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         i.putExtra("activity", constantes.LOGIN_ACTIVITY);
@@ -895,6 +900,7 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
         public HsLoginTask() {
             mMatricula = constantes.cuitHS;
             mPassword = constantes.passHS;
+            showProgress(true);
         }
 
         @Override
@@ -1000,7 +1006,9 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
                         }
                     }
                     if (success) {
-                        geoLocalizacion();
+                        if (constantes.activarGeoLocalizacion) {
+                            geoLocalizacion();
+                        }
                         Intent i = new Intent(getApplicationContext(), HsActivity.class);
                         i.putExtra("empresa", empresa);
                         i.putExtra("nombreEmpresa", nombreEmpresa);
@@ -1050,15 +1058,17 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
         private final String posLatitud;
         private final String posLongitud;
         private final String posPrecision;
+        private final String posMsj;
         private JSONObject jsonResp = null;
 
 
-        RegPosicionTask(String posProfe, String posMatricula, String posLatitud, String posLongitud, String posPrecision) {
+        RegPosicionTask(String posProfe, String posMatricula, String posLatitud, String posLongitud, String posPrecision, String posMsj) {
             this.posProfe = posProfe;
             this.posMatricula = posMatricula;
             this.posLatitud = posLatitud;
             this.posLongitud = posLongitud;
             this.posPrecision = posPrecision;
+            this.posMsj = posMsj;
         }
 
         @Override
@@ -1085,6 +1095,7 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
                 obj.put("pos_latitud", posLatitud);
                 obj.put("pos_longitud", posLongitud);
                 obj.put("pos_precision", posPrecision);
+                obj.put("pos_msj", posMsj);
 
                 Log.i("JSON", obj.toString());
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
@@ -1157,11 +1168,11 @@ public class LoginActivity extends AppCompatActivity implements ActivityCompat.O
             switch (estado) {
                 case "OK":
                     if (!success) {
-                        Toast.makeText(LoginActivity.this, R.string.servidor_timeout, Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, R.string.error_geolocalizacion, Toast.LENGTH_LONG).show();
                     }
                     break;
                 default:
-                    Toast.makeText(LoginActivity.this, R.string.servidor_timeout, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, R.string.error_geolocalizacion, Toast.LENGTH_LONG).show();
                     break;
             }
         }

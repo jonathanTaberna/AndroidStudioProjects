@@ -30,7 +30,7 @@ public class constantes {
     public static String hospitalGralDehezaServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
     public static String urologicoServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
     public static String clinicaPrivadaGralDehezaServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
-    public static String hsServer = "http://192.168.2.121:8080/valida-prof/servlet/isCobol"; //(HS-AGENDA)";
+    public static String hsServer = "http://192.168.2.121:9500/valida-prof/servlet/isCobol"; //(HS-AGENDA)";
 
     public static String pathConnection;// = neoServer;
     public static String metodoHsAgenda = "(HS-AGENDA)";
@@ -44,7 +44,7 @@ public class constantes {
     public static String cuitHS = "30640685782";
     public static String passHS = "H"; //"HS852";
     public static Boolean activarGeoLocalizacion = true; //activa o desactiva la geolocalizacion
-    public static double presicionGeolocalizacion = 50;
-    public static double presicionInicialGeolocalizacion = 55;
+    public static double presicionGeolocalizacion = 30;
+    public static int tiempoEsperaGeolocalizacion = 3;
 
 }

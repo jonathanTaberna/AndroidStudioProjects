@@ -18,12 +18,23 @@
                                 <PersistentState>
                                   <option name="children">
                                     <map>
+                                      <entry key="foregroundClipArt">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="foregroundImage">
                                         <value>
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="63" />
+                                                <entry key="scalingPercent" value="102" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -37,7 +48,7 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="C:\Users\usuario\Documents\AndroidStudioProjects\NeoClinica\app\src\main\res\drawable\hs_logo.png" />
-                                      <entry key="foregroundImage" value="C:\Users\usuario\Documents\AndroidStudioProjects\NeoClinica\app\src\main\res\drawable\salud_icon.png" />
+                                      <entry key="foregroundImage" value="C:\Users\usuario\Documents\AndroidStudioProjects\NeoClinica\app\src\main\res\drawable\icono_sanatorial.png" />
                                     </map>
                                   </option>
                                 </PersistentState>

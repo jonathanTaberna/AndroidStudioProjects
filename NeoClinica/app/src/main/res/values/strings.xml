@@ -33,6 +33,10 @@
     <string name="error_get_turnos">No se pudo obtener la agenda de Turnos.</string>
     <string name="error_get_internados">No se pudo obtener la lista de Internados.</string>
     <string name="error_get_dias_no_trabajo">No se pudo obtener la tabla de dias No Laborables.</string>
+    <string name="error_geolocalizacion">No se pudo registrar la Geolocalizacion.</string>
+    <string name="onProviderDisabled">Debe activar la Ubicacion para poder registrar su Localizacion.</string>
+    <string name="onProviderEnabled">Ubicacion activa.</string>
+
 
     <!-- menu -->
     <!--

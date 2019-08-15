@@ -71,6 +71,7 @@
             android:layout_gravity="right|center_vertical"
             android:layout_weight="1"
             android:background="@drawable/layout_boton_odontograssi"
+            android:visibility="invisible"
             tools:layout_editor_absoluteX="218dp"
             tools:layout_editor_absoluteY="103dp" />
     </LinearLayout>
@@ -90,6 +91,7 @@
             android:layout_weight="1"
             android:background="@drawable/layout_boton_resonanciar4"
             android:text="Resonancia Rio Cuarto"
+            android:visibility="invisible"
             tools:layout_editor_absoluteX="218dp"
             tools:layout_editor_absoluteY="16dp" />
 
@@ -101,6 +103,7 @@
             android:layout_weight="1"
             android:background="@drawable/layout_boton_hospitalgraldeheza"
             android:text="Hospital de la Comunidad Gral Deheza"
+            android:visibility="invisible"
             tools:layout_editor_absoluteX="218dp"
             tools:layout_editor_absoluteY="103dp" />
     </LinearLayout>
@@ -120,6 +123,7 @@
             android:layout_weight="1"
             android:background="@drawable/layout_boton_urologico"
             android:text="Urologico"
+            android:visibility="invisible"
             tools:layout_editor_absoluteX="218dp"
             tools:layout_editor_absoluteY="16dp" />
 
@@ -131,6 +135,7 @@
             android:layout_weight="1"
             android:background="@drawable/layout_boton_clinicaprivgraldeheza"
             android:text="ClinicaPrivadaGralDeheza"
+            android:visibility="invisible"
             tools:layout_editor_absoluteX="218dp"
             tools:layout_editor_absoluteY="103dp" />
     </LinearLayout>
