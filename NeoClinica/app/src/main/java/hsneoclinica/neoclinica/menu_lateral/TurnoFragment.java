@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -75,6 +76,7 @@ public class TurnoFragment extends Fragment {
     private Button btnNext;
     private TextView tvFecha;
     private View pbLoading;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public TurnosVector productosVector = new TurnosVector();
 
@@ -111,6 +113,7 @@ public class TurnoFragment extends Fragment {
         btnNext = (Button) view.findViewById(R.id.btnNext);
         tvFecha = (TextView) view.findViewById(R.id.tvFecha);
         pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
 
         tvNombre.setText(nombre.trim());
         if (matricula.trim().equals("0")) {
@@ -170,7 +173,21 @@ public class TurnoFragment extends Fragment {
                 getTurnosTask.execute((Void) null);
             }
         });
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Esto se ejecuta cada vez que se realiza el gesto
+                //swipeRefreshLayout.setRefreshing(t);
 
+                productosVector.ResetList();
+                if (productosVector.tamanyo() > 0 ) {
+                    recyclerView.stopScroll();
+                    adaptador.notifyDataSetChanged();
+                }
+                getTurnosTask = new GetTurnosTask(fecha);
+                getTurnosTask.execute((Void) null);
+            }
+        });
 
         // Inflate the layout for this fragment
         return view;
@@ -254,7 +271,7 @@ public class TurnoFragment extends Fragment {
         layoutManager = new LinearLayoutManager(contexto);
         recyclerView.setLayoutManager(layoutManager);
         showProgress(false);
-
+        swipeRefreshLayout.setRefreshing(false);
         setearEnable(true);
     }
 
