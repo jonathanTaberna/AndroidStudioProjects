@@ -20,14 +20,20 @@ public class constantes {
     public static String flavioProductos  = "http://192.168.2.57:8080/FARMACLUB/rest/product/"; //existeusu
     //public static String flavioProductos  = "http://192.168.2.50:81/farmaclubserver/rest/product/"; //existeusu
     //public static String hsServer = "http://192.168.2.121:8080/farmaclubserver/rest/user/";
+    public static String hsServer = "http://192.168.2.121:8080/farmaclubserver/rest/user/";
+    public static String hsServerProductos = "192.168.2.121:8080/farmaclubserver/rest/product/";
     public static String hsServerNombre = "http://highsoft.no-ip.org:8080/farmaclubserver/rest/user/";
     public static String hsServerNombreProductos = "http://highsoft.no-ip.org:8080/farmaclubserver/rest/product/";
+
+    public static String puerta = "http://192.168.2.57:8080/FARMACLUBServer/rest/user/";
+    public static String puertaProductos = "http://192.168.2.57:8080/FARMACLUBServer/rest/product/";
+
 
     public static String delPuebloNombre = "http://delpueblocentral.ddns.net:8181/FARMACLUB/rest/user/";
     public static String delPuebloNombreProductos = "http://delpueblocentral.ddns.net:8181/FARMACLUB/rest/product/";
 
-    public static String pathConnection = flavio; //delPuebloNombre;
-    public static String pathConnectionProductos = flavioProductos; //delPuebloNombreProductos;
+    public static String pathConnection = puerta; //delPuebloNombre;
+    public static String pathConnectionProductos = puertaProductos; //delPuebloNombreProductos;
 
     public static String pdfName = "FarmaClub Terminos y Condiciones.pdf";
 

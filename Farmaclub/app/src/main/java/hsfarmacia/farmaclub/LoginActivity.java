@@ -98,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
         */
 
+
         mIngresarButton = (Button) findViewById(R.id.btnIngresar);
         mIngresarButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -112,7 +113,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             }
         });
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         tilPassword = findViewById(R.id.tilPassword);

@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -78,7 +79,7 @@ public class TurnoFragment extends Fragment {
     private View pbLoading;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public TurnosVector productosVector = new TurnosVector();
+    public TurnosVector turnosVector = new TurnosVector();
 
     private String fragmentVisible = "";
 
@@ -115,6 +116,9 @@ public class TurnoFragment extends Fragment {
         pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
 
+        Typeface font = Typeface.createFromAsset(view.getContext().getAssets(), "fonts/HelveticaNeueMed.ttf");
+        tvFecha.setTypeface(font);
+
         tvNombre.setText(nombre.trim());
         if (matricula.trim().equals("0")) {
             tvNroMat.setHeight(0);
@@ -145,8 +149,8 @@ public class TurnoFragment extends Fragment {
                 c.add(Calendar.DAY_OF_MONTH, -1);
                 fecha = generarFecha(c);
 
-                productosVector.ResetList();
-                if (productosVector.tamanyo() > 0 ) {
+                turnosVector.ResetList();
+                if (turnosVector.tamanyo() > 0 ) {
                     recyclerView.stopScroll();
                     adaptador.notifyDataSetChanged();
                 }
@@ -164,8 +168,8 @@ public class TurnoFragment extends Fragment {
                 c.add(Calendar.DAY_OF_MONTH, 1);
                 fecha = generarFecha(c);
 
-                productosVector.ResetList();
-                if (productosVector.tamanyo() > 0 ) {
+                turnosVector.ResetList();
+                if (turnosVector.tamanyo() > 0 ) {
                     recyclerView.stopScroll();
                     adaptador.notifyDataSetChanged();
                 }
@@ -179,8 +183,8 @@ public class TurnoFragment extends Fragment {
                 // Esto se ejecuta cada vez que se realiza el gesto
                 //swipeRefreshLayout.setRefreshing(t);
 
-                productosVector.ResetList();
-                if (productosVector.tamanyo() > 0 ) {
+                turnosVector.ResetList();
+                if (turnosVector.tamanyo() > 0 ) {
                     recyclerView.stopScroll();
                     adaptador.notifyDataSetChanged();
                 }
@@ -245,7 +249,7 @@ public class TurnoFragment extends Fragment {
                 String color = jsonObject.getString("color");
 
                 turno = new Turno(hora, paciente, mutual, obs, color);
-                productosVector.anyade(turno);
+                turnosVector.anyade(turno);
             } catch (Exception e) {
                 Log.e("inflarVista", e.getMessage());
             }
@@ -253,17 +257,17 @@ public class TurnoFragment extends Fragment {
 
         if (tamanyoArray == 0) { //no hay turnos para mostrar
             turno = new Turno();
-            productosVector.anyade(turno);
+            turnosVector.anyade(turno);
             Toast.makeText(contexto, "No hay turnos a Mostrar", Toast.LENGTH_SHORT).show();
-            TurnosVector productosVectorAux = new TurnosVector(productosVector.getArray(1, 1));
-            actualizarVista(productosVectorAux);
+            TurnosVector turnosVectorAux = new TurnosVector(turnosVector.getArray(1, 1));
+            actualizarVista(turnosVectorAux);
         } else {
-            actualizarVista(productosVector);
+            actualizarVista(turnosVector);
         }
     }
 
-    public void actualizarVista(TurnosVector productosVector){
-        turnos = productosVector;
+    public void actualizarVista(TurnosVector turnosVector){
+        turnos = turnosVector;
         if (fragmentVisible == "agenda"){
             adaptador = new AdaptadorTurnos(contexto, turnos);
         }
@@ -323,7 +327,7 @@ public class TurnoFragment extends Fragment {
                     monthStr = "" + month;
                 }
 
-                productosVector.ResetList();
+                turnosVector.ResetList();
                 c.set(year, month - 1, day);
                 fecha = generarFecha(c);
                 getTurnosTask = new GetTurnosTask(fecha);

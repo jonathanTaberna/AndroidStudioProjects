@@ -50,22 +50,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:singleLine="true"
+                android:maxLines="2"
+                android:singleLine="false"
                 android:text="nombre del paciente (edad)"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/texto_normal" />
+
+            <TextView
+                android:id="@+id/tvTextoDeEspacio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvPacienteInternado"
+                android:text="esto es un espacio"
+                android:textSize="@dimen/texto_chico" />
 
             <TextView
                 android:id="@+id/tvProfesionalInternado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Profesional" />
+                android:text="Profesional"
+                android:textSize="@dimen/texto_chico" />
 
             <TextView
                 android:id="@+id/tvMutualInternado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mutual" />
+                android:text="Mutual"
+                android:textSize="@dimen/texto_chico" />
 
             <TextView
                 android:id="@+id/tvMotivoInternado"
@@ -75,7 +87,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_below="@+id/tvPacienteInternado"
                 android:singleLine="true"
-                android:text="Motivo" />
+                android:text="Motivo"
+                android:textSize="@dimen/texto_chico" />
         </LinearLayout>
     </LinearLayout>
 

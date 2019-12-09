@@ -1,6 +1,7 @@
 package hsneoclinica.neoclinica.adaptador;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //public TextView nombre, descripcion;
-        public TextView nombre, profesional, mutual, motivo, tvLugarInternado;
+        public TextView nombre, profesional, mutual, motivo, tvLugarInternado, espacio;
         public RelativeLayout rlElementoInternado;
         public ImageView ivIconoInternado;
 
@@ -40,7 +41,16 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
             profesional = (TextView) itemView.findViewById(R.id.tvProfesionalInternado);
             mutual = (TextView) itemView.findViewById(R.id.tvMutualInternado);
             motivo = (TextView) itemView.findViewById(R.id.tvMotivoInternado);
+            espacio = (TextView) itemView.findViewById(R.id.tvTextoDeEspacio);
             rlElementoInternado = (RelativeLayout) itemView.findViewById(R.id.rlElementoInternado);
+
+            Typeface font = Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/HelveticaNeueBd.ttf");
+            nombre.setTypeface(font);
+            font = Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/HelveticaNeueMed.ttf");
+            profesional.setTypeface(font);
+            espacio.setTypeface(font);
+            mutual.setTypeface(font);
+            motivo.setTypeface(font);
         }
     }
 
@@ -73,6 +83,7 @@ public class AdaptadorInternados extends RecyclerView.Adapter<AdaptadorInternado
         holder.profesional.setText(internado.getProfesional().trim());
         holder.mutual.setText(internado.getMutual().trim());
         holder.motivo.setText(internado.getMotivo().trim());
+        holder.espacio.setText("");
         String lugarAux = internado.getLugar().trim();
         if (!lugarAux.isEmpty()) {
             if (lugarAux.length() > 20) {

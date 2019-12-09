@@ -15,14 +15,14 @@ public class constantes {
     public static int RESULT_HS_ACTIVITY = 333;
     public static int TAMANYO_ELEMENTO_OBS = 280;
     public static int TAMANYO_ELEMENTO_SIN_OBS = 150;
-    public static int TAMANYO_TEXT_SIZE = 20;
+    public static int TAMANYO_TEXT_SIZE = 17;
 
 
     //constantes para permisos REQUEST CODE
     public static final int REQUEST_CODE_GEOLOCALIZACION = 10;
 
 
-    public static String sanLucasServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
+    public static String sanLucasServer  = "http://200.123.248.20:9500/valida-prof/servlet/isCobol";
     public static String neoServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";
     public static String sanatorioPrivadoServer  = "http://sanatorioprivado.no-ip.org:9500/valida-prof/servlet/isCobol";
     public static String odontograssiServer  = "http://neomat.dyndns.org:9500/valida-prof/servlet/isCobol";

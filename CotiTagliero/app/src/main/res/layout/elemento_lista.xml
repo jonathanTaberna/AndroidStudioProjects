@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlElemento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1">
+    <!--
+    android:theme="@style/AppTheme"
+    -->
+
+    <TextView
+        android:id="@+id/elemento_lista_fecha_y_peso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:maxLines="2"
+        android:singleLine="false"
+        android:text="fecha | peso"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="@dimen/texto_normal" />
+
+    <TextView
+        android:id="@+id/elemento_lista_texto_de_espacio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/elemento_lista_fecha_y_peso"
+        android:text="esto es un espacio"
+        android:textSize="@dimen/texto_chico" />
+
+    <TextView
+        android:id="@+id/elemento_lista_imc_gvisceral"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/elemento_lista_texto_de_espacio"
+        android:maxLines="2"
+        android:singleLine="false"
+        android:text="imc y g visceral"
+        android:textSize="@dimen/texto_chico" />
+
+    <TextView
+        android:id="@+id/elemento_lista_mgrasa_mmuscular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@+id/elemento_lista_imc_gvisceral"
+        android:maxLines="4"
+        android:text="m grasa y m muscular"
+        android:textSize="@dimen/texto_chico" />
+
+    <TextView
+        android:id="@+id/elemento_lista_edadmeta_tipo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@+id/elemento_lista_mgrasa_mmuscular"
+        android:maxLines="4"
+        android:text="edad meta y tipo"
+        android:textSize="@dimen/texto_chico" />
+
+    <TextView
+        android:id="@+id/elemento_lista_texto_de_espacio2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/elemento_lista_edadmeta_tipo"
+        android:text="esto es un espacio"
+        android:textSize="@dimen/texto_chico" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/button_background" />
+</RelativeLayout>

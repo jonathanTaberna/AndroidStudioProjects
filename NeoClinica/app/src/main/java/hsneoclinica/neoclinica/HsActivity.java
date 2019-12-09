@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -113,6 +114,13 @@ public class HsActivity extends AppCompatActivity {
                 final TextView textView3 = new TextView(contexto);
                 //TextView textView4 = new TextView(contexto);
                 //TextView textView5 = new TextView(this);
+
+
+                Typeface font = Typeface.createFromAsset(contexto.getAssets(), "fonts/HelveticaNeue Medium.ttf");
+                textView1.setTypeface(font);
+                textView2.setTypeface(font);
+                textView3.setTypeface(font);
+
                 textView1.setText(matricula);
                 textView1.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 //textView1.setHeight(15);

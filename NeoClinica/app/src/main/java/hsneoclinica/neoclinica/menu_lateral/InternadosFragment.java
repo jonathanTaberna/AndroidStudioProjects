@@ -6,10 +6,12 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -74,6 +76,7 @@ public class InternadosFragment extends Fragment {
     private Button btnNext;
     private TextView tvFecha;
     private View pbLoading;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public InternadosVector internadosVector = new InternadosVector();
 
@@ -110,6 +113,10 @@ public class InternadosFragment extends Fragment {
         btnNext = (Button) view.findViewById(R.id.btnNext);
         tvFecha = (TextView) view.findViewById(R.id.tvFecha);
         pbLoading = (ProgressBar) view.findViewById(R.id.pbLoading);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+
+        Typeface font = Typeface.createFromAsset(view.getContext().getAssets(), "fonts/HelveticaNeueMed.ttf");
+        tvFecha.setTypeface(font);
 
         tvNombre.setText(nombre.trim());
         tvComentario.setText("");
@@ -165,6 +172,21 @@ public class InternadosFragment extends Fragment {
                 recyclerView.stopScroll();
                 adaptador.notifyDataSetChanged();
 
+                getInternadosTask = new GetInternadosTask(fecha);
+                getInternadosTask.execute((Void) null);
+            }
+        });
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Esto se ejecuta cada vez que se realiza el gesto
+                //swipeRefreshLayout.setRefreshing(t);
+
+                internadosVector.ResetList();
+                if (internadosVector.tamanyo() > 0 ) {
+                    recyclerView.stopScroll();
+                    adaptador.notifyDataSetChanged();
+                }
                 getInternadosTask = new GetInternadosTask(fecha);
                 getInternadosTask.execute((Void) null);
             }
@@ -244,8 +266,8 @@ public class InternadosFragment extends Fragment {
             Toast.makeText(contexto, "No hay internados a Mostrar", Toast.LENGTH_SHORT).show();
             actualizarVista(internadosVector);
             /*
-            TurnosVector productosVectorAux = new TurnosVector(productosVector.getArray(1, 1));
-            actualizarVista(productosVectorAux);
+            TurnosVector turnosVectorAux = new TurnosVector(turnosVector.getArray(1, 1));
+            actualizarVista(turnosVectorAux);
             */
         } else {
             actualizarVista(internadosVector);
@@ -263,7 +285,7 @@ public class InternadosFragment extends Fragment {
         layoutManager = new LinearLayoutManager(contexto);
         recyclerView.setLayoutManager(layoutManager);
         showProgress(false);
-
+        swipeRefreshLayout.setRefreshing(false);
         setearEnable(true);
     }
 

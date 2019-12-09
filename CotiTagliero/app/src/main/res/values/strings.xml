@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Coti Tagliero Nutrición</string>
+
+    <!-- Strings related to login -->
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+
+    <!-- Strings Coti App -->
+    <!-- Strings Coti App -->
+    <!-- Strings Coti App -->
+    <!-- Strings Coti App -->
+    <!-- Strings Coti App -->
+
+    <!-- edit Text-->
+    <string name="edtUsuarioU">Usuario</string>
+    <string name="edtContrasenia">Contraseña</string>
+
+    <!-- check box-->
+    <string name="cbRecordarUsuario">Recordar Usuario.</string>
+
+    <!-- botones-->
+    <string name="btnIngresar">Ingresar</string>
+
+    <!-- mensajes de errores -->
+    <string name="error_invalid_password">El tamaño de la contraseña es incorrecto (entre 4 y 15).</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta.</string>
+    <string name="error_field_required">Este campo es Obligatorio.</string>
+    <string name="usuario_deconocido">Usuario y/o contraseña invalidos.</string>
+    <string name="servidor_timeout">No es posible conectarse al Servidor.</string>
+    <string name="servidor_error">Se ha producido un error en el Servidor.</string>
+    <string name="usuario_invalido">Usuario no valido.</string>
+</resources>

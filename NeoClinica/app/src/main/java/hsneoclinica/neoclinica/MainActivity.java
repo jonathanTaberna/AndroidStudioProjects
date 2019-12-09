@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_hs_menu_item) {
             setResult(constantes.RESULT_HS_ACTIVITY);
-            turnoFragment.productosVector.eliminaListaProductos();
+            turnoFragment.turnosVector.eliminaListaProductos();
             finish();
 
         } else if (id == R.id.nav_cerrar_sesion) {
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_salir) {
             setResult(RESULT_CANCELED);
-            turnoFragment.productosVector.eliminaListaProductos();
+            turnoFragment.turnosVector.eliminaListaProductos();
             finish();
         }
 

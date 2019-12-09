@@ -2,6 +2,7 @@ package hsneoclinica.neoclinica.menu_lateral;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -108,6 +109,12 @@ public class DiasNoTrabajoFragment extends Fragment {
                 TextView textView1 = new TextView(contexto);
                 TextView textView2 = new TextView(contexto);
                 TextView textView3 = new TextView(contexto);
+
+                Typeface font = Typeface.createFromAsset(contexto.getAssets(), "fonts/HelveticaNeueMed.ttf");
+                textView1.setTypeface(font);
+                textView2.setTypeface(font);
+                textView3.setTypeface(font);
+
                 textView1.setText(desde);
                 textView1.setTextSize(constantes.TAMANYO_TEXT_SIZE);
                 textView2.setText(hasta);

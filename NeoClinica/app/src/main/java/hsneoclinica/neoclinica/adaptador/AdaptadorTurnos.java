@@ -1,13 +1,16 @@
 package hsneoclinica.neoclinica.adaptador;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import java.util.StringTokenizer;
@@ -34,7 +37,7 @@ public class AdaptadorTurnos extends RecyclerView.Adapter<AdaptadorTurnos.ViewHo
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //public TextView nombre, descripcion;
-        public TextView nombre, mutual, obs;
+        public TextView nombre, mutual, obs, espacio, espacio2;
 
         public RelativeLayout rlElemento;
 
@@ -44,7 +47,19 @@ public class AdaptadorTurnos extends RecyclerView.Adapter<AdaptadorTurnos.ViewHo
             nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre_paciente);
             mutual = (TextView) itemView.findViewById(R.id.elemento_lista_mutual);
             obs = (TextView) itemView.findViewById(R.id.elemento_lista_obs);
+            espacio = (TextView) itemView.findViewById(R.id.elemento_lista_texto_de_espacio);
+            espacio2 = (TextView) itemView.findViewById(R.id.elemento_lista_texto_de_espacio2);
             rlElemento = (RelativeLayout) itemView.findViewById(R.id.rlElemento);
+
+
+            Typeface font = Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/HelveticaNeueBd.ttf");
+            nombre.setTypeface(font);
+            font = Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/HelveticaNeueMed.ttf");
+            espacio.setTypeface(font);
+            espacio2.setTypeface(font);
+            mutual.setTypeface(font);
+            obs.setTypeface(font);
+
         }
     }
 
@@ -75,6 +90,10 @@ public class AdaptadorTurnos extends RecyclerView.Adapter<AdaptadorTurnos.ViewHo
         }
         holder.nombre.setText(nombreAux);
         holder.mutual.setText(turno.getMutual().trim());
+
+        holder.espacio.setText("");
+        holder.espacio2.setText("");
+
         String obsAux = turno.getObs();
         if (obsAux.contains("|")){
             StringTokenizer st = new StringTokenizer(obsAux, "|");
@@ -139,6 +158,10 @@ public class AdaptadorTurnos extends RecyclerView.Adapter<AdaptadorTurnos.ViewHo
         holder.nombre.setBackgroundColor(color);
         holder.mutual.setTextColor(colorLetra);
         holder.mutual.setBackgroundColor(color);
+        holder.espacio.setTextColor(colorLetra);
+        holder.espacio.setBackgroundColor(color);
+        holder.espacio2.setTextColor(colorLetra);
+        holder.espacio2.setBackgroundColor(color);
         //holder.obs.setTextColor(colorLetra);
         ViewGroup.LayoutParams params = holder.obs.getLayoutParams();
         if (obsAux.trim().isEmpty()){
