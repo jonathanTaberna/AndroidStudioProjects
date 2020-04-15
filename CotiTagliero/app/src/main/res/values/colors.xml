@@ -5,4 +5,9 @@
     <color name="colorAccent">#d4205d</color>
     <color name="window_background">#8bc34a</color>
     <color name="button_background">#0dac9d</color>
+    <color name="titleColor">#d7cfcf</color>
+
+    <color name="colorAmarillo">#eadb38</color>
+    <color name="colorVerde">#62bc46</color>
+    <color name="colorRojo">#df3434</color>
 </resources>

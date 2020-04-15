@@ -16,6 +16,10 @@
     <!-- Strings Coti App -->
     <!-- Strings Coti App -->
 
+    <string name="action_refresh">Refrescar Seguimiento</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <!-- edit Text-->
     <string name="edtUsuarioU">Usuario</string>
     <string name="edtContrasenia">Contraseña</string>
@@ -34,4 +38,5 @@
     <string name="servidor_timeout">No es posible conectarse al Servidor.</string>
     <string name="servidor_error">Se ha producido un error en el Servidor.</string>
     <string name="usuario_invalido">Usuario no valido.</string>
+    <string name="error_get_seguimientos">No se pudo obtener la agenda de Turnos.</string>
 </resources>

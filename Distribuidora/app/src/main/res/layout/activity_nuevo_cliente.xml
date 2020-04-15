@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".menu_lateral.NuevoClienteFragment">
+    -->
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".menu_lateral.NuevoClienteFragment">
+
+        <LinearLayout
+            android:id="@+id/llDni"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="@drawable/layout_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteDni"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/edtNuevoClienteDni"
+                    android:inputType="number"
+                    android:maxLength="11"
+                    android:padding="5dp"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!--
+            <Spinner
+                android:id="@+id/spNuevoClienteCategorias"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:spinnerMode="dropdown" />
+            -->
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llDni"
+            android:layout_margin="3dp"
+            android:background="@drawable/layout_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/edtNuevoClienteNombre"
+                    android:inputType="textPersonName"
+                    android:maxLength="40"
+                    android:padding="5dp"
+                    android:textAppearance="@android:style/TextAppearance.Medium" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llCorreo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/llNombre"
+            android:layout_margin="3dp"
+            android:background="@drawable/layout_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteCorreo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/edtNuevoClienteCorreo"
+                    android:inputType="textEmailAddress"
+                    android:maxLength="40"
+                    android:padding="5dp" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/llCorreo"
+            android:layout_margin="3dp"
+            android:background="@drawable/layout_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteTelefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/edtNuevoClienteTelefono"
+                    android:inputType="phone"
+                    android:maxLength="20"
+                    android:padding="5dp" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llDireccion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/llTelefono"
+            android:layout_margin="3dp"
+            android:background="@drawable/layout_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteDireccion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/edtNuevoClienteDireccion"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLength="40"
+                    android:padding="5dp" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llLocalidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/llDireccion"
+            android:layout_margin="3dp"
+            android:background="@drawable/layout_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="250dp"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteLocalidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/edtNuevoClienteLocalidad"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLength="40"
+                    android:padding="5dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteCodpos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/edtNuevoClienteCodpos"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:padding="5dp" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/llCategorias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/llLocalidad"
+        android:layout_margin="3dp"
+        android:background="@drawable/layout_bg"
+        android:orientation="horizontal"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp">
+
+        <Spinner
+            android:id="@+id/spNuevoClienteCategorias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llLocalidad"
+            android:padding="5dp"
+            android:spinnerMode="dropdown">
+        </Spinner>
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+        <!--
+        <LinearLayout
+            android:id="@+id/llFechaNacimiento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/llLocalidad"
+            android:layout_margin="3dp"
+            android:background="@drawable/layout_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edtNuevoClienteFechaNacimiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="@string/edtNuevoClienteFechaNacimiento"
+                    android:inputType="date"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:padding="5dp" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+        -->
+
+        <LinearLayout
+            android:id="@+id/llBotones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/llCategorias"
+            android:layout_margin="5dp"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp">
+
+            <Button
+                android:id="@+id/btnNuevoClienteCancelar"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/layout_botones"
+                android:text="@string/btnLimpiar" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnNuevoClienteAceptar"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/layout_botones"
+                android:text="@string/btnAceptar" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+<!--
+</FrameLayout>
+-->

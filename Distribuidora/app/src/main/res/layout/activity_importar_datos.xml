@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/llImportarArt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnImportarArticulos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/layout_botones"
+            android:text="@string/btnImportarArticulos"
+            android:textAllCaps="false" />
+
+        <TextView
+            android:id="@+id/tvPathArt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:editable="false"
+            android:hint="@string/edtImportarArticulosPath"
+            android:maxLines="3" />
+
+    </LinearLayout>
+
+    <Space
+        android:id="@+id/spaceImportar"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@id/llImportarArt" />
+
+    <LinearLayout
+        android:id="@+id/llImportarCli"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spaceImportar"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnImportarClientes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/layout_botones"
+            android:text="@string/btnImportarClientes"
+            android:textAllCaps="false" />
+
+        <TextView
+            android:id="@+id/tvPathClientes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:editable="false"
+            android:hint="@string/edtImportarClientesPath"
+            android:maxLines="3" />
+    </LinearLayout>
+
+    <Space
+        android:id="@+id/spaceImportar2"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@id/llImportarCli" />
+
+    <LinearLayout
+        android:id="@+id/llImportarCategorias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spaceImportar2"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnImportarCategorias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/layout_botones"
+            android:text="@string/btnImportarCategorias"
+            android:textAllCaps="false" />
+
+        <TextView
+            android:id="@+id/tvPathCategorias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:editable="false"
+            android:hint="@string/edtImportarCategoriasPath"
+            android:maxLines="3" />
+    </LinearLayout>
+<!--
+    <LinearLayout
+        android:id="@+id/llImportarVende"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spaceImportar2"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnImportarVendedores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/layout_botones"
+            android:text="@string/btnImportarVendedores"
+            android:textAllCaps="false" />
+
+        <TextView
+            android:id="@+id/tvPathVendedores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:editable="false"
+            android:hint="@string/edtImportarVendedoresPath"
+            android:maxLines="3" />
+    </LinearLayout>
+-->
+    <Button
+        android:id="@+id/btnImportar"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/llImportarCategorias"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="43dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/layout_botones"
+        android:text="@string/btnImportar"
+        android:textAllCaps="false" />
+
+</RelativeLayout>

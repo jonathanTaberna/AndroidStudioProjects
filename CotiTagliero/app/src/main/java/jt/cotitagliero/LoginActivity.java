@@ -3,6 +3,7 @@ package jt.cotitagliero;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -59,6 +60,7 @@ import java.util.List;
 import jt.cotitagliero.constantes.constantes;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static jt.cotitagliero.constantes.constantes.RESULT_CERRAR_SESION;
 
 /**
  * A login screen that offers login via email/password.
@@ -410,6 +412,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == constantes.RESULT_CLIENTE_ACTIVITY ) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                finish();
+            }
+            if (resultCode == RESULT_CERRAR_SESION) {
+                mPasswordView.setText("");
+                mPasswordView.requestFocus();
+            }
+        }
+    }
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -554,7 +568,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             // if si cliente
                             Intent i = new Intent(getApplicationContext(), ClienteActivity.class);
                             i.putExtra("id", id);
-                            startActivity(i);
+                            i.putExtra("nombre", nombre);
+                            startActivityForResult(i,constantes.RESULT_CLIENTE_ACTIVITY);
                             // if si admin
                         }
                     } else {

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_menu_principal"
+            android:title="Menu Principal"
+            android:icon="@drawable/ic_menu_principal"
+            app:itemBackground="@android:color/transparent"
+            />
+        <item
+            android:id="@+id/nav_nuevo_cliente"
+            android:title="Nuevo Cliente"
+            android:icon="@drawable/ic_nuevo_cliente"
+            app:itemBackground="@android:color/transparent"
+            />
+        <!--
+        <item
+            android:id="@+id/nav_importa_clientes"
+            android:title="Importa Clientes"
+            android:icon="@drawable/ic_importa_clientes"
+            app:itemIconTint="@color/drawer_itam"
+            app:itemTextColor="@color/drawer_itam"
+            app:itemBackground="@android:color/transparent"
+            />
+            -->
+        <item
+            android:id="@+id/nav_importa_datos"
+            android:title="Importa Datos"
+            android:icon="@drawable/ic_importa_datos"
+            app:itemBackground="@android:color/transparent"
+            />
+        <!--
+        <item
+            android:id="@+id/nav_cambiar_pass"
+            android:icon="@drawable/ic_contrasena"
+            android:title="Cambiar Contraseña" />
+        -->
+    </group>
+
+    <item android:title="Acciones">
+        <menu>
+            <!--
+            <item
+                android:id="@+id/nav_cambiar_pass"
+                android:icon="@drawable/ic_contrasena"
+                android:title="Cambiar Contraseña" />
+            <item
+                android:id="@+id/nav_cerrar_sesion"
+                android:icon="@drawable/ic_cerrar_sesion"
+                android:title="Cerrar Sesion" />
+            -->
+            <item
+                android:id="@+id/nav_salir"
+                android:icon="@drawable/ic_salir"
+                android:title="Salir" />
+        </menu>
+    </item>
+
+</menu>

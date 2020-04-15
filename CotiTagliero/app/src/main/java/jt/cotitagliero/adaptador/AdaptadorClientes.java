@@ -2,7 +2,6 @@ package jt.cotitagliero.adaptador;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,52 +10,53 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.StringTokenizer;
-
-import hsneoclinica.neoclinica.R;
-import hsneoclinica.neoclinica.provisorios.Turno;
-import hsneoclinica.neoclinica.provisorios.Turnos;
+import jt.cotitagliero.R;
+import jt.cotitagliero.provisorios.Cliente;
+import jt.cotitagliero.provisorios.Clientes;
 
 public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.ViewHolder> {
-    protected Turnos turnos;       //Turnos a mostrar
+    protected Clientes clientes;       //Turnos a mostrar
     protected LayoutInflater inflador;   //Crea Layouts a partir del XML
     protected Context contexto;          //Lo necesitamos para el inflador
     protected View.OnClickListener onClickListener; //Listener para cada elemento
 
-    public AdaptadorClientes(Context contexto, Turnos turnos) {
+    public AdaptadorClientes(Context contexto, Clientes clientes) {
         this.contexto = contexto;
-        this.turnos = turnos;
+        this.clientes = clientes;
         inflador = (LayoutInflater) contexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        //public TextView nombre, descripcion;
-        public TextView nombre, mutual, obs, espacio, espacio2;
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView espacio, espacio2;
+        public TextView fecha;
+        public TextView peso;
+        public TextView imc;
+        public TextView gVisceral;
+        public TextView mGrasa;
+        public TextView mMuscular;
+        public TextView edadMeta;
+        public TextView tipo;
 
         public RelativeLayout rlElemento;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            //nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre);
-            nombre = (TextView) itemView.findViewById(R.id.elemento_lista_nombre_paciente);
-            mutual = (TextView) itemView.findViewById(R.id.elemento_lista_mutual);
-            obs = (TextView) itemView.findViewById(R.id.elemento_lista_obs);
+            fecha = (TextView) itemView.findViewById(R.id.elemento_lista_fecha);
+            peso = (TextView) itemView.findViewById(R.id.elemento_lista_peso);
+            imc = (TextView) itemView.findViewById(R.id.elemento_lista_imc);
+            gVisceral = (TextView) itemView.findViewById(R.id.elemento_lista_gvisceral);
+            mGrasa = (TextView) itemView.findViewById(R.id.elemento_lista_mgrasa);
+            mMuscular = (TextView) itemView.findViewById(R.id.elemento_lista_mmuscular);
+            edadMeta = (TextView) itemView.findViewById(R.id.elemento_lista_edadmeta);
+            tipo = (TextView) itemView.findViewById(R.id.elemento_lista_tipo);
             espacio = (TextView) itemView.findViewById(R.id.elemento_lista_texto_de_espacio);
             espacio2 = (TextView) itemView.findViewById(R.id.elemento_lista_texto_de_espacio2);
             rlElemento = (RelativeLayout) itemView.findViewById(R.id.rlElemento);
-
-
-            Typeface font = Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/HelveticaNeueBd.ttf");
-            nombre.setTypeface(font);
-            font = Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/HelveticaNeueMed.ttf");
-            espacio.setTypeface(font);
-            espacio2.setTypeface(font);
-            mutual.setTypeface(font);
-            obs.setTypeface(font);
-
         }
     }
+
 
     // Creamos el ViewHolder con la vista de un elemento sin personalizar
     @Override
@@ -70,44 +70,66 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
     // Usando como base el ViewHolder y lo personalizamos
     @Override
     public void onBindViewHolder(ViewHolder holder, int posicion) {
-        Turno turno = turnos.elemento(posicion);
-        personalizaVista(holder, turno);
+        Cliente cliente = clientes.elemento(posicion);
+        personalizaVista(holder, cliente);
     }
 
     // Personalizamos un ViewHolder a partir de un lugar
-    public void personalizaVista(ViewHolder holder, Turno turno) {
+    public void personalizaVista(ViewHolder holder, Cliente cliente) {
 
-        String nombreAux = "";
-        if (turno.getPaciente().trim().isEmpty()) {
-            nombreAux = turno.getHora().trim();
-        } else {
-            nombreAux = turno.getHora() + " | " + turno.getPaciente().trim();
+        String fecha = cliente.getFecha().trim();
+        if (!fecha.isEmpty()) {
+            String[] split = fecha.split("-");
+            String anio = split[0];
+            String mes = split[1];
+            String dia = split[2];
+            fecha = " " + dia + "/" + mes + "/" + anio;
         }
-        holder.nombre.setText(nombreAux);
-        holder.mutual.setText(turno.getMutual().trim());
 
+        String peso = " Peso: " + cliente.getPeso();
+        String imc = " IMC: " + cliente.getImc().trim();
+        String gVisceral = "|| G. Visceral: " + cliente.getgVisceral().trim();
+        String mGrasa = " M. Grasa: " + cliente.getmGrasa().trim();
+        String mMuscular = "|| M. Muscular: " + cliente.getmMuscular().trim();
+        String edadMeta = " Edad Metabólica: " + cliente.getEdadMeta().trim();
+        String tipo = "|| Tipo: " + cliente.getTipo().trim();
+
+        holder.fecha.setText(fecha);
+        holder.peso.setText(peso);
+        holder.imc.setText(imc);
+        holder.gVisceral.setText(gVisceral);
+        holder.mGrasa.setText(mGrasa);
+        holder.mMuscular.setText(mMuscular);
+        holder.edadMeta.setText(edadMeta);
+        holder.tipo.setText(tipo);
         holder.espacio.setText("");
         holder.espacio2.setText("");
 
-        String obsAux = turno.getObs();
-        if (obsAux.contains("|")){
-            StringTokenizer st = new StringTokenizer(obsAux, "|");
-            String obs1 = st.nextToken();
-            String obs2 = st.nextToken();
-            String obs3 = st.nextToken();
-            String obs4 = st.nextToken();
-            obsAux = obs1.trim();
-            if (!obs2.trim().isEmpty()) {
-                obsAux += " , " + obs2.trim();
+        double pesoInicial = cliente.getPesoInicial();
+        double pesoActual =  cliente.getPeso();
+        int color = 0;
+        int colorLetra = 0;
+        if (!cliente.getTipo().trim().equals("Inicial")) {
+            if (pesoActual == pesoInicial) {
+                color = ContextCompat.getColor(contexto, R.color.colorAmarillo);
+                colorLetra = ContextCompat.getColor(contexto, R.color.colorPrimaryDark);
+            } else if (pesoActual > pesoInicial) {
+                color = ContextCompat.getColor(contexto, R.color.colorRojo);
+                colorLetra = Color.BLACK;
+            } else if (pesoActual < pesoInicial) {
+                color = ContextCompat.getColor(contexto, R.color.colorVerde);
+                colorLetra = ContextCompat.getColor(contexto, R.color.colorPrimaryDark);
             }
-            if (!obs3.trim().isEmpty()) {
-                obsAux += " , " + obs3.trim();
-            }
-            if (!obs4.trim().isEmpty()) {
-                obsAux += " , " + obs4.trim();
-            }
+
+            ViewGroup.LayoutParams params = holder.peso.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+            holder.peso.setTextColor(colorLetra);
+            holder.peso.setBackgroundColor(color);
+            holder.peso.setLayoutParams(params);
         }
-        holder.obs.setText(obsAux);
+
+
+        /*
         int color = 0;
         int colorLetra = 0;
         switch (turno.getColor()){
@@ -153,42 +175,17 @@ public class AdaptadorClientes extends RecyclerView.Adapter<AdaptadorClientes.Vi
         holder.nombre.setBackgroundColor(color);
         holder.mutual.setTextColor(colorLetra);
         holder.mutual.setBackgroundColor(color);
-        holder.espacio.setTextColor(colorLetra);
-        holder.espacio.setBackgroundColor(color);
-        holder.espacio2.setTextColor(colorLetra);
-        holder.espacio2.setBackgroundColor(color);
-        //holder.obs.setTextColor(colorLetra);
-        ViewGroup.LayoutParams params = holder.obs.getLayoutParams();
-        if (obsAux.trim().isEmpty()){
-            params.height = 0;
-        } else {
-            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            holder.obs.setTextColor(Color.BLACK);
-            holder.obs.setBackgroundColor(Color.YELLOW);
-        }
-        holder.obs.setLayoutParams(params);
-
-        /*
-        ViewGroup.LayoutParams layoutParams;
-        layoutParams = holder.rlElemento.getLayoutParams();
-        if (obsAux.trim().isEmpty()){
-            layoutParams.height = TAMANYO_ELEMENTO_SIN_OBS;
-        } else {
-            layoutParams.height = TAMANYO_ELEMENTO_OBS;
-            holder.obs.setTextColor(R.color.colorLetraAmarillo);
-            holder.obs.setBackgroundColor(R.color.colorAmarillo);
-        }
-        holder.rlElemento.setLayoutParams(layoutParams);
         */
+
     }
 
     // Indicamos el número de elementos de la lista
     @Override public int getItemCount() {
-        return turnos.tamanyo();
+        return clientes.tamanyo();
     }
 
     public void setOnItemClickListener(View.OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
     }
-
 }
+

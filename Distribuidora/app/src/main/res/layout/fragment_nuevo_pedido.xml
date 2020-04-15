@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollViewPedidoNuevo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments_secundarios.NuevoPedidoFragment">
+
+
+    <LinearLayout
+        android:id="@+id/ll1PedidoNuevo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/ivIconoPedidoNuevo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/pedido_icono" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/ivIconoPedidoNuevo"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAñadirPedido"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/tvAñadirPedido"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                    android:textColor="@color/colorNegro" />
+
+                <RelativeLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnPedidoNuevoEliminar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toLeftOf="@id/spPedidoNuevoBotones2"
+                        android:background="@drawable/eliminar" />
+
+                    <Space
+                        android:id="@+id/spPedidoNuevoBotones2"
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@id/btnPedidoNuevoGuardar" />
+
+                    <Button
+                        android:id="@+id/btnPedidoNuevoGuardar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toLeftOf="@id/spPedidoNuevoBotones"
+                        android:background="@drawable/guardar"
+                        tools:layout_conversion_absoluteHeight="40dp"
+                        tools:layout_conversion_absoluteWidth="40dp"
+                        tools:layout_editor_absoluteX="85dp"
+                        tools:layout_editor_absoluteY="51dp" />
+
+                    <Space
+                        android:id="@+id/spPedidoNuevoBotones"
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:layout_toLeftOf="@id/btnPedidoNuevoCancelar" />
+
+                    <Button
+                        android:id="@+id/btnPedidoNuevoCancelar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/cancelar"
+                        tools:layout_conversion_absoluteHeight="40dp"
+                        tools:layout_conversion_absoluteWidth="40dp"
+                        tools:layout_editor_absoluteX="125dp"
+                        tools:layout_editor_absoluteY="51dp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tvVendedor"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tvVendedor"
+                android:textColor="@color/colorNegro" />
+
+            <TextView
+                android:id="@+id/tvPedidoNuevoVendedor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="el vendedor elegido"
+                android:textColor="@color/colorNegro" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tvPedidoNuevoCliente"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tvCliente"
+                android:textColor="@color/colorNegro" />
+
+            <TextView
+                android:id="@+id/tvPedidoNuevoCodigoNombreCliente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="el cliente seleccionado"
+                android:textColor="@color/colorNegro" />
+
+            <!--
+            <Spinner
+                android:id="@+id/spNuevoCliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog" />
+            -->
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tvPedidoNuevoListaPre"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tvListaPrecios"
+                android:textColor="@color/colorNegro" />
+
+            <Spinner
+                android:id="@+id/spPedidoNuevoListaPrecios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:theme="@style/Base.AlertDialog.AppCompat.Light" />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tvFecha"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tvFecha"
+                android:textColor="@color/colorNegro" />
+
+            <EditText
+                android:id="@+id/edtPedidoNuevoFecha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="false"
+                android:hint="fecha"
+                android:inputType="date"
+                android:textColor="@color/colorNegro" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tvComentario"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tvComentario"
+                android:textColor="@color/colorNegro" />
+
+            <TextView
+                android:id="@+id/tvPedidoNuevoComentario"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/tvComentario"
+                android:textColor="@color/colorNegro" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tvTotal"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:text="@string/tvTotal"
+                android:textColor="@color/colorNegro" />
+
+            <TextView
+                android:id="@+id/tvPedidoNuevoTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="total"
+                android:textColor="@color/colorNegro" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/dvNuevoPedido"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/darker_gray" />
+
+    </LinearLayout>
+</ScrollView>

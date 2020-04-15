@@ -8,8 +8,9 @@ public class constantes {
     //constantes
     public static String CONFIG_NOT_FOUND = "CONFIG_NOT_FOUND";
     public static String CONFIG_FOUND = "CONFIG_FOUND";
-    public static int RESULT_NUEVO_USUARIO = 111;
+    public static int RESULT_CERRAR_SESION = 111;
     public static int RESULT_MAIN_ACTIVITY = 222;
+    public static int RESULT_CLIENTE_ACTIVITY = 333;
     public static int CANTIDAD_PRODUCTOS_LISTA = 10;
     public static int TAMANYO_ELEMENTO_CANJE = 120;
     public static int TAMANYO_ELEMENTO_PROMOCIONES = 170;
