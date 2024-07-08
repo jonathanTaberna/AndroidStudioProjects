@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/main2_action_listar_clientes_nuevos"
+        android:orderInCategory="100"
+        android:title="Listar Clientes Nuevos"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/main2_action_borrar_clientes_nuevos_cargados"
+        android:orderInCategory="101"
+        android:title="Borrar Clientes Nuevos Cargados"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/main2_action_listar_clientes_cargados"
+        android:orderInCategory="102"
+        android:title="Listar Clientes Cargados"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/main2_action_listar_articulos_cargados"
+        android:orderInCategory="103"
+        android:title="Listar Articulos Cargados"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/main2_action_listar_pedidos_cargados"
+        android:orderInCategory="104"
+        android:title="Listar Pedidos Cargados"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/main2_action_listar_pedidos_guardados"
+        android:orderInCategory="105"
+        android:title="Listar Pedidos Guardados en Backup"
+        app:showAsAction="never" />
+    <!--
+    <item
+        android:id="@+id/main2_action_listar_vendedores_cargados"
+        android:orderInCategory="102"
+        android:title="Listar Vendedores Cargados"
+        app:showAsAction="never" />
+    -->
+</menu>

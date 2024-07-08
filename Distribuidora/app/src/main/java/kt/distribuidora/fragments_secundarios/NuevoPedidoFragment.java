@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +44,7 @@ public class NuevoPedidoFragment extends Fragment {
     private EditText edtPedidoNuevoFecha;
     private TextView tvPedidoNuevoComentario;
     private TextView tvPedidoNuevoTotal;
+    private EditText edtFiltrarProductos;
     private ScrollView scrollViewPedidoNuevo;
     private LinearLayout ll1PedidoNuevo;
     private Button btnPedidoNuevoEliminar;
@@ -63,7 +66,7 @@ public class NuevoPedidoFragment extends Fragment {
 
     private Boolean editarInfo;
     private int idPedido;
-    private int codigoVendedor;
+    private long codigoVendedor;
     private String nombreVendedor;
     private long codigoCliente;
     private String nombreCliente;
@@ -87,7 +90,7 @@ public class NuevoPedidoFragment extends Fragment {
         args.putBoolean("editarInfo", editarInfo);
         if (editarInfo) {
             args.putInt("idPedido", pedido.getIdPedido());
-            args.putInt("codigoVendedor", pedido.getCodigoVendedor());
+            args.putLong("codigoVendedor", pedido.getCodigoVendedor());
             args.putString("nombreVendedor", pedido.getNombreVendedor());
             args.putLong("codigoCliente", pedido.getCodigoCliente());
             args.putString("nombreCliente", pedido.getNombreCliente());
@@ -132,6 +135,17 @@ public class NuevoPedidoFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
+
+        try {
+            adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
+            SQLiteDatabase db = adminSQLiteOpenHelper.getWritableDatabase();
+            adminSQLiteOpenHelper.borrarRegistros("temporalProductos", db);
+            adminSQLiteOpenHelper.crearTabla("temporalProductos", db);
+            db.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         super.onViewCreated(view, savedInstanceState);
 
         final Calendar c = Calendar.getInstance();
@@ -147,6 +161,7 @@ public class NuevoPedidoFragment extends Fragment {
         edtPedidoNuevoFecha = (EditText) view.findViewById(R.id.edtPedidoNuevoFecha);
         tvPedidoNuevoComentario = (TextView) view.findViewById(R.id.tvPedidoNuevoComentario);
         tvPedidoNuevoTotal = (TextView) view.findViewById(R.id.tvPedidoNuevoTotal);
+        edtFiltrarProductos = (EditText) view.findViewById(R.id.edtFiltrarProductos);
         scrollViewPedidoNuevo = (ScrollView) view.findViewById(R.id.scrollViewPedidoNuevo);
         ll1PedidoNuevo = (LinearLayout) view.findViewById(R.id.ll1PedidoNuevo);
 
@@ -156,6 +171,27 @@ public class NuevoPedidoFragment extends Fragment {
         btnPedidoNuevoEliminar = (Button) view.findViewById(R.id.btnPedidoNuevoEliminar);
         btnPedidoNuevoGuardar = (Button) view.findViewById(R.id.btnPedidoNuevoGuardar);
         btnPedidoNuevoCancelar = (Button) view.findViewById(R.id.btnPedidoNuevoCancelar);
+
+
+        TextWatcher textWatcher = new TextWatcher() {
+            View vista = view;
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                limpiarProductos(ll1PedidoNuevo);
+                cont = 0;
+                totalPedido = 0;
+                llenarArticulos(ll1PedidoNuevo);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        };
+        edtFiltrarProductos.addTextChangedListener(textWatcher);
 
         btnPedidoNuevoGuardar.setOnClickListener(new View.OnClickListener() {
             View vista = view;
@@ -179,6 +215,7 @@ public class NuevoPedidoFragment extends Fragment {
                 }
             }
         });
+
         btnPedidoNuevoCancelar.setOnClickListener(new View.OnClickListener() {
             View vista = view;
             @Override
@@ -270,7 +307,6 @@ public class NuevoPedidoFragment extends Fragment {
             }
         });
 
-
         edtPedidoNuevoFecha.setText(generarFecha(sDay,sMonth,sYear));
         edtPedidoNuevoFecha.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,7 +314,6 @@ public class NuevoPedidoFragment extends Fragment {
                 showDatePickerDialog();
             }
         });
-
 
         tvPedidoNuevoComentario.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -290,34 +325,6 @@ public class NuevoPedidoFragment extends Fragment {
         cont = 0;
         totalPedido = 0;
         tvPedidoNuevoTotal.setText("$ " + totalPedido);
-
-        /*
-        llenarSpinerCliente(view);
-
-        spNuevoCliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
-                if (cont > 0) {
-                    int i = 1;
-                    while (i <= cont) {
-                        View child = (View) view.findViewById(i) ;
-                        ll1PedidoNuevo.removeView(child);
-                        i++;
-                    }
-                }
-                cont = 0;
-                totalPedido = 0;
-                llenarArticulos(ll1PedidoNuevo);
-                tvPedidoNuevoTotal.setText("$ " + totalPedido);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-        });
-        */
 
         editarInfo = getArguments().getBoolean("editarInfo");
         if (editarInfo) {
@@ -341,15 +348,28 @@ public class NuevoPedidoFragment extends Fragment {
         spPedidoNuevoListaPrecios.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
-                if (cont > 0) {
-                    int i = 1;
-                    while (i <= cont) {
-                        View child = (View) view.findViewById(i) ;
-                        ll1PedidoNuevo.removeView(child);
-                        i++;
-                    }
+
+                try {
+                    String elemento = spPedidoNuevoListaPrecios.getSelectedItem().toString();
+                    String[] partes = elemento.split(" - ");
+                    int listaPrecios = Integer.parseInt(partes[0]);
+
+                    adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
+                    SQLiteDatabase db = adminSQLiteOpenHelper.getWritableDatabase();
+                    //adminSQLiteOpenHelper.borrarRegistros("temporalProductos", db);
+                    //adminSQLiteOpenHelper.crearTabla("temporalProductos", db);
+                    String query = " INSERT INTO temporalProductos" +
+                            " SELECT codigo, 0, 0" +
+                            " FROM articulos" +
+                            " WHERE codigoLista = " + listaPrecios;
+
+                    db.execSQL(query);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+                limpiarProductos(ll1PedidoNuevo);
+
                 cont = 0;
                 totalPedido = 0;
                 llenarArticulos(ll1PedidoNuevo);
@@ -362,6 +382,7 @@ public class NuevoPedidoFragment extends Fragment {
             }
         });
 
+        limpiarProductos(ll1PedidoNuevo);
         cont = 0;
         totalPedido = 0;
         llenarArticulos(ll1PedidoNuevo);
@@ -383,51 +404,6 @@ public class NuevoPedidoFragment extends Fragment {
         tvPedidoNuevoComentario.setText(comentariosPedido);
 
     }
-
-    /*
-    private void llenarSpinerCliente(View view) {
-
-        adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
-        SQLiteDatabase db = adminSQLiteOpenHelper.getReadableDatabase();
-        String query = "SELECT codigo, nombre FROM clientes";
-        Cursor cursor = db.rawQuery(query, null);
-
-        int cont = 0;
-        ArrayList<String> arraySpinner = new ArrayList<>();
-
-        String elemento = "";
-        while (cursor.moveToNext()) {
-            cont++;
-            int codigo = cursor.getInt(0);
-            String nombre = cursor.getString(1);
-
-            elemento = codigo + " - " + nombre;
-            arraySpinner.add(elemento);
-        }
-        cursor.close();
-
-        cursor = db.rawQuery("SELECT dni, nombre FROM clientesNuevos", null);
-        elemento = "";
-        while (cursor.moveToNext()) {
-            cont++;
-            long dni = cursor.getLong(0);
-            String nombre = cursor.getString(1);
-            elemento = dni + " - " + nombre;
-            arraySpinner.add(elemento);
-        }
-        cursor.close();
-
-        if (cont == 0) {
-            arraySpinner.add("No hay Clientes cargados");
-        }
-
-        arrayAdapter = new ArrayAdapter<String>(contexto,android.R.layout.simple_spinner_item, arraySpinner);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spNuevoCliente.setAdapter(arrayAdapter);
-
-    }
-    */
-
 
     private void llenarSpinerListaPrecios(View view) {
         adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
@@ -520,7 +496,6 @@ public class NuevoPedidoFragment extends Fragment {
         }
     }
 
-
     private void llenarArticulos(LinearLayout linearLayout) {
 
         String cliente = tvPedidoNuevoCodigoNombreCliente.getText().toString();
@@ -535,36 +510,42 @@ public class NuevoPedidoFragment extends Fragment {
         partes = elemento.split(" - ");
         int listaPrecios = Integer.parseInt(partes[0]);
 
+//        limpiarProductos(linearLayout);
+
+        String filtro = edtFiltrarProductos.getText().toString();
         String query = "";
-
-        query = "SELECT A.codigo, A.descripcion, A.costo, A.precio, PP.cantidadProducto, PP.cantidadProductoBonif " +
-                "FROM articulos AS A " +
-                "LEFT JOIN productosPedidos AS PP " +
-                "ON (A.codigo = PP.codigoProducto AND PP.idPedido = " + idPedido + ") " +
-                "WHERE codigoLista = " + listaPrecios;
-        cargarArticulos(linearLayout, query);
-        /*
-        query = "SELECT A.codigo, A.descripcion, A.costo, A.precio, PP.cantidadProducto, PP.cantidadProductoBonif " +
-                "FROM articulos AS A " +
-                "JOIN clientes AS C " +
-                "ON (A.codigoLista = C.codigoLista) " +
-                "LEFT JOIN productosPedidos AS PP " +
-                "ON (A.codigo = PP.codigoProducto AND PP.idPedido = " + idPedido + ") " +
-                "WHERE C.codigo = " + codigoCliente;
-        cargarArticulos(linearLayout, query);
-
-        query = "SELECT A.codigo, A.descripcion, A.costo, A.precio, PP.cantidadProducto, PP.cantidadProductoBonif " +
-                "FROM articulos AS A " +
-                "JOIN clientesNuevos AS CN " +
-                "ON (A.codigoLista = CN.categoria) " +
-                "LEFT JOIN productosPedidos AS PP " +
-                "ON (A.codigo = PP.codigoProducto AND PP.idPedido = " + idPedido + ") " +
-                "WHERE CN.dni = " + codigoCliente;
-        cargarArticulos(linearLayout, query);
-        */
+        if (filtro.isEmpty()) {
+            query = "SELECT A.codigo," +
+                    " A.descripcion," +
+                    " A.costo," +
+                    " A.precio," +
+                    " CASE WHEN TP.cantidadProducto <> 0 THEN TP.cantidadProducto ELSE PP.cantidadProducto END," +
+                    " CASE WHEN TP.cantidadProductoBonif <> 0 THEN TP.cantidadProductoBonif ELSE PP.cantidadProductoBonif END" +
+                    " FROM articulos AS A " +
+                    " LEFT JOIN productosPedidos AS PP " +
+                    " ON (A.codigo = PP.codigoProducto AND PP.idPedido = " + idPedido + ") " +
+                    " LEFT JOIN temporalProductos AS TP " +
+                    " ON A.codigo = TP.codigoProducto " +
+                    " WHERE codigoLista = " + listaPrecios;
+        } else {
+            query = "SELECT A.codigo," +
+                    " A.descripcion," +
+                    " A.costo," +
+                    " A.precio," +
+                    " CASE WHEN TP.cantidadProducto <> 0 THEN TP.cantidadProducto ELSE PP.cantidadProducto END," +
+                    " CASE WHEN TP.cantidadProductoBonif <> 0 THEN TP.cantidadProductoBonif ELSE PP.cantidadProductoBonif END" +
+                    " FROM articulos AS A " +
+                    " LEFT JOIN productosPedidos AS PP " +
+                    " ON (A.codigo = PP.codigoProducto AND PP.idPedido = " + idPedido + ") " +
+                    " LEFT JOIN temporalProductos AS TP " +
+                    " ON A.codigo = TP.codigoProducto " +
+                    " WHERE codigoLista = " + listaPrecios +
+                      " and A.descripcion like '%" + filtro + "%'";
+        }
+        cargarArticulos(linearLayout, query, filtro);
     }
 
-    private void cargarArticulos(LinearLayout linearLayout, String query) {
+    private void cargarArticulos(LinearLayout linearLayout, String query, String filtro) {
         adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
         SQLiteDatabase db = adminSQLiteOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -595,6 +576,7 @@ public class NuevoPedidoFragment extends Fragment {
             final TextView tvCantidadBonif = (TextView) child.findViewById(R.id.tvCantidadBonif);
 
             final int[] cantidad = {0};
+            /*
             if (editarInfo && cantidadArt > 0) {
                 tvCantidad.setText("" + cantidadArt);
                 cantidad[0] = cantidadArt;
@@ -602,8 +584,13 @@ public class NuevoPedidoFragment extends Fragment {
             } else {
                 tvCantidad.setText("0");
             }
+            */
+            tvCantidad.setText("" + cantidadArt);
+            cantidad[0] = cantidadArt;
+            totalPedido += cantidadArt * precio;
 
             final int[] cantidadBonif = {0};
+            /*
             if (editarInfo && cantidadArtBonif > 0) {
                 tvCantidadBonif.setText("" + cantidadArtBonif);
                 cantidadBonif[0] = cantidadArtBonif;
@@ -611,6 +598,10 @@ public class NuevoPedidoFragment extends Fragment {
             } else {
                 tvCantidadBonif.setText("0");
             }
+            */
+            tvCantidadBonif.setText("" + cantidadArtBonif);
+            cantidadBonif[0] = cantidadArtBonif;
+            totalPedido -= cantidadArtBonif * precio;
 
             tvCantidadArticulo.setText("" + cantidad[0]);
             tvCantidadArticuloBonif.setText("" + cantidadBonif[0]);
@@ -621,11 +612,14 @@ public class NuevoPedidoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
+                    cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
                     cantidad[0] ++;
                     tvCantidad.setText("" + cantidad[0]);
                     tvCantidadArticulo.setText("" + cantidad[0]);
                     totalPedido += precio;
                     tvPedidoNuevoTotal.setText("$ " + totalPedido);
+
+                    actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
                 }
             });
             btnMenos.setOnClickListener(new View.OnClickListener() {
@@ -633,11 +627,14 @@ public class NuevoPedidoFragment extends Fragment {
                 public void onClick(View view) {
                     if (cantidad[0] > 0) {
                         cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
+                        cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
                         cantidad[0] --;
                         tvCantidad.setText("" + cantidad[0]);
                         tvCantidadArticulo.setText("" + cantidad[0]);
                         totalPedido -= precio;
                         tvPedidoNuevoTotal.setText("$ " + totalPedido);
+
+                        actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
                     }
                 }
             });
@@ -659,6 +656,9 @@ public class NuevoPedidoFragment extends Fragment {
                         totalPedido += precio * cant;
                         tvPedidoNuevoTotal.setText("$ " + totalPedido);
                         cantidad[0] = cant;
+                        cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
+
+                        actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
                     }
                 }
             });
@@ -679,6 +679,9 @@ public class NuevoPedidoFragment extends Fragment {
                     tvCantidadArticuloBonif.setText("" + cantidadBonif[0]);
                     totalPedido -= precio;
                     tvPedidoNuevoTotal.setText("$ " + totalPedido);
+                    cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
+
+                    actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
                 }
             });
             btnMenosBonif.setOnClickListener(new View.OnClickListener() {
@@ -691,6 +694,9 @@ public class NuevoPedidoFragment extends Fragment {
                         tvCantidadArticuloBonif.setText("" + cantidadBonif[0]);
                         totalPedido += precio;
                         tvPedidoNuevoTotal.setText("$ " + totalPedido);
+                        cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
+
+                        actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
                     }
                 }
             });
@@ -699,10 +705,28 @@ public class NuevoPedidoFragment extends Fragment {
 
         }
         if (cont == 0) {
-            Toast.makeText(contexto, "No hay Precios definidos sobre los articulos para la lista de precios: " + spPedidoNuevoListaPrecios.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+            if (filtro.isEmpty()) {
+                Toast.makeText(contexto, "No hay Precios definidos sobre los articulos para la lista de precios: " + spPedidoNuevoListaPrecios.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(contexto, "No hay Productos definidos para el filtro ingresado", Toast.LENGTH_LONG).show();
+            }
         }
         cursor.close();
 
+    }
+
+    private void actualizaTemporal(SQLiteDatabase db, int codigo, int cantidadProducto, int cantidadBonifProducto, double precio){
+        ContentValues registro = new ContentValues();
+        int result = 0;
+        registro.clear();
+        registro.put("cantidadProducto", cantidadProducto);
+        registro.put("cantidadProductoBonif", cantidadBonifProducto);
+
+        result = db.update("temporalProductos", registro, "codigoProducto = " + codigo, null);
+        if (result < 0) { //error al regrabar
+            Toast.makeText(contexto, "Error al guardar los datos temporales -1-", Toast.LENGTH_SHORT).show();
+            db.close();
+        }
     }
 
     private void popUpEditText(String textoCargado) {
@@ -774,7 +798,7 @@ public class NuevoPedidoFragment extends Fragment {
         String query = "SELECT codigo, nombre FROM vendedores";
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
-            codigoVendedor = cursor.getInt(0);
+            codigoVendedor = cursor.getLong(0);
             nombreVendedor = cursor.getString(1);
         }
         cursor.close();
@@ -1060,4 +1084,14 @@ public class NuevoPedidoFragment extends Fragment {
         return fecha;
     }
 
+    private void limpiarProductos(LinearLayout linearLayout){
+        if (cont > 0) {
+            int i = 1;
+            while (i <= cont) {
+                View child = (View) linearLayout.findViewById(i) ;
+                ll1PedidoNuevo.removeView(child);
+                i++;
+            }
+        }
+    }
 }

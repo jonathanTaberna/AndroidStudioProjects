@@ -1,0 +1,111 @@
+<resources>
+    <!--
+    <string name="app_name">El Manolito Distribuidora</string>
+    <string name="app_name">App Distribuidora Kiwitech</string>
+    -->
+    <string name="app_name">BJ Distribuidora</string>
+
+    <!-- Strings related to login -->
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+
+    <!-- Strings Distribuidora App -->
+    <!-- Strings Distribuidora App -->
+    <!-- Strings Distribuidora App -->
+    <!-- Strings Distribuidora App -->
+    <!-- Strings Distribuidora App -->
+
+    <!-- edit Text-->
+    <string name="edtUsuarioU">Usuario</string>
+    <string name="edtContrasenia">Contraseña</string>
+    <string name="edtContraseniaVieja">Contraseña Anterior</string>
+    <string name="edtContraseniaNueva">Contraseña Nueva</string>
+    <string name="edtContraseniaConfirmar">Confirmar Contraseña Nueva</string>
+
+    <string name="edtNuevoClienteDni">DNI/CUIT</string>
+    <string name="edtNuevoClienteNombre">Nombre y Apellido</string>
+    <string name="edtNuevoClienteCorreo">Direccion de correo electronico</string>
+    <string name="edtNuevoClienteTelefono">Numero de Telefono</string>
+    <string name="edtNuevoClienteDireccion">Direccion</string>
+    <string name="edtNuevoClienteLocalidad">Localidad</string>
+    <string name="edtNuevoClienteCodpos">Cod. Postal</string>
+    <string name="edtNuevoClienteFechaNacimiento">Fecha de Nacimiento</string>
+    <string name="edtImportarArticulosPath">Archivo Articulos</string>
+    <string name="edtImportarClientesPath">Archivo Clientes</string>
+    <string name="edtImportarVendedoresPath">Archivo Clientes</string>
+    <string name="edtImportarCategoriasPath">Archivo Categorias</string>
+    <string name="edtImportarZonasPath">Archivo Zonas</string>
+    <string name="edtSeleccionarClienteDialogoCliente">Nombre del Cliente</string>
+    <string name="edtExportarPedidos">Exportación de Pedidos</string>
+    <string name="edtExportarClientesNuevos">Exportación de Clientes Nuevos</string>
+    <string name="edtFiltrarProductos">Filtrar Productos</string>
+
+
+    <!-- text view-->
+    <string name="tvAñadirPedido">Añadir Pedido</string>
+    <string name="tvCliente">Cliente</string>
+    <string name="tvListaPrecios">Lista de Precios</string>
+    <string name="tvVendedor">Vendedor</string>
+    <string name="tvFecha">Fecha</string>
+    <string name="tvTotal">Total Pedido</string>
+    <string name="tvComentario">Comentarios</string>
+    <string name="tvBuscarProducto">Buscar Producto</string>
+
+
+    <!-- radio button-->
+    <string name="rbExportacionDialogoBorrar">Exportar y Borrar los Pedidos cargados</string>
+    <string name="rbExportacionDialogoGuardar">Exportar y Guardar los Pedidos cargados a modo de Backup</string>
+    <string name="rbExportacionDialogoClientesNuevos">Exportar los Clientes Nuevos</string>
+    <string name="rbExportacionDialogoExportar">Solo Exportar</string>
+    <string name="rbConfiguracionesDialogoCodigo">Codigo de Pedido</string>
+    <string name="rbConfiguracionesDialogoNombre">Nombre de Cliente</string>
+    <string name="rbConfiguracionesDialogoFecha">Fecha de Pedido</string>
+    <string name="rbConfiguracionesDialogoAsc">Ascendente</string>
+    <string name="rbConfiguracionesDialogoDesc">Descendente</string>
+
+
+    <!-- check box-->
+    <string name="cbRecordarUsuario">Recordar Usuario.</string>
+
+    <!-- botones-->
+    <string name="btnIngresar">Ingresar</string>
+    <string name="btnImportarInfo">Importar Informacion del Vendedor</string>
+    <string name="btnNuevoPedido">Nuevo Pedido</string>
+    <string name="btnExportarPedidos">Exportación de Datos</string>
+    <string name="btnImportar">Importar</string>
+    <string name="btnAceptar">Aceptar</string>
+    <string name="btnCancelar">Cancelar</string>
+    <string name="btnLimpiar">Limpiar</string>
+    <string name="btnImportarClientes">Seleccionar Archivo de Clientes</string>
+    <string name="btnImportarArticulos">Seleccionar Archivo de Articulos</string>
+    <string name="btnImportarVendedores">Seleccionar Archivo de Vendedores</string>
+    <string name="btnImportarCategorias">Seleccionar Archivo de Categorias</string>
+    <string name="btnImportarZonas">Seleccionar Archivo de Zonas</string>
+
+    <!-- mensajes de errores -->
+    <string name="error_invalid_password">El tamaño de la contraseña es incorrecto (entre 4 y 15).</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta.</string>
+    <string name="error_field_required">Este campo es Obligatorio.</string>
+    <string name="usuario_deconocido">Usuario y/o contraseña invalidos.</string>
+    <string name="servidor_timeout">No es posible conectarse al Servidor.</string>
+    <string name="servidor_error">Se ha producido un error en el Servidor.</string>
+    <string name="usuario_invalido">Usuario no valido. No puede contener Espacios</string>
+    <string name="error_dni_positivo">El DNI debe ser Positivo.</string>
+    <string name="error_pass_vieja_incorrecta">La contraseña ingresada no se corresponde con la cargada con anterioridad.</string>
+    <string name="error_pass_vieja_nueva">La Nueva contraseña ingresada es igual a la contraseña Antigua.</string>
+    <string name="error_pass_nueva_confira">La Nueva contraseña ingresada no coincide con la repetición de la misma.</string>
+    <string name="permission_explain">Sin el permiso de Lectura/Escritura no puede funcionar la Aplicación.</string>
+
+
+
+    <!-- otros-->
+    <string name="action_refresh">Refrescar</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlElemento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1">
+
+    <TextView
+        android:id="@+id/elemento_lista_cliente_codigo_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:maxLines="2"
+        android:singleLine="false"
+        android:text="codigo - nombre"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="18sp" />
+
+    <!--
+    <TextView
+        android:id="@+id/elemento_lista_cliente_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/elemento_lista_cliente_codigo_nombre"
+        android:text="esto es un espacio"
+        android:textSize="@dimen/texto_chico" />
+
+    <TextView
+        android:id="@+id/elemento_lista_mutual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/elemento_lista_texto_de_espacio"
+        android:maxLines="2"
+        android:singleLine="false"
+        android:text="mutual"
+        android:textSize="@dimen/texto_chico" />
+
+    <TextView
+        android:id="@+id/elemento_lista_obs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@+id/elemento_lista_mutual"
+        android:maxLines="4"
+        android:text="Obs"
+        android:textSize="@dimen/texto_chico" />
+
+    <TextView
+        android:id="@+id/elemento_lista_texto_de_espacio2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/elemento_lista_obs"
+        android:text="esto es un espacio"
+        android:textSize="@dimen/texto_chico" />
+    -->
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_below="@id/elemento_lista_cliente_codigo_nombre"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="false"
+        android:background="@color/button_background" />
+</RelativeLayout>

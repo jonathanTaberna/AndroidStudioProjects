@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llNavigator"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_header_height"
+    android:background="@drawable/side_nav_bar"
+    android:gravity="bottom"
+    android:theme="@style/AppTheme.NoActionBar">
+    <!--
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    -->
+
+    <ImageView
+        android:id="@+id/ivNavigator"
+        android:layout_width="281dp"
+        android:layout_height="134dp"
+        android:background="@drawable/logo_vacio_distribuidora_rio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+    <!--
+        android:background="@drawable/logo_kiwitech_vacio"
+        android:background="@drawable/logo_vacio_distribuidora_rio"
+        app:srcCompat="@drawable/neoclinica_logo"
+        app:srcCompat="@drawable/clinica_gral_deheza_logo"
+        android:contentDescription="@string/nav_header_desc"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="@string/nav_header_title"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
+    -->
+
+</android.support.constraint.ConstraintLayout>

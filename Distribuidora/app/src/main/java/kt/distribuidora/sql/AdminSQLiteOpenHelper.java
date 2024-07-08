@@ -73,8 +73,15 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
                                                 "telefono TEXT," +
                                                 "direccion TEXT," +
                                                 "codpos INTEGER," +
-                                                "localidad TEXT" +
+                                                "localidad TEXT," +
+                                                "zona INTEGER" +
                                                 ")";
+
+    private String dropTablaZonas = "DROP TABLE IF EXISTS zonas";
+    private String createTablaZonas = "CREATE TABLE IF NOT EXISTS zonas(" +
+            "codigo INTEGER PRIMARY KEY," +
+            "descripcion TEXT" +
+            ")";
 
     private String dropTablaClientes = "DROP TABLE IF EXISTS clientes";
     private String createTablaClientes = "CREATE TABLE IF NOT EXISTS clientes(" +
@@ -83,6 +90,7 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
                                     "codigoLista INTEGER," +
                                     "costo DECIMAL(10,2)," +
                                     "facturaConLista BOOLEAN," +
+                                    "zona INTEGER," +
                                     "PRIMARY KEY (codigo, codigoLista)" +
                                     ")";
 
@@ -104,6 +112,13 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
                                     "ultimoPedidoGuardado INTEGER"+
                                     ")";
 
+    private String dropTablaTemporalProductos = "DROP TABLE IF EXISTS temporalProductos";
+    private String createTablaTemporalProductos = "CREATE TABLE IF NOT EXISTS temporalProductos(" +
+                                            "codigoProducto INTEGER," +
+                                            "cantidadProducto INTEGER," +
+                                            "cantidadProductoBonif INTEGER" +
+                                            ")";
+
 
     public AdminSQLiteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -120,6 +135,8 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(createTablaClientes);
         db.execSQL(createTablaArticulos);
         db.execSQL(createTablaVendedores);
+        db.execSQL(createTablaCategorias);
+        db.execSQL(createTablaZonas);
     }
 
     @Override
@@ -128,6 +145,45 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void crearTabla(String tabla, SQLiteDatabase db) {
+        switch(tabla) {
+            case "pedidosRestaurados":
+                db.execSQL(createTablaPedidosRestaurados);
+                break;
+            case "productosPedidosGuardados":
+                db.execSQL(createTablaProductosPedidosGuardados);
+                break;
+            case "pedidosGuardados":
+                db.execSQL(createTablaPedidosGuardados);
+                break;
+            case "productosPedidos":
+                db.execSQL(createTablaProductosPedidos);
+                break;
+            case "pedidos":
+                db.execSQL(createTablaPedidos);
+                break;
+            case "categorias":
+                db.execSQL(createTablaCategorias);
+                break;
+            case "clientesNuevos":
+                db.execSQL(createTablaClientesNuevos);
+                break;
+            case "clientes":
+                db.execSQL(createTablaClientes);
+                break;
+            case "articulos":
+                db.execSQL(createTablaArticulos);
+                break;
+            case "vendedores":
+                db.execSQL(createTablaVendedores);
+                break;
+            case "zonas":
+                db.execSQL(createTablaZonas);
+                break;
+            case "temporalProductos":
+                db.execSQL(createTablaTemporalProductos);
+                break;
+        }
+        /*
         if (tabla.equals("pedidosRestaurados")) {
             db.execSQL(createTablaPedidosRestaurados);
         } else if (tabla.equals("productosPedidosGuardados")) {
@@ -148,7 +204,10 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
             db.execSQL(createTablaArticulos);
         } else if (tabla.equals("vendedores")) {
             db.execSQL(createTablaVendedores);
+        }else if (tabla.equals("zonas")) {
+            db.execSQL(createTablaZonas);
         }
+        */
     }
 
     public void borrarRegistros(String tabla, SQLiteDatabase db) {
@@ -159,42 +218,47 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
                 db.execSQL(createTablaPedidosRestaurados);
                 break;
             case "productosPedidosGuardados":
-                    db.execSQL(dropTablaProductosPedidosGuardados);
-                    db.execSQL(createTablaProductosPedidosGuardados);
-                    break;
+                db.execSQL(dropTablaProductosPedidosGuardados);
+                db.execSQL(createTablaProductosPedidosGuardados);
+                break;
             case "pedidosGuardados":
-                    db.execSQL(dropTablaPedidosGuardados);
-                    db.execSQL(createTablaPedidosGuardados);
-                    break;
+                db.execSQL(dropTablaPedidosGuardados);
+                db.execSQL(createTablaPedidosGuardados);
+                break;
             case "productosPedidos":
-                    db.execSQL(dropTablaProductosPedidos);
-                    db.execSQL(createTablaProductosPedidos);
-                    break;
+                db.execSQL(dropTablaProductosPedidos);
+                db.execSQL(createTablaProductosPedidos);
+                break;
             case "pedidos":
-                    db.execSQL(dropTablaPedidos);
-                    db.execSQL(createTablaPedidos);
-                    break;
+                db.execSQL(dropTablaPedidos);
+                db.execSQL(createTablaPedidos);
+                break;
             case "categorias":
-                    db.execSQL(dropTablaCategorias);
-                    db.execSQL(createTablaCategorias);
-                    break;
+                db.execSQL(dropTablaCategorias);
+                db.execSQL(createTablaCategorias);
+                break;
+            case "zonas":
+                db.execSQL(dropTablaZonas);
+                db.execSQL(createTablaZonas);
+                break;
             case "clientesNuevos":
-                    db.execSQL(dropTablaClientesNuevos);
-                    db.execSQL(createTablaClientesNuevos);
-                    break;
+                db.execSQL(dropTablaClientesNuevos);
+                db.execSQL(createTablaClientesNuevos);
+                break;
             case "clientes":
-                    db.execSQL(dropTablaClientes);
-                    db.execSQL(createTablaClientes);
-                    break;
+                db.execSQL(dropTablaClientes);
+                db.execSQL(createTablaClientes);
+                break;
             case "articulos":
-                    db.execSQL(dropTablaArticulos);
-                    db.execSQL(createTablaArticulos);
-                    break;
+                db.execSQL(dropTablaArticulos);
+                db.execSQL(createTablaArticulos);
+                break;
             case "vendedores":
-                    db.execSQL(dropTablaVendedores);
-                    db.execSQL(createTablaVendedores);
-                    break;
-            default:
+                db.execSQL(dropTablaVendedores);
+                db.execSQL(createTablaVendedores);
+                break;
+            case "temporalProductos":
+                db.execSQL(dropTablaTemporalProductos);
                 break;
         }
         /*
@@ -250,6 +314,9 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(dropTablaCategorias);
         db.execSQL(createTablaCategorias);
 
+        db.execSQL(dropTablaZonas);
+        db.execSQL(createTablaZonas);
+
         db.execSQL(dropTablaClientesNuevos);
         db.execSQL(createTablaClientesNuevos);
 
@@ -270,10 +337,10 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(createTablaProductosPedidos);
         db.execSQL(createTablaPedidos);
         db.execSQL(createTablaCategorias);
+        db.execSQL(createTablaZonas);
         db.execSQL(createTablaClientesNuevos);
         db.execSQL(createTablaClientes);
         db.execSQL(createTablaArticulos);
         db.execSQL(createTablaVendedores);
-
     }
 }

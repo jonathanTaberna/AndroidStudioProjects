@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#575963</color>
+    <color name="colorAccent">#FF5722</color>
+    <color name="window_background">#8bc34a</color>
+    <color name="button_background">#0dac9d</color>
+    <color name="colorGris">#e7656876</color>
+    <color name="titleColor">#e7656876</color>
+    <color name="colorNegro">#000000</color>
+    <color name="colorBlanco">#FFFFFF</color>
+</resources>
+
+
+<!--
+
+    <color name="colorPrimary">#5E93959F</color>
+    <color name="colorPrimaryDark">#575963</color>
+    <color name="colorAccent">#E10B16</color>
+    <color name="window_background">#8bc34a</color>
+    <color name="button_background">#0dac9d</color>
+    <color name="colorGris">#e7656876</color>
+    <color name="titleColor">#e7656876</color>
+    <color name="colorNegro">#000000</color>
+
+-->

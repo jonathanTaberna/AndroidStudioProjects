@@ -14,14 +14,16 @@
 
     <ImageView
         android:id="@+id/ivNavigator"
-        android:layout_width="248dp"
-        android:layout_height="113dp"
-        android:layout_marginBottom="10dp"
+        android:layout_width="260dp"
+        android:layout_height="130dp"
         android:layout_marginStart="5dp"
-        android:background="@drawable/logo_vacio"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/logo_vacio_manolito"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
     <!--
+        android:background="@drawable/logo_kiwitech_vacio"
+        android:background="@drawable/logo_vacio_manolito"
         app:srcCompat="@drawable/neoclinica_logo"
         app:srcCompat="@drawable/clinica_gral_deheza_logo"
         android:contentDescription="@string/nav_header_desc"

@@ -13,7 +13,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="128dp"
+        android:layout_height="250dp"
         android:background="@android:color/background_light"
         android:gravity="top|center_horizontal"
         app:elevation="0dp">
@@ -38,9 +38,11 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/logo" />
+                android:background="@drawable/logo_manolito" />
             <!--
                 android:src="@drawable/logo_coti" />
+                android:background="@drawable/logo_manolito"
+                android:background="@drawable/logo_kiwitech"
                 -->
         </RelativeLayout>
 

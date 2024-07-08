@@ -1,4 +1,8 @@
 <resources>
+    <!--
+    <string name="app_name">El Manolito Distribuidora</string>
+    <string name="app_name">App Distribuidora Kiwitech</string>
+    -->
     <string name="app_name">El Manolito Distribuidora</string>
 
     <!-- Strings related to login -->
@@ -35,7 +39,11 @@
     <string name="edtImportarClientesPath">Archivo Clientes</string>
     <string name="edtImportarVendedoresPath">Archivo Clientes</string>
     <string name="edtImportarCategoriasPath">Archivo Categorias</string>
+    <string name="edtImportarZonasPath">Archivo Zonas</string>
     <string name="edtSeleccionarClienteDialogoCliente">Nombre del Cliente</string>
+    <string name="edtExportarPedidos">Exportación de Pedidos</string>
+    <string name="edtExportarClientesNuevos">Exportación de Clientes Nuevos</string>
+    <string name="edtFiltrarProductos">Filtrar Productos</string>
 
 
     <!-- text view-->
@@ -46,11 +54,13 @@
     <string name="tvFecha">Fecha</string>
     <string name="tvTotal">Total Pedido</string>
     <string name="tvComentario">Comentarios</string>
+    <string name="tvBuscarProducto">Buscar Producto</string>
 
 
     <!-- radio button-->
     <string name="rbExportacionDialogoBorrar">Exportar y Borrar los Pedidos cargados</string>
     <string name="rbExportacionDialogoGuardar">Exportar y Guardar los Pedidos cargados a modo de Backup</string>
+    <string name="rbExportacionDialogoClientesNuevos">Exportar los Clientes Nuevos</string>
     <string name="rbExportacionDialogoExportar">Solo Exportar</string>
     <string name="rbConfiguracionesDialogoCodigo">Codigo de Pedido</string>
     <string name="rbConfiguracionesDialogoNombre">Nombre de Cliente</string>
@@ -66,7 +76,7 @@
     <string name="btnIngresar">Ingresar</string>
     <string name="btnImportarInfo">Importar Informacion del Vendedor</string>
     <string name="btnNuevoPedido">Nuevo Pedido</string>
-    <string name="btnExportarPedidos">Exportar Pedidos</string>
+    <string name="btnExportarPedidos">Exportación de Datos</string>
     <string name="btnImportar">Importar</string>
     <string name="btnAceptar">Aceptar</string>
     <string name="btnCancelar">Cancelar</string>
@@ -75,6 +85,7 @@
     <string name="btnImportarArticulos">Seleccionar Archivo de Articulos</string>
     <string name="btnImportarVendedores">Seleccionar Archivo de Vendedores</string>
     <string name="btnImportarCategorias">Seleccionar Archivo de Categorias</string>
+    <string name="btnImportarZonas">Seleccionar Archivo de Zonas</string>
 
     <!-- mensajes de errores -->
     <string name="error_invalid_password">El tamaño de la contraseña es incorrecto (entre 4 y 15).</string>
