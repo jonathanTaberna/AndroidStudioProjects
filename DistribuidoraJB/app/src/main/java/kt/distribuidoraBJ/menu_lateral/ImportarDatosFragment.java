@@ -1,5 +1,13 @@
 package kt.distribuidoraBJ.menu_lateral;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static kt.distribuidoraBJ.constantes.constantes.FLAG_IMPORTA_DATOS;
+import static kt.distribuidoraBJ.constantes.constantes.RESULT_ARTICULOS_FILE;
+import static kt.distribuidoraBJ.constantes.constantes.RESULT_CATEGORIAS_FILE;
+import static kt.distribuidoraBJ.constantes.constantes.RESULT_CLIENTES_FILE;
+import static kt.distribuidoraBJ.constantes.constantes.RESULT_ZONAS_FILE;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,18 +23,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import kt.distribuidoraBJ.R;
 import kt.distribuidoraBJ.sql.AdminSQLiteOpenHelper;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static kt.distribuidoraBJ.constantes.constantes.*;
 
 @SuppressLint("ValidFragment")
 public class ImportarDatosFragment extends Fragment {
@@ -311,7 +315,7 @@ public class ImportarDatosFragment extends Fragment {
         boolean retorno = false;
         try {
             InputStream inputStream = contexto.getContentResolver().openInputStream(pathClientes);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.ISO_8859_1));
             String linea;
 
             AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(contexto, "dbSistema", null, 1);
@@ -388,7 +392,7 @@ public class ImportarDatosFragment extends Fragment {
         boolean retorno = false;
         try {
             InputStream inputStream = contexto.getContentResolver().openInputStream(pathArt);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.ISO_8859_1));
             String linea;
 
             AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(contexto, "dbSistema", null, 1);
@@ -412,6 +416,7 @@ public class ImportarDatosFragment extends Fragment {
 
                 int codigo = Integer.parseInt(arreglo[0]);
                 String descripcion = arreglo[1];
+                //descripcion.replace("�", "Ñ");
                 double costo = 0;
                 if (!arreglo[2].isEmpty()) {
                     costo = Double.parseDouble(arreglo[2]);
@@ -458,7 +463,7 @@ public class ImportarDatosFragment extends Fragment {
         boolean retorno = false;
         try {
             InputStream inputStream = contexto.getContentResolver().openInputStream(pathCategorias);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.ISO_8859_1));
             String linea;
 
             AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(contexto, "dbSistema", null, 1);
@@ -510,7 +515,7 @@ public class ImportarDatosFragment extends Fragment {
         boolean retorno = false;
         try {
             InputStream inputStream = contexto.getContentResolver().openInputStream(pathZonas);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.ISO_8859_1));
             String linea;
 
             AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(contexto, "dbSistema", null, 1);

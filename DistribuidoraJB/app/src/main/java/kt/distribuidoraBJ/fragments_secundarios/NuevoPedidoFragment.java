@@ -11,6 +11,7 @@ import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class NuevoPedidoFragment extends Fragment {
     private Button btnPedidoNuevoEliminar;
     private Button btnPedidoNuevoGuardar;
     private Button btnPedidoNuevoCancelar;
+    private Button btnConfirmaFiltrar;
 
     private int sYear;
     private int sMonth;
@@ -58,6 +60,7 @@ public class NuevoPedidoFragment extends Fragment {
     private double totalPedido;
     //private boolean flagEdit;
     private boolean flagGuardadoCorrecto;
+    private boolean flagCargaInicial;
     private String comentario;
 
     private AdminSQLiteOpenHelper adminSQLiteOpenHelper;
@@ -79,6 +82,10 @@ public class NuevoPedidoFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    
+    private int cantidad;
+    private int cantidadBonif;
+    
     public NuevoPedidoFragment() {
         // Required empty public constructor
     }
@@ -134,7 +141,7 @@ public class NuevoPedidoFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-
+        flagCargaInicial = false;
         try {
             adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
             SQLiteDatabase db = adminSQLiteOpenHelper.getWritableDatabase();
@@ -170,8 +177,9 @@ public class NuevoPedidoFragment extends Fragment {
         btnPedidoNuevoEliminar = (Button) view.findViewById(R.id.btnPedidoNuevoEliminar);
         btnPedidoNuevoGuardar = (Button) view.findViewById(R.id.btnPedidoNuevoGuardar);
         btnPedidoNuevoCancelar = (Button) view.findViewById(R.id.btnPedidoNuevoCancelar);
+        btnConfirmaFiltrar = (Button) view.findViewById(R.id.btnConfirmaFiltrar);
 
-
+/*
         TextWatcher textWatcher = new TextWatcher() {
             View vista = view;
             @Override
@@ -191,6 +199,22 @@ public class NuevoPedidoFragment extends Fragment {
             }
         };
         edtFiltrarProductos.addTextChangedListener(textWatcher);
+ */
+        btnConfirmaFiltrar.setOnClickListener(new View.OnClickListener() {
+            View vista = view;
+            @Override
+            public void onClick(View view) {
+                if (flagCargaInicial) {
+                    flagCargaInicial = false;
+                    return;
+                }
+                limpiarProductos(ll1PedidoNuevo);
+                cont = 0;
+                totalPedido = 0;
+                llenarArticulos(ll1PedidoNuevo);
+
+            }
+        });
 
         btnPedidoNuevoGuardar.setOnClickListener(new View.OnClickListener() {
             View vista = view;
@@ -317,7 +341,7 @@ public class NuevoPedidoFragment extends Fragment {
         tvPedidoNuevoComentario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popUpEditText(tvPedidoNuevoComentario.getText().toString());
+                popUpEditText(tvPedidoNuevoComentario.getText().toString(), "Comentario", null, null, null,null,null,0,0);
             }
         });
 
@@ -355,10 +379,10 @@ public class NuevoPedidoFragment extends Fragment {
 
                     adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
                     SQLiteDatabase db = adminSQLiteOpenHelper.getWritableDatabase();
-                    //adminSQLiteOpenHelper.borrarRegistros("temporalProductos", db);
-                    //adminSQLiteOpenHelper.crearTabla("temporalProductos", db);
+                    adminSQLiteOpenHelper.borrarRegistros("temporalProductos", db);
+                    adminSQLiteOpenHelper.crearTabla("temporalProductos", db);
                     String query = " INSERT INTO temporalProductos" +
-                            " SELECT codigo, 0, 0" +
+                            " SELECT codigo, 0, 0, precio" +
                             " FROM articulos" +
                             " WHERE codigoLista = " + listaPrecios;
 
@@ -367,11 +391,16 @@ public class NuevoPedidoFragment extends Fragment {
                     e.printStackTrace();
                 }
 
+                edtFiltrarProductos.setText("");
+                if (flagCargaInicial) {
+                    flagCargaInicial = false;
+                    return;
+                }
                 limpiarProductos(ll1PedidoNuevo);
-
                 cont = 0;
                 totalPedido = 0;
                 llenarArticulos(ll1PedidoNuevo);
+
                 tvPedidoNuevoTotal.setText("$ " + totalPedido);
             }
 
@@ -386,6 +415,7 @@ public class NuevoPedidoFragment extends Fragment {
         totalPedido = 0;
         llenarArticulos(ll1PedidoNuevo);
         tvPedidoNuevoTotal.setText("$ " + totalPedido);
+        flagCargaInicial = true;
 
     }
 
@@ -574,70 +604,118 @@ public class NuevoPedidoFragment extends Fragment {
             Button btnMenosBonif = (Button) child.findViewById(R.id.btnMenosBonif);
             final TextView tvCantidadBonif = (TextView) child.findViewById(R.id.tvCantidadBonif);
 
-            final int[] cantidad = {0};
-            /*
-            if (editarInfo && cantidadArt > 0) {
-                tvCantidad.setText("" + cantidadArt);
-                cantidad[0] = cantidadArt;
-                totalPedido += cantidadArt * precio;
-            } else {
-                tvCantidad.setText("0");
-            }
-            */
+            cantidad = 0;
             tvCantidad.setText("" + cantidadArt);
-            cantidad[0] = cantidadArt;
+            cantidad = cantidadArt;
             totalPedido += cantidadArt * precio;
 
-            final int[] cantidadBonif = {0};
+            cantidadBonif = 0;
             /*
             if (editarInfo && cantidadArtBonif > 0) {
                 tvCantidadBonif.setText("" + cantidadArtBonif);
-                cantidadBonif[0] = cantidadArtBonif;
+                cantidadBonif = cantidadArtBonif;
                 totalPedido -= cantidadArtBonif * precio;
             } else {
                 tvCantidadBonif.setText("0");
             }
             */
             tvCantidadBonif.setText("" + cantidadArtBonif);
-            cantidadBonif[0] = cantidadArtBonif;
+            cantidadBonif = cantidadArtBonif;
             totalPedido -= cantidadArtBonif * precio;
 
-            tvCantidadArticulo.setText("" + cantidad[0]);
-            tvCantidadArticuloBonif.setText("" + cantidadBonif[0]);
+            tvCantidadArticulo.setText("" + cantidad);
+            tvCantidadArticuloBonif.setText("" + cantidadBonif);
             tvPrecio.setText("$ " + precio);
             desc.setText(codigo + " - " + nombre);
 
             btnMas.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
-                    cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
-                    cantidad[0] ++;
-                    tvCantidad.setText("" + cantidad[0]);
-                    tvCantidadArticulo.setText("" + cantidad[0]);
+                    cantidad = Integer.parseInt(tvCantidad.getText().toString());
+                    cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+                    cantidad ++;
+                    tvCantidad.setText("" + cantidad);
+                    tvCantidadArticulo.setText("" + cantidad);
                     totalPedido += precio;
                     tvPedidoNuevoTotal.setText("$ " + totalPedido);
 
-                    actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
+                    actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
                 }
             });
             btnMenos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (cantidad[0] > 0) {
-                        cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
-                        cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
-                        cantidad[0] --;
-                        tvCantidad.setText("" + cantidad[0]);
-                        tvCantidadArticulo.setText("" + cantidad[0]);
+                    if (cantidad > 0) {
+                        cantidad = Integer.parseInt(tvCantidad.getText().toString());
+                        cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+                        cantidad --;
+                        tvCantidad.setText("" + cantidad);
+                        tvCantidadArticulo.setText("" + cantidad);
                         totalPedido -= precio;
                         tvPedidoNuevoTotal.setText("$ " + totalPedido);
 
-                        actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
+                        actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
                     }
                 }
             });
 
+            tvCantidadArticulo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popUpEditText(tvCantidadArticulo.getText().toString(),
+                            "Articulo",
+                            tvCantidad,
+                            tvCantidadBonif,
+                            tvCantidadArticulo,
+                            tvCantidadArticuloBonif,
+                            db,
+                            codigo,
+                            precio);
+
+//                    cantidad = Integer.parseInt(tvCantidad.getText().toString());
+//                    cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+//                    tvCantidadArticulo.setText("" + cantidad);
+//
+//                    actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
+//
+//                    obtengoTotalPedido();
+                }
+            });
+
+            tvCantidadArticuloBonif.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popUpEditText(tvCantidadArticuloBonif.getText().toString(),
+                            "Bonificacion",
+                            tvCantidad,
+                            tvCantidadBonif,
+                            tvCantidadArticulo,
+                            tvCantidadArticuloBonif,
+                            db,
+                            codigo,
+                            precio);
+
+//                    cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+//                    cantidad = Integer.parseInt(tvCantidad.getText().toString());
+//
+//                    if (cantidadBonif + 1 > cantidad) {
+//                        Toast.makeText(contexto, "No se pueden asignar más bonificaciones a este Artículo.", Toast.LENGTH_SHORT).show();
+//                        cantidadBonif = cantidad;
+//                        tvCantidadBonif.setText("" + cantidadBonif);
+//                        tvCantidadArticuloBonif.setText("" + cantidadBonif);
+//                        return;
+//                    }
+//
+//                    tvCantidadBonif.setText("" + cantidadBonif);
+//                    tvCantidadArticuloBonif.setText("" + cantidadBonif);
+//
+//                    actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
+//
+//                    obtengoTotalPedido();
+                }
+            });
+
+            /*
             tvCantidadArticulo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -648,54 +726,56 @@ public class NuevoPedidoFragment extends Fragment {
                             return;
                         }
                         int cant = Integer.parseInt(cantS);
-                        if (cantidad[0] > 0) {
-                            totalPedido -= precio * cantidad[0];
+                        if (cantidad > 0) {
+                            totalPedido -= precio * cantidad;
                         }
                         tvCantidadArticulo.setText("" + cant);
                         totalPedido += precio * cant;
                         tvPedidoNuevoTotal.setText("$ " + totalPedido);
-                        cantidad[0] = cant;
-                        cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
+                        cantidad = cant;
+                        cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
 
-                        actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
+                        actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
                     }
                 }
             });
 
+             */
+
             btnMasBonif.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
-                    cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
+                    cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+                    cantidad = Integer.parseInt(tvCantidad.getText().toString());
 
-                    if (cantidadBonif[0] + 1 > cantidad[0]) {
+                    if (cantidadBonif + 1> cantidad) {
                         Toast.makeText(contexto, "No se pueden asignar más bonificaciones a este Artículo.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    cantidadBonif[0] ++;
-                    tvCantidadBonif.setText("" + cantidadBonif[0]);
-                    tvCantidadArticuloBonif.setText("" + cantidadBonif[0]);
+                    cantidadBonif ++;
+                    tvCantidadBonif.setText("" + cantidadBonif);
+                    tvCantidadArticuloBonif.setText("" + cantidadBonif);
                     totalPedido -= precio;
                     tvPedidoNuevoTotal.setText("$ " + totalPedido);
-                    cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
+                    cantidad = Integer.parseInt(tvCantidad.getText().toString());
 
-                    actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
+                    actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
                 }
             });
             btnMenosBonif.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (cantidadBonif[0] > 0) {
-                        cantidadBonif[0] = Integer.parseInt(tvCantidadBonif.getText().toString());
-                        cantidadBonif[0] --;
-                        tvCantidadBonif.setText("" + cantidadBonif[0]);
-                        tvCantidadArticuloBonif.setText("" + cantidadBonif[0]);
+                    if (cantidadBonif > 0) {
+                        cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+                        cantidadBonif --;
+                        tvCantidadBonif.setText("" + cantidadBonif);
+                        tvCantidadArticuloBonif.setText("" + cantidadBonif);
                         totalPedido += precio;
                         tvPedidoNuevoTotal.setText("$ " + totalPedido);
-                        cantidad[0] = Integer.parseInt(tvCantidad.getText().toString());
+                        cantidad = Integer.parseInt(tvCantidad.getText().toString());
 
-                        actualizaTemporal(db, codigo, cantidad[0], cantidadBonif[0], precio);
+                        actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
                     }
                 }
             });
@@ -711,7 +791,6 @@ public class NuevoPedidoFragment extends Fragment {
             }
         }
         cursor.close();
-
     }
 
     private void actualizaTemporal(SQLiteDatabase db, int codigo, int cantidadProducto, int cantidadBonifProducto, double precio){
@@ -720,6 +799,7 @@ public class NuevoPedidoFragment extends Fragment {
         registro.clear();
         registro.put("cantidadProducto", cantidadProducto);
         registro.put("cantidadProductoBonif", cantidadBonifProducto);
+        registro.put("precio", precio);
 
         result = db.update("temporalProductos", registro, "codigoProducto = " + codigo, null);
         if (result < 0) { //error al regrabar
@@ -728,10 +808,45 @@ public class NuevoPedidoFragment extends Fragment {
         }
     }
 
-    private void popUpEditText(String textoCargado) {
+    private void obtengoTotalPedido(){
+        adminSQLiteOpenHelper = new AdminSQLiteOpenHelper(getContext(), "dbSistema", null, 1);
+        SQLiteDatabase db = adminSQLiteOpenHelper.getReadableDatabase();
+        String query = "select SUM(cantidadProducto * precio)" +
+                       " - SUM (cantidadProductoBonif * precio)" +
+                       " from temporalProductos" +
+                       " where cantidadProducto > 0";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        int cont = 0;
+        ArrayList<String> arraySpinner = new ArrayList<>();
+
+        String elemento = "";
+        double precio = 0;
+        while (cursor.moveToNext()) {
+            precio = cursor.getDouble(0);
+        }
+        cursor.close();
+
+
+        totalPedido = precio;
+        tvPedidoNuevoTotal.setText("$ " + totalPedido);
+    }
+
+    private void popUpEditText(String textoCargado,
+                               String titulo,
+                               TextView tvCantidad,
+                               TextView tvCantidadBonif,
+                               TextView tvCantidadArticulo,
+                               TextView tvCantidadArticuloBonif,
+                               SQLiteDatabase db,
+                               int codigo,
+                               double precio) {
+
         final String[] valor = {""};
         final AlertDialog.Builder builder = new AlertDialog.Builder(contexto);
-        builder.setTitle("Comentario");
+        //builder.setTitle("Comentario");
+        builder.setTitle(titulo);
         builder.setCancelable(false);
 
         final EditText input = new EditText(contexto);
@@ -740,6 +855,11 @@ public class NuevoPedidoFragment extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         input.setLayoutParams(lp);
+        if (titulo == "Articulo" || titulo == "Bonificacion") {
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        } else {
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
         builder.setView(input);
 
         // Set up the buttons
@@ -748,8 +868,46 @@ public class NuevoPedidoFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
 
                 // do something here on OK
-                comentario = input.getText().toString();
-                tvPedidoNuevoComentario.setText(comentario);
+
+                switch (titulo) {
+                    case "Articulo":
+                        // secuencia de sentencias.
+                        tvCantidad.setText("" + Integer.parseInt(input.getText().toString()));
+
+                        cantidad = Integer.parseInt(tvCantidad.getText().toString());
+                        cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+                        tvCantidadArticulo.setText("" + cantidad);
+
+                        actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
+
+                        obtengoTotalPedido();
+                        break;
+
+                    case "Bonificacion":
+                        // secuencia de sentencias.
+                        tvCantidadBonif.setText("" + Integer.parseInt(input.getText().toString()));
+
+                        cantidadBonif = Integer.parseInt(tvCantidadBonif.getText().toString());
+                        cantidad = Integer.parseInt(tvCantidad.getText().toString());
+
+                        if (cantidadBonif > cantidad) {
+                            Toast.makeText(contexto, "No se pueden asignar más bonificaciones a este Artículo.", Toast.LENGTH_SHORT).show();
+                            cantidadBonif = cantidad;
+                        }
+                        tvCantidadBonif.setText("" + cantidadBonif);
+                        tvCantidadArticuloBonif.setText("" + cantidadBonif);
+
+                        actualizaTemporal(db, codigo, cantidad, cantidadBonif, precio);
+
+                        obtengoTotalPedido();
+                        break;
+
+                    case "Comentario":
+                        // secuencia de sentencias.
+                        comentario = input.getText().toString();
+                        tvPedidoNuevoComentario.setText(comentario);
+                        break;
+                }
                 dialog.cancel();
             }
         });
