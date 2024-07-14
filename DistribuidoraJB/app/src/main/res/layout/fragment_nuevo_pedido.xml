@@ -164,7 +164,6 @@
         </LinearLayout>
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -247,11 +246,17 @@
 
             <EditText
                 android:id="@+id/edtFiltrarProductos"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/edtFiltrarProductos"
                 android:inputType="text" />
+
+            <Button
+                android:id="@+id/btnConfirmaFiltrar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/confirma" />
 
 
         </LinearLayout>

@@ -116,7 +116,8 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
     private String createTablaTemporalProductos = "CREATE TABLE IF NOT EXISTS temporalProductos(" +
                                             "codigoProducto INTEGER," +
                                             "cantidadProducto INTEGER," +
-                                            "cantidadProductoBonif INTEGER" +
+                                            "cantidadProductoBonif INTEGER," +
+                                            "precio DECIMAL(10,2)" +
                                             ")";
 
 
